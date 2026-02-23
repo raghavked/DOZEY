@@ -21,6 +21,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
       citizenships: [],
       languages: [],
       primaryProvider: '',
+      providerDetails: '',
       targetCountry: '',
       targetInstitution: '',
       targetEmployment: '',
@@ -36,6 +37,58 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
       setFormData(profile);
     }
   }, [profile]);
+
+  function getProviderFollowUp(provider: string): { label: string; placeholder: string } | null {
+    if (!provider.trim()) return null;
+    const lower = provider.toLowerCase().trim();
+
+    if (/^dr\.?\s|doctor\s|^md\b|physician|pediatrician|internist|practitioner/i.test(lower)) {
+      return {
+        label: "Doctor's Office / Clinic Details",
+        placeholder: "Clinic name, address, phone number, and specialty (e.g., Family Medicine Clinic, 123 Main St, Suite 200, (555) 123-4567, Internal Medicine)",
+      };
+    }
+    if (/hospital|medical center|medical centre|health system/i.test(lower)) {
+      return {
+        label: "Hospital Details",
+        placeholder: "Department, attending physician, patient ID or MRN, and phone number (e.g., Dept. of Internal Medicine, Dr. Patel, MRN #12345, (555) 987-6543)",
+      };
+    }
+    if (/clinic|health center|health centre|urgent care|walk-in/i.test(lower)) {
+      return {
+        label: "Clinic Details",
+        placeholder: "Address, primary doctor's name, patient ID, and phone number (e.g., 456 Oak Ave, Dr. Johnson, Patient #67890, (555) 456-7890)",
+      };
+    }
+    if (/pharmacy|cvs|walgreens|rite aid|costco|walmart/i.test(lower)) {
+      return {
+        label: "Pharmacy Details",
+        placeholder: "Store location/address, pharmacist name if known, and phone number (e.g., CVS #4521, 789 Elm St, (555) 321-0987)",
+      };
+    }
+    if (/va\b|veterans|military|tricare|army|navy|air force/i.test(lower)) {
+      return {
+        label: "Military / VA Healthcare Details",
+        placeholder: "Facility name, branch of service, EDIPI or service number, and primary care manager (e.g., VA Medical Center Portland, US Army, PCM: Dr. Williams)",
+      };
+    }
+    if (/university|college|student health|campus/i.test(lower)) {
+      return {
+        label: "Student Health Service Details",
+        placeholder: "University name, student ID, assigned provider, and health center phone (e.g., UCLA Student Health, ID #123456, Dr. Lee, (310) 825-4073)",
+      };
+    }
+    if (/insurance|aetna|cigna|united|blue cross|anthem|humana|kaiser/i.test(lower)) {
+      return {
+        label: "Insurance & Provider Details",
+        placeholder: "Plan name, member/group ID, assigned PCP name, and network (e.g., Aetna PPO, Member #W123456, PCP: Dr. Garcia, In-Network)",
+      };
+    }
+    return {
+      label: "Provider Contact & Details",
+      placeholder: "Address, phone number, provider type, and any patient/member ID (e.g., 123 Health Blvd, (555) 000-1111, Family Practice, Patient #ABC123)",
+    };
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -264,6 +317,30 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
                 required
                 placeholder="e.g., Dr. Smith, City General Hospital"
               />
+
+              {formData.primaryProvider.trim() && (() => {
+                const followUp = getProviderFollowUp(formData.primaryProvider);
+                if (!followUp) return null;
+                return (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <label htmlFor="providerDetails" className="block text-gray-700 font-medium mb-2">
+                      {followUp.label} *
+                    </label>
+                    <textarea
+                      id="providerDetails"
+                      value={formData.providerDetails || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, providerDetails: e.target.value }))}
+                      required
+                      rows={3}
+                      placeholder={followUp.placeholder}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none resize-none"
+                    />
+                    <p className="text-gray-500 text-xs mt-1">
+                      This information helps us connect with your provider for record verification and transfers.
+                    </p>
+                  </div>
+                );
+              })()}
 
               <AutocompleteInput
                 id="targetCountry"

@@ -86,6 +86,7 @@ export function useProfile() {
         citizenships: p.citizenships ? JSON.parse(p.citizenships) : [],
         languages: p.languages ? JSON.parse(p.languages) : [],
         primaryProvider: p.primaryProvider || '',
+        providerDetails: p.providerDetails || '',
         targetCountry: p.targetCountry || '',
         targetInstitution: p.targetInstitution || '',
         targetEmployment: p.targetEmployment || '',

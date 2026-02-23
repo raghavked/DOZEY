@@ -20,6 +20,7 @@ export interface UserProfile {
   citizenships: string[];
   languages: string[];
   primaryProvider: string;
+  providerDetails?: string;
   targetCountry?: string;
   targetInstitution?: string;
   targetEmployment?: string;

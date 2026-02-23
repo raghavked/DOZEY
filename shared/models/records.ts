@@ -12,6 +12,7 @@ export const profiles = pgTable("profiles", {
   citizenships: text("citizenships"),
   languages: text("languages"),
   primaryProvider: varchar("primary_provider"),
+  providerDetails: text("provider_details"),
   targetCountry: varchar("target_country"),
   targetInstitution: varchar("target_institution"),
   targetEmployment: varchar("target_employment"),
