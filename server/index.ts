@@ -12,6 +12,13 @@ async function main() {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
 
+  app.get("/api/config", (_req, res) => {
+    res.json({
+      supabaseUrl: process.env.SUPABASE_URL?.trim(),
+      supabaseAnonKey: process.env.SUPABASE_ANON_KEY?.trim(),
+    });
+  });
+
   registerRoutes(app);
 
   if (process.env.NODE_ENV === "production") {

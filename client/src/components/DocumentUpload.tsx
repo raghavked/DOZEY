@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { UploadedDocument, VaccinationRecord } from '@/types';
 import { Upload, FileText, Image, Trash2, Plus, Download } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 interface DocumentUploadProps {
   documents: UploadedDocument[];
@@ -62,7 +62,8 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
 
   const handleDownload = async (docId: string, docName: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const sb = await getSupabase();
+      const { data: { session } } = await sb.auth.getSession();
       const res = await fetch(`/api/documents/${docId}/download`, {
         headers: { Authorization: `Bearer ${session?.access_token}` },
       });

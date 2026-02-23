@@ -1,10 +1,33 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+let supabaseInstance: SupabaseClient | null = null;
+let initPromise: Promise<SupabaseClient> | null = null;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables');
+async function initSupabase(): Promise<SupabaseClient> {
+  const res = await fetch('/api/config');
+  const config = await res.json();
+
+  if (!config.supabaseUrl || !config.supabaseAnonKey) {
+    throw new Error('Supabase configuration not available');
+  }
+
+  supabaseInstance = createClient(config.supabaseUrl, config.supabaseAnonKey);
+  return supabaseInstance;
 }
 
-export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
+export async function getSupabase(): Promise<SupabaseClient> {
+  if (supabaseInstance) return supabaseInstance;
+  if (!initPromise) {
+    initPromise = initSupabase();
+  }
+  return initPromise;
+}
+
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    if (!supabaseInstance) {
+      throw new Error('Supabase not initialized yet. Use getSupabase() first.');
+    }
+    return (supabaseInstance as any)[prop];
+  },
+});

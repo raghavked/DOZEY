@@ -1,9 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { VaccinationRecord, UserProfile, CountryPeriod, UploadedDocument } from '@/types';
-import { supabase } from '@/lib/supabase';
+import { getSupabase } from '@/lib/supabase';
 
 async function getToken(): Promise<string> {
-  const { data: { session } } = await supabase.auth.getSession();
+  const sb = await getSupabase();
+  const { data: { session } } = await sb.auth.getSession();
   if (!session?.access_token) throw new Error('Not authenticated');
   return session.access_token;
 }

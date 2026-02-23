@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { supabaseAdmin } from './supabase';
+import { getSupabaseAdmin } from './supabase';
 import { db } from './db';
 import { users } from '../shared/schema';
 import { eq } from 'drizzle-orm';
@@ -17,7 +17,8 @@ export async function isAuthenticated(req: Request, res: Response, next: NextFun
 
   const token = authHeader.split(' ')[1];
   try {
-    const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+    const supabase = getSupabaseAdmin();
+    const { data: { user }, error } = await supabase.auth.getUser(token);
     if (error || !user) {
       return res.status(401).json({ message: 'Invalid or expired token' });
     }

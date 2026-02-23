@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/lib/supabase";
-import type { User as SupabaseUser, Session } from "@supabase/supabase-js";
+import { getSupabase } from "@/lib/supabase";
+import type { User as SupabaseUser, Session, SupabaseClient } from "@supabase/supabase-js";
 
 interface AuthState {
   user: SupabaseUser | null;
@@ -16,48 +16,65 @@ export function useAuth() {
     isLoading: true,
     isAuthenticated: false,
   });
+  const [client, setClient] = useState<SupabaseClient | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setState({
-        user: session?.user ?? null,
-        session,
-        isLoading: false,
-        isAuthenticated: !!session?.user,
+    let subscription: any;
+
+    getSupabase().then((sb) => {
+      setClient(sb);
+
+      sb.auth.getSession().then(({ data: { session } }) => {
+        setState({
+          user: session?.user ?? null,
+          session,
+          isLoading: false,
+          isAuthenticated: !!session?.user,
+        });
       });
+
+      const { data } = sb.auth.onAuthStateChange((_event, session) => {
+        setState({
+          user: session?.user ?? null,
+          session,
+          isLoading: false,
+          isAuthenticated: !!session?.user,
+        });
+      });
+      subscription = data.subscription;
+    }).catch((err) => {
+      console.error("Failed to initialize auth:", err);
+      setState(prev => ({ ...prev, isLoading: false }));
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setState({
-        user: session?.user ?? null,
-        session,
-        isLoading: false,
-        isAuthenticated: !!session?.user,
-      });
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription?.unsubscribe();
+    };
   }, []);
 
   const signUp = useCallback(async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const sb = await getSupabase();
+    const { data, error } = await sb.auth.signUp({ email, password });
     if (error) throw error;
     return data;
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const sb = await getSupabase();
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
     if (error) throw error;
     return data;
   }, []);
 
   const signOut = useCallback(async () => {
-    const { error } = await supabase.auth.signOut();
+    const sb = await getSupabase();
+    const { error } = await sb.auth.signOut();
     if (error) throw error;
   }, []);
 
   const getAccessToken = useCallback(async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const sb = await getSupabase();
+    const { data: { session } } = await sb.auth.getSession();
     return session?.access_token || null;
   }, []);
 
