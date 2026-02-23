@@ -26,7 +26,7 @@ export function TeamPage() {
     },
     {
       name: 'Raghav Kedia',
-      role: 'Co-Founder',
+      role: 'Co-Founder & CIO',
       bio: 'UC Davis Computer Science and Economics student with expertise in AI and computing systems. Experienced in building and launching apps aimed toward the betterment of people.',
       photo: raghavImg,
       social: {
