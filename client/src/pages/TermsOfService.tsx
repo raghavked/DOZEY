@@ -159,17 +159,34 @@ export function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">7. AI-Powered Features</h2>
+              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">7. AI-Powered Features and Data Processing</h2>
               <p className="text-gray-700 leading-relaxed">
-                DOZEY uses artificial intelligence technologies for document processing, translation, and the Doze chatbot assistant. By using these features, you acknowledge that:
+                DOZEY uses artificial intelligence technologies for document processing, translation, and the Doze chatbot assistant. By using these features, you acknowledge and agree that:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
-                <li>AI processing of your documents is performed to extract and organize health information</li>
-                <li>AI translations are provided for convenience and may not be perfect; official translations should be verified by certified translators</li>
-                <li>The Doze chatbot provides general health information guidance and is not a substitute for professional medical advice</li>
-                <li>AI processing is subject to the same HIPAA protections as all other data handling</li>
-                <li>Your data processed by AI systems is not used to train general-purpose AI models</li>
+                <li>AI processing of your documents is performed solely to extract and organize health information for your benefit</li>
+                <li>AI translations are provided for convenience and may not be perfect; official translations should be verified by certified translators for legal or medical use</li>
+                <li>The Doze chatbot provides general health information guidance and is NOT a substitute for professional medical advice, diagnosis, or treatment</li>
+                <li>AI processing is subject to the same HIPAA protections as all other data handling within the Service</li>
+                <li>Your data processed by AI systems is NOT used to train general-purpose AI models</li>
+                <li>AI-extracted data (OCR, translation, parsing) is transmitted securely via encrypted channels (TLS 1.2+) and is never stored by third-party AI providers beyond the duration of processing</li>
+                <li>All third-party AI service providers are bound by Business Associate Agreements (BAAs) or equivalent data processing agreements that require HIPAA-compliant handling of PHI</li>
               </ul>
+
+              <h3 className="font-semibold text-[#22283a] mt-4 mb-2">7.1 AI Data Processing Safeguards</h3>
+              <ul className="list-disc pl-6 text-gray-700 space-y-1">
+                <li><strong>Data Minimization:</strong> Only the minimum necessary PHI is transmitted to AI services for processing</li>
+                <li><strong>No Persistent Storage:</strong> Third-party AI providers do not retain your PHI after processing is complete</li>
+                <li><strong>Encryption in Transit:</strong> All data sent to AI services is encrypted using TLS 1.2 or higher</li>
+                <li><strong>Audit Trail:</strong> All AI processing activities are logged for compliance and accountability purposes</li>
+                <li><strong>Human Review:</strong> Users have the ability to review, edit, and correct all AI-extracted data before importing it into their records</li>
+                <li><strong>Opt-Out:</strong> You may choose not to use AI-powered features and instead enter your health records manually</li>
+              </ul>
+
+              <h3 className="font-semibold text-[#22283a] mt-4 mb-2">7.2 AI Accuracy Disclaimer</h3>
+              <p className="text-gray-700 leading-relaxed">
+                While we strive for accuracy, AI-powered features including document OCR, translation, and data parsing may produce errors, omissions, or inaccuracies. DOZEY is not responsible for any consequences arising from reliance on AI-generated output without human verification. Users are strongly encouraged to review all AI-extracted data and compare it against their original documents before using it for compliance, sharing, or any official purpose.
+              </p>
             </section>
 
             <section>
@@ -257,7 +274,63 @@ export function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">18. Miscellaneous</h2>
+              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">18. HIPAA Sanctions Policy</h2>
+              <p className="text-gray-700 leading-relaxed">
+                DOZEY maintains a sanctions policy applicable to all workforce members, contractors, and business associates. Violations of HIPAA policies, including unauthorized access, use, or disclosure of PHI, are subject to disciplinary action up to and including termination and legal action. All suspected violations are investigated promptly and documented in accordance with the HIPAA Security Rule.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">19. De-identification and Anonymization</h2>
+              <p className="text-gray-700 leading-relaxed">
+                When PHI is used for service improvement, analytics, or research purposes, DOZEY applies de-identification methods consistent with 45 CFR § 164.514. De-identified data does not contain any of the 18 HIPAA identifiers and cannot be used to identify individual users. We utilize both the Safe Harbor and Expert Determination methods as appropriate.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">20. Audit Trail and Activity Logging</h2>
+              <p className="text-gray-700 leading-relaxed">DOZEY maintains comprehensive audit trails as required by the HIPAA Security Rule, including:</p>
+              <ul className="list-disc pl-6 text-gray-700 space-y-1">
+                <li>All access to PHI including reads, writes, modifications, and deletions</li>
+                <li>User authentication events (login, logout, failed attempts)</li>
+                <li>Record sharing and export activities</li>
+                <li>AI document processing events</li>
+                <li>Administrative actions affecting user accounts or data</li>
+                <li>System access and security events</li>
+              </ul>
+              <p className="text-gray-700 leading-relaxed mt-2">
+                Audit logs are retained for a minimum of 6 years as required by HIPAA and are protected against tampering or unauthorized access. Users may request an accounting of disclosures of their PHI by contacting our Privacy Officer.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">21. Security Incident Response</h2>
+              <p className="text-gray-700 leading-relaxed">DOZEY maintains a formal Security Incident Response Plan that includes:</p>
+              <ul className="list-disc pl-6 text-gray-700 space-y-1">
+                <li>Identification and classification of security incidents</li>
+                <li>Immediate containment and mitigation measures</li>
+                <li>Investigation and root cause analysis</li>
+                <li>Notification of affected individuals within 60 days as required by the HIPAA Breach Notification Rule (45 CFR Part 164, Subpart D)</li>
+                <li>Notification to the HHS Secretary for breaches affecting 500 or more individuals, or annual notification for smaller breaches</li>
+                <li>Notification to prominent media outlets for breaches affecting 500 or more residents of a state or jurisdiction</li>
+                <li>Documentation of all incidents and corrective actions</li>
+                <li>Post-incident review and policy updates</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">22. Contingency Planning</h2>
+              <p className="text-gray-700 leading-relaxed">DOZEY maintains contingency plans as required by the HIPAA Security Rule, including:</p>
+              <ul className="list-disc pl-6 text-gray-700 space-y-1">
+                <li><strong>Data Backup Plan:</strong> Regular automated encrypted backups of all ePHI</li>
+                <li><strong>Disaster Recovery Plan:</strong> Procedures to restore data and systems following an emergency</li>
+                <li><strong>Emergency Mode Operation Plan:</strong> Procedures to protect ePHI during and immediately after a crisis</li>
+                <li><strong>Testing and Revision:</strong> Regular testing of contingency plans and updates as needed</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">23. Miscellaneous</h2>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>Entire Agreement:</strong> These Terms, together with the Privacy Policy and HIPAA Notice, constitute the entire agreement between you and DOZEY</li>
                 <li><strong>Severability:</strong> If any provision of these Terms is found to be unenforceable, the remaining provisions shall remain in full force and effect</li>
@@ -268,7 +341,7 @@ export function TermsOfService() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">19. Contact Information</h2>
+              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">24. Contact Information</h2>
               <p className="text-gray-700 leading-relaxed">
                 For questions about these Terms, HIPAA compliance, or to exercise your rights regarding your health information, please contact us:
               </p>

@@ -3,6 +3,7 @@ import { getSupabaseAdmin } from './supabase';
 import { db } from './db';
 import { users } from '../shared/schema';
 import { eq } from 'drizzle-orm';
+import { auditLog } from './index';
 
 export interface AuthRequest extends Request {
   userId: string;
@@ -12,6 +13,7 @@ export interface AuthRequest extends Request {
 export async function isAuthenticated(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    auditLog(req, "AUTH_FAILED_NO_TOKEN");
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
@@ -20,6 +22,7 @@ export async function isAuthenticated(req: Request, res: Response, next: NextFun
     const supabase = getSupabaseAdmin();
     const { data: { user }, error } = await supabase.auth.getUser(token);
     if (error || !user) {
+      auditLog(req, "AUTH_FAILED_INVALID_TOKEN");
       return res.status(401).json({ message: 'Invalid or expired token' });
     }
 
@@ -37,9 +40,11 @@ export async function isAuthenticated(req: Request, res: Response, next: NextFun
       });
     }
 
+    auditLog(req, "PHI_ACCESS");
     next();
   } catch (err) {
     console.error('Auth error:', err);
+    auditLog(req, "AUTH_ERROR");
     return res.status(401).json({ message: 'Authentication failed' });
   }
 }

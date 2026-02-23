@@ -1,6 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { getSupabase } from "@/lib/supabase";
 import type { User as SupabaseUser, Session, SupabaseClient } from "@supabase/supabase-js";
+
+const SESSION_TIMEOUT_MS = 15 * 60 * 1000;
 
 interface AuthState {
   user: SupabaseUser | null;
@@ -17,12 +19,38 @@ export function useAuth() {
     isAuthenticated: false,
   });
   const [client, setClient] = useState<SupabaseClient | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sbRef = useRef<SupabaseClient | null>(null);
+
+  const resetTimeout = useCallback(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(async () => {
+      if (sbRef.current) {
+        await sbRef.current.auth.signOut();
+      }
+    }, SESSION_TIMEOUT_MS);
+  }, []);
+
+  useEffect(() => {
+    if (!state.isAuthenticated) return;
+
+    const events = ["mousedown", "keydown", "scroll", "touchstart"];
+    const handler = () => resetTimeout();
+    events.forEach(e => window.addEventListener(e, handler, { passive: true }));
+    resetTimeout();
+
+    return () => {
+      events.forEach(e => window.removeEventListener(e, handler));
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [state.isAuthenticated, resetTimeout]);
 
   useEffect(() => {
     let subscription: any;
 
     getSupabase().then((sb) => {
       setClient(sb);
+      sbRef.current = sb;
 
       sb.auth.getSession().then(({ data: { session } }) => {
         setState({

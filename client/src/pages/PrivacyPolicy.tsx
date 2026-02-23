@@ -111,14 +111,23 @@ export function PrivacyPolicy() {
               <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">5. Third-Party Service Providers</h2>
               <p className="text-gray-700 leading-relaxed">We use the following categories of third-party service providers, all bound by Business Associate Agreements (BAAs) or equivalent data processing agreements:</p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
-                <li><strong>Cloud Infrastructure:</strong> For secure data hosting and storage</li>
-                <li><strong>Authentication Services:</strong> For secure user authentication and session management</li>
-                <li><strong>AI Processing:</strong> For document OCR, parsing, and translation (data processed in compliance with HIPAA)</li>
-                <li><strong>Email Services:</strong> For transactional emails (account verification, security alerts)</li>
+                <li><strong>Cloud Infrastructure:</strong> For secure data hosting and storage (SOC 2 Type II certified)</li>
+                <li><strong>Authentication Services:</strong> For secure user authentication, session management, and email verification</li>
+                <li><strong>AI Document Processing:</strong> OCR extraction (Mistral AI), language translation (DeepL), and data parsing (OpenAI) — all bound by BAAs, data processed in compliance with HIPAA, no PHI retained after processing</li>
+                <li><strong>Email Services:</strong> For transactional emails (account verification, security alerts) — no PHI included in emails</li>
               </ul>
               <p className="text-gray-700 leading-relaxed mt-2">
-                We carefully vet all third-party providers and require them to maintain appropriate security measures and comply with applicable privacy laws.
+                We carefully vet all third-party providers and require them to: (a) execute BAAs before accessing any PHI, (b) maintain appropriate administrative, physical, and technical safeguards, (c) report any security incidents promptly, and (d) return or destroy PHI upon termination of the agreement.
               </p>
+
+              <h3 className="font-semibold text-[#22283a] mt-4 mb-2">5.1 AI Data Processing Details</h3>
+              <p className="text-gray-700 leading-relaxed">When you use AI-powered features, your data is processed as follows:</p>
+              <ul className="list-disc pl-6 text-gray-700 space-y-1">
+                <li><strong>OCR Extraction:</strong> Document images/PDFs are sent via encrypted connection to extract text. The provider does not store your documents or extracted text after processing.</li>
+                <li><strong>Translation:</strong> Extracted text is sent for translation. The provider does not use your data for training and does not retain it.</li>
+                <li><strong>Parsing:</strong> Translated text is analyzed to extract structured vaccination and medical data. The provider does not store or train on your data.</li>
+                <li><strong>Chatbot:</strong> Your chat messages are processed in real-time. Conversation content is not stored by the AI provider and is not used for model training.</li>
+              </ul>
             </section>
 
             <section>
@@ -184,14 +193,29 @@ export function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">11. Changes to This Policy</h2>
+              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">11. Your Right to File a Complaint</h2>
+              <p className="text-gray-700 leading-relaxed">
+                If you believe your privacy rights have been violated, you have the right to file a complaint. You will not be penalized or retaliated against for filing a complaint. You may file a complaint with:
+              </p>
+              <ul className="list-disc pl-6 text-gray-700 space-y-1">
+                <li><strong>DOZEY Privacy Officer:</strong> Contact us at privacy@dozeyrecords.com or hipaa@dozeyrecords.com</li>
+                <li><strong>U.S. Department of Health and Human Services (HHS):</strong> Office for Civil Rights at hhs.gov/ocr or by calling 1-877-696-6775</li>
+                <li><strong>State Attorney General:</strong> Your state may have additional privacy complaint mechanisms</li>
+              </ul>
+              <p className="text-gray-700 leading-relaxed mt-2">
+                Complaints must be filed within 180 days of the date you knew or should have known about the act or omission. However, this deadline may be waived by HHS for good cause.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">12. Changes to This Policy</h2>
               <p className="text-gray-700 leading-relaxed">
                 We will notify you of material changes to this Privacy Policy at least 30 days before they take effect via email or in-app notification. We encourage you to review this policy periodically. The "Last Updated" date at the top indicates when the policy was last revised.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">12. Contact Us</h2>
+              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">13. Contact Us</h2>
               <p className="text-gray-700 leading-relaxed">
                 For questions about this Privacy Policy, to exercise your rights, or to file a complaint:
               </p>
