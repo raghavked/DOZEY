@@ -31,15 +31,23 @@ function phiCacheControl(req: Request, res: Response, next: NextFunction) {
 }
 app.use(phiCacheControl);
 
-const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
-function rateLimit(maxRequests: number, windowMs: number) {
+function createRateLimiter(maxRequests: number, windowMs: number) {
+  const store = new Map<string, { count: number; resetTime: number }>();
+
+  setInterval(() => {
+    const now = Date.now();
+    for (const [key, value] of store) {
+      if (now > value.resetTime) store.delete(key);
+    }
+  }, 60 * 1000);
+
   return (req: Request, res: Response, next: NextFunction) => {
     const ip = req.ip || req.socket.remoteAddress || "unknown";
     const now = Date.now();
-    const record = rateLimitStore.get(ip);
+    const record = store.get(ip);
 
     if (!record || now > record.resetTime) {
-      rateLimitStore.set(ip, { count: 1, resetTime: now + windowMs });
+      store.set(ip, { count: 1, resetTime: now + windowMs });
       return next();
     }
 
@@ -52,16 +60,9 @@ function rateLimit(maxRequests: number, windowMs: number) {
     next();
   };
 }
-app.use("/api/auth/", rateLimit(10, 60 * 1000));
-app.use("/api/chat", rateLimit(20, 60 * 1000));
-app.use("/api/", rateLimit(100, 60 * 1000));
-
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, value] of rateLimitStore) {
-    if (now > value.resetTime) rateLimitStore.delete(key);
-  }
-}, 60 * 1000);
+app.use("/api/auth/", createRateLimiter(10, 60 * 1000));
+app.use("/api/chat", createRateLimiter(20, 60 * 1000));
+app.use("/api/", createRateLimiter(100, 60 * 1000));
 
 export function auditLog(req: Request, action?: string) {
   const timestamp = new Date().toISOString();
