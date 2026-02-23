@@ -64,7 +64,7 @@ export function VaccinationTimeline({ vaccinations, onAdd, onDelete }: Vaccinati
               value={filterVerified}
               onChange={setFilterVerified}
               options={[
-                { value: 'all', label: 'All Status' },
+                { value: 'all', label: 'All Statuses' },
                 { value: 'verified', label: 'Verified Only' },
                 { value: 'unverified', label: 'Unverified Only' },
               ]}

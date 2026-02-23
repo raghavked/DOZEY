@@ -124,7 +124,7 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
             <Globe className="w-8 h-8 text-[#26844f]" />
             <span className="text-[#22283a]">{countryHistory.length}</span>
           </div>
-          <p className="text-[#6b7280]">States Lived In</p>
+          <p className="text-[#6b7280]">Countries Lived In</p>
         </div>
 
         <div 
