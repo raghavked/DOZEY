@@ -93,11 +93,17 @@ docs/                      # Documentation
 - Production domain: dozeyrecords.com
 
 ## HIPAA Compliance
-- Terms of Service with comprehensive HIPAA sections (19 sections covering PHI handling, safeguards, breach notification, user rights)
-- Privacy Policy & HIPAA Notice of Privacy Practices (12 sections)
+- Terms of Service with comprehensive HIPAA sections (24 sections covering PHI handling, safeguards, breach notification, user rights, sanctions, de-identification, audit trails, incident response, contingency planning, AI data processing BAAs)
+- Privacy Policy & HIPAA Notice of Privacy Practices (13 sections including AI processing details and complaint filing rights)
 - Registration requires mandatory acceptance of ToS + Privacy Policy + HIPAA Notice
 - TOS acceptance timestamp stored in users table (tos_accepted_at column)
 - Footer links to Terms and Privacy on all public pages
+- **Security Headers**: HSTS, CSP (production), X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy, Permissions-Policy
+- **PHI Cache Control**: API responses include no-store/no-cache headers to prevent PHI caching
+- **Rate Limiting**: Auth (10/min), Chat (20/min), General API (100/min) with automatic cleanup
+- **Audit Logging**: All authenticated API access logged with timestamp, method, path, IP, userId, and action type (PHI_ACCESS, AUTH_FAILED, etc.)
+- **Session Auto-Timeout**: 15 minutes of inactivity triggers automatic sign-out (HIPAA requirement)
+- **Password Requirements**: Minimum 8 characters with uppercase, lowercase, number, and special character required
 
 ## AI Document Processing Pipeline
 - **Mistral OCR** (`@mistralai/mistralai`): Extracts text from uploaded PDFs and images
