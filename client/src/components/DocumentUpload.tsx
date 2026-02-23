@@ -1,19 +1,22 @@
 import { useState, useRef } from 'react';
 import { UploadedDocument, VaccinationRecord } from '@/types';
-import { Upload, FileText, Image, Trash2, Plus, Download } from 'lucide-react';
+import { Upload, FileText, Image, Trash2, Plus, Download, Pencil, Check, X } from 'lucide-react';
 import { getSupabase } from '@/lib/supabase';
 
 interface DocumentUploadProps {
   documents: UploadedDocument[];
   onUpload: (formData: FormData) => void;
+  onUpdate?: (id: string, data: { name?: string; type?: string; country?: string }) => void;
   onDelete: (id: string) => void;
   onAddVaccination: (vaccination: Omit<VaccinationRecord, 'id'>) => void;
 }
 
-export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination }: DocumentUploadProps) {
+export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddVaccination }: DocumentUploadProps) {
   const [dragActive, setDragActive] = useState(false);
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = (e: React.DragEvent) => {
@@ -291,7 +294,39 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
                     <FileText className="w-10 h-10 text-red-500 flex-shrink-0" />
                   )}
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-gray-900 truncate">{doc.name}</h4>
+                    {editingId === doc.id ? (
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="text"
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#1051a5] outline-none"
+                          autoFocus
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              onUpdate?.(doc.id, { name: editName });
+                              setEditingId(null);
+                            } else if (e.key === 'Escape') {
+                              setEditingId(null);
+                            }
+                          }}
+                        />
+                        <button
+                          onClick={() => { onUpdate?.(doc.id, { name: editName }); setEditingId(null); }}
+                          className="text-green-600 hover:text-green-700"
+                        >
+                          <Check className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => setEditingId(null)}
+                          className="text-gray-400 hover:text-gray-600"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <h4 className="text-gray-900 truncate">{doc.name}</h4>
+                    )}
                     <p className="text-gray-600 text-sm">From: {doc.country}</p>
                     {doc.fileSize && (
                       <p className="text-gray-500 text-xs">{formatFileSize(doc.fileSize)}</p>
@@ -301,6 +336,15 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
                     </p>
                   </div>
                   <div className="flex gap-1">
+                    {onUpdate && editingId !== doc.id && (
+                      <button
+                        onClick={() => { setEditingId(doc.id); setEditName(doc.name); }}
+                        className="text-gray-400 hover:text-[#1051a5] transition-colors"
+                        title="Rename"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                    )}
                     {doc.fileName && (
                       <button
                         onClick={() => handleDownload(doc.id, doc.fileName || doc.name)}

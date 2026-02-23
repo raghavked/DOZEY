@@ -235,4 +235,82 @@ export function registerRoutes(app: Express) {
       res.status(500).json({ message: "Failed to delete country period" });
     }
   });
+
+  app.patch("/api/documents/:id", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const id = parseInt(req.params.id as string);
+      const { name, type, country } = req.body;
+      const updates: Record<string, any> = {};
+      if (name !== undefined) updates.name = name;
+      if (type !== undefined) updates.type = type;
+      if (country !== undefined) updates.country = country;
+
+      const [updated] = await db
+        .update(documents)
+        .set(updates)
+        .where(and(eq(documents.id, id), eq(documents.userId, userId)))
+        .returning();
+      if (!updated) {
+        return res.status(404).json({ message: "Document not found" });
+      }
+      res.json(updated);
+    } catch (error) {
+      console.error("Error updating document:", error);
+      res.status(500).json({ message: "Failed to update document" });
+    }
+  });
+
+  app.post("/api/chat", isAuthenticated, async (req, res) => {
+    try {
+      const { message, history } = req.body;
+      if (!message) {
+        return res.status(400).json({ message: "Message is required" });
+      }
+
+      const openaiKey = process.env.OPENAI_API_KEY;
+      if (!openaiKey) {
+        return res.json({
+          reply: "I'm not fully set up yet, but I'll be ready soon! In the meantime, feel free to explore the app. You can upload documents, add vaccinations, and manage your health records.",
+        });
+      }
+
+      const { default: OpenAI } = await import("openai");
+      const openai = new OpenAI({ apiKey: openaiKey });
+
+      const systemPrompt = `You are Doze, a friendly health records assistant for the DOZEY app. DOZEY helps immigrants, international students, and global workers manage vaccination records and medical documents across borders.
+
+You help users with:
+- Understanding vaccination requirements for different countries
+- Navigating the DOZEY app features (profile, document upload, vaccination timeline, country history, sharing records, alerts)
+- General questions about immunization schedules
+- Explaining how to upload and manage health documents
+
+Keep responses concise, warm, and helpful. Use simple language. If unsure about specific medical advice, recommend consulting a healthcare provider.`;
+
+      const messages = [
+        { role: "system" as const, content: systemPrompt },
+        ...(history || []).slice(-10).map((m: any) => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+        })),
+        { role: "user" as const, content: message },
+      ];
+
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages,
+        max_tokens: 500,
+        temperature: 0.7,
+      });
+
+      const reply = completion.choices[0]?.message?.content || "Sorry, I couldn't process that. Please try again.";
+      res.json({ reply });
+    } catch (error) {
+      console.error("Chat error:", error);
+      res.json({
+        reply: "I'm having trouble connecting right now. Please try again in a moment!",
+      });
+    }
+  });
 }

@@ -1,5 +1,6 @@
 import { User, Globe, Upload, Clock, Share2, Bell, LayoutDashboard, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
+import { LanguageSelector } from '@/components/LanguageSelector';
 import dozeyLogo from '@/assets/dozey-logo.png';
 
 interface NavigationProps {
@@ -37,6 +38,7 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
             <img src={dozeyLogo} alt="DOZEY" className="h-12" />
           </div>
           <div className="flex items-center gap-3">
+            <LanguageSelector />
             {userName && (
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-[#1051a5] text-white flex items-center justify-center text-sm font-medium">

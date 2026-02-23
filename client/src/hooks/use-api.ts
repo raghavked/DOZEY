@@ -40,6 +40,17 @@ async function putJson<T>(url: string, data: any): Promise<T> {
   return res.json();
 }
 
+async function patchJson<T>(url: string, data: any): Promise<T> {
+  const token = await getToken();
+  const res = await fetch(url, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+  return res.json();
+}
+
 async function deleteJson(url: string): Promise<void> {
   const token = await getToken();
   const res = await fetch(url, {
@@ -153,6 +164,12 @@ export function useDocuments() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['documents'] }),
   });
 
+  const update = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: { name?: string; type?: string; country?: string } }) =>
+      patchJson(`/api/documents/${id}`, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['documents'] }),
+  });
+
   const remove = useMutation({
     mutationFn: (id: string) => deleteJson(`/api/documents/${id}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['documents'] }),
@@ -162,6 +179,7 @@ export function useDocuments() {
     documents: query.data || [],
     isLoading: query.isLoading,
     addDocument: add.mutate,
+    updateDocument: update.mutate,
     deleteDocument: remove.mutate,
   };
 }

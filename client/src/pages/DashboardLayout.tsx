@@ -7,6 +7,7 @@ import { DocumentUpload } from '@/components/DocumentUpload';
 import { VaccinationTimeline } from '@/components/VaccinationTimeline';
 import { ShareRecords } from '@/components/ShareRecords';
 import { Alerts } from '@/components/Alerts';
+import { DozeChat } from '@/components/DozeChat';
 import { useProfile, useVaccinations, useDocuments, useCountryHistory } from '@/hooks/use-api';
 import { useAuth } from '@/hooks/use-auth';
 
@@ -16,7 +17,7 @@ export function DashboardLayout() {
   
   const { profile, isLoading: profileLoading, saveProfile } = useProfile();
   const { vaccinations, isLoading: vaccLoading, addVaccination, deleteVaccination } = useVaccinations();
-  const { documents, isLoading: docsLoading, addDocument, deleteDocument } = useDocuments();
+  const { documents, isLoading: docsLoading, addDocument, updateDocument, deleteDocument } = useDocuments();
   const { countryHistory, isLoading: historyLoading, addCountryPeriod, deleteCountryPeriod } = useCountryHistory();
 
   const isLoading = profileLoading || vaccLoading || docsLoading || historyLoading;
@@ -73,6 +74,7 @@ export function DashboardLayout() {
           <DocumentUpload
             documents={documents}
             onUpload={(formData) => addDocument(formData)}
+            onUpdate={(id, data) => updateDocument({ id, data })}
             onDelete={(id) => deleteDocument(String(id))}
             onAddVaccination={(v) => addVaccination(v)}
           />
@@ -116,6 +118,7 @@ export function DashboardLayout() {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {renderPage()}
       </main>
+      <DozeChat />
     </div>
   );
 }
