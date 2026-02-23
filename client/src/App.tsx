@@ -1,6 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/use-auth';
-import { LandingPage } from '@/pages/LandingPage';
+import { PublicNavbar } from '@/components/PublicNavbar';
+import { PublicFooter } from '@/components/PublicFooter';
+import { HomePage } from '@/pages/HomePage';
+import { FeaturesPage } from '@/pages/FeaturesPage';
+import { ProgressPage } from '@/pages/ProgressPage';
+import { TeamPage } from '@/pages/TeamPage';
+import { ContactPage } from '@/pages/ContactPage';
 import { DashboardLayout } from '@/pages/DashboardLayout';
 
 export default function App() {
@@ -8,7 +14,7 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f0f4f8] to-[#e1e8ed]">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-blue-50/30 to-green-50/20">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-[#1051a5] border-t-transparent rounded-full animate-spin" />
           <p className="text-[#22283a] text-lg">Loading DOZEY...</p>
@@ -27,7 +33,23 @@ export default function App() {
           </>
         ) : (
           <>
-            <Route path="/*" element={<LandingPage />} />
+            <Route
+              path="/*"
+              element={
+                <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-green-50/20 text-[#22283a]">
+                  <PublicNavbar />
+                  <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/features" element={<FeaturesPage />} />
+                    <Route path="/progress" element={<ProgressPage />} />
+                    <Route path="/team" element={<TeamPage />} />
+                    <Route path="/contact" element={<ContactPage />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                  <PublicFooter />
+                </div>
+              }
+            />
           </>
         )}
       </Routes>
