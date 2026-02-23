@@ -2,6 +2,7 @@ import { Linkedin } from 'lucide-react';
 import { Heart, Users, Syringe, Stethoscope } from 'lucide-react';
 import aashImg from '@/assets/aash-photo.png';
 import isaacImg from '@/assets/isaac-photo.png';
+import raghavImg from '@/assets/raghav-photo.png';
 
 export function TeamPage() {
   const team = [
@@ -21,6 +22,15 @@ export function TeamPage() {
       photo: isaacImg,
       social: {
         linkedin: 'https://www.linkedin.com/in/isaac-k-4aa14b262/',
+      },
+    },
+    {
+      name: 'Raghav Kedia',
+      role: 'Co-Founder',
+      bio: 'UC Davis Computer Science and Economics student with expertise in AI and computing systems. Experienced in building and launching apps aimed toward the betterment of people.',
+      photo: raghavImg,
+      social: {
+        linkedin: 'https://www.linkedin.com/in/raghav-kedia-169a42279/',
       },
     },
   ];
@@ -45,15 +55,15 @@ export function TeamPage() {
           </div>
           <h1 className="text-5xl mb-6 text-[#22283a]">Meet the Team</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            DOZEY was founded by two UC Davis students dedicated to solving the challenges of
+            DOZEY was founded by UC Davis students dedicated to solving the challenges of
             managing vaccination records across borders.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
           {team.map((member, index) => {
-            const bgGradients = ['from-blue-50 to-indigo-100/50', 'from-emerald-50 to-green-100/50'];
-            const borderColors = ['border-blue-200/60', 'border-green-200/60'];
+            const bgGradients = ['from-blue-50 to-indigo-100/50', 'from-emerald-50 to-green-100/50', 'from-amber-50 to-orange-100/50'];
+            const borderColors = ['border-blue-200/60', 'border-green-200/60', 'border-amber-200/60'];
 
             return (
               <div
