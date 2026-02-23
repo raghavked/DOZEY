@@ -17,7 +17,7 @@ export function DashboardLayout() {
   
   const { profile, isLoading: profileLoading, saveProfile } = useProfile();
   const { vaccinations, isLoading: vaccLoading, addVaccination, deleteVaccination } = useVaccinations();
-  const { documents, isLoading: docsLoading, addDocument, updateDocument, deleteDocument } = useDocuments();
+  const { documents, isLoading: docsLoading, addDocument, updateDocument, deleteDocument, refreshAll } = useDocuments();
   const { countryHistory, isLoading: historyLoading, addCountryPeriod, deleteCountryPeriod } = useCountryHistory();
 
   const isLoading = profileLoading || vaccLoading || docsLoading || historyLoading;
@@ -77,6 +77,7 @@ export function DashboardLayout() {
             onUpdate={(id, data) => updateDocument({ id, data })}
             onDelete={(id) => deleteDocument(String(id))}
             onAddVaccination={(v) => addVaccination(v)}
+            onRefresh={refreshAll}
           />
         );
       case 'timeline':

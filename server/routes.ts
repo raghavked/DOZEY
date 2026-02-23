@@ -5,6 +5,7 @@ import { isAuthenticated, type AuthRequest } from "./auth";
 import { db } from "./db";
 import { users, profiles, vaccinations, documents, countryHistory } from "../shared/schema";
 import { eq, and } from "drizzle-orm";
+import { processDocument } from "./ai-pipeline";
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
@@ -273,6 +274,112 @@ export function registerRoutes(app: Express) {
     } catch (error) {
       console.error("Error updating document:", error);
       res.status(500).json({ message: "Failed to update document" });
+    }
+  });
+
+  app.post("/api/documents/:id/process", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const id = parseInt(req.params.id as string);
+      const [doc] = await db
+        .select()
+        .from(documents)
+        .where(and(eq(documents.id, id), eq(documents.userId, userId)));
+
+      if (!doc) {
+        return res.status(404).json({ message: "Document not found" });
+      }
+
+      if (!doc.filePath) {
+        return res.status(400).json({ message: "No file attached to this document" });
+      }
+
+      await db
+        .update(documents)
+        .set({ processingStatus: "processing" })
+        .where(eq(documents.id, id));
+
+      try {
+        const result = await processDocument(doc.filePath, doc.mimeType || "application/pdf");
+
+        const [updated] = await db
+          .update(documents)
+          .set({
+            extractedText: result.extractedText,
+            translatedText: result.translatedText,
+            originalLanguage: result.originalLanguage,
+            parsedData: JSON.stringify(result.parsedData),
+            processingStatus: "completed",
+          })
+          .where(eq(documents.id, id))
+          .returning();
+
+        res.json({
+          success: true,
+          document: updated,
+          parsedData: result.parsedData,
+        });
+      } catch (processingError: any) {
+        await db
+          .update(documents)
+          .set({ processingStatus: "error" })
+          .where(eq(documents.id, id));
+
+        console.error("Document processing error:", processingError);
+        res.status(500).json({
+          message: processingError.message || "Failed to process document",
+        });
+      }
+    } catch (error) {
+      console.error("Error processing document:", error);
+      res.status(500).json({ message: "Failed to process document" });
+    }
+  });
+
+  app.post("/api/documents/:id/import-vaccinations", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const id = parseInt(req.params.id as string);
+      const [doc] = await db
+        .select()
+        .from(documents)
+        .where(and(eq(documents.id, id), eq(documents.userId, userId)));
+
+      if (!doc || !doc.parsedData) {
+        return res.status(400).json({ message: "Document has no parsed data" });
+      }
+
+      const parsed = JSON.parse(doc.parsedData);
+      const vaccs = parsed.vaccinations || [];
+
+      if (vaccs.length === 0) {
+        return res.status(400).json({ message: "No vaccination records found in document" });
+      }
+
+      const inserted = [];
+      for (const v of vaccs) {
+        const [record] = await db
+          .insert(vaccinations)
+          .values({
+            userId,
+            vaccineName: v.vaccine_name || "Unknown Vaccine",
+            date: v.date || new Date().toISOString().split("T")[0],
+            doseNumber: v.dose_number || 1,
+            location: v.location || null,
+            countryGiven: v.country_given || doc.country || null,
+            provider: v.provider || null,
+            notes: v.notes || null,
+            verified: false,
+            documentId: String(doc.id),
+          })
+          .returning();
+        inserted.push(record);
+      }
+
+      res.json({ success: true, imported: inserted.length, vaccinations: inserted });
+    } catch (error) {
+      console.error("Error importing vaccinations:", error);
+      res.status(500).json({ message: "Failed to import vaccinations" });
     }
   });
 

@@ -155,6 +155,11 @@ export function useDocuments() {
         fileName: d.fileName || null,
         fileSize: d.fileSize || null,
         mimeType: d.mimeType || null,
+        extractedText: d.extractedText || null,
+        translatedText: d.translatedText || null,
+        parsedData: d.parsedData || null,
+        originalLanguage: d.originalLanguage || null,
+        processingStatus: d.processingStatus || null,
       }))
     ),
   });
@@ -175,12 +180,17 @@ export function useDocuments() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['documents'] }),
   });
 
+  const refreshDocuments = () => queryClient.invalidateQueries({ queryKey: ['documents'] });
+  const refreshVaccinations = () => queryClient.invalidateQueries({ queryKey: ['vaccinations'] });
+
   return {
     documents: query.data || [],
     isLoading: query.isLoading,
     addDocument: add.mutate,
     updateDocument: update.mutate,
     deleteDocument: remove.mutate,
+    refreshDocuments,
+    refreshAll: () => { refreshDocuments(); refreshVaccinations(); },
   };
 }
 

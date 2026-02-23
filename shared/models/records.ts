@@ -42,6 +42,11 @@ export const documents = pgTable("documents", {
   filePath: varchar("file_path"),
   mimeType: varchar("mime_type"),
   fileSize: integer("file_size"),
+  extractedText: text("extracted_text"),
+  translatedText: text("translated_text"),
+  parsedData: text("parsed_data"),
+  originalLanguage: varchar("original_language"),
+  processingStatus: varchar("processing_status").default("pending"),
   uploadDate: timestamp("upload_date").defaultNow(),
 });
 

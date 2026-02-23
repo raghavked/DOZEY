@@ -99,7 +99,21 @@ docs/                      # Documentation
 - TOS acceptance timestamp stored in users table (tos_accepted_at column)
 - Footer links to Terms and Privacy on all public pages
 
+## AI Document Processing Pipeline
+- **Mistral OCR** (`@mistralai/mistralai`): Extracts text from uploaded PDFs and images
+- **DeepL** (`deepl-node`): Detects language and translates to English
+- **OpenAI** (`openai`, gpt-4o-mini): Parses extracted text into structured vaccination data (JSON)
+- Pipeline: Upload -> OCR extract -> Translate -> Parse -> Import to timeline
+- Server endpoints: `/api/documents/:id/process`, `/api/documents/:id/import-vaccinations`
+- Document schema includes: extractedText, translatedText, parsedData, originalLanguage, processingStatus
+
+## Environment Variables
+- `MISTRAL_API_KEY` - Mistral AI API key for OCR (secret)
+- `DEEPL_API_KEY` - DeepL API key for translation (secret)
+- `OPENAI_API_KEY` - OpenAI API key for parsing and chatbot (secret)
+
 ## Recent Changes
+- 2026-02-23: Wired up AI document processing pipeline (Mistral OCR, DeepL translation, OpenAI parsing) with full frontend UI
 - 2026-02-23: Added HIPAA-compliant Terms of Service and Privacy Policy pages with mandatory acceptance on registration
 - 2026-02-23: Added Doze AI chatbot, language selector (7 languages), autocomplete data, document rename, chat API endpoint
 - 2026-02-23: Added Supabase email templates (5 types), AI agent recommendations doc, comprehensive Supabase SQL schema (18 tables with RLS)
