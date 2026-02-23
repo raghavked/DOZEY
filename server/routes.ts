@@ -1,13 +1,74 @@
 import type { Express } from "express";
-import { isAuthenticated } from "./replit_integrations/auth";
+import path from "path";
+import multer from "multer";
+import { isAuthenticated, type AuthRequest } from "./auth";
 import { db } from "./db";
-import { profiles, vaccinations, documents, countryHistory } from "../shared/schema";
+import { users, profiles, vaccinations, documents, countryHistory } from "../shared/schema";
 import { eq, and } from "drizzle-orm";
 
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, path.resolve(__dirname, "../uploads"));
+  },
+  filename: (_req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, uniqueSuffix + ext);
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowed = [
+      "application/pdf",
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    if (allowed.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("File type not allowed. Supported: PDF, images, Word documents."));
+    }
+  },
+});
+
 export function registerRoutes(app: Express) {
-  app.get("/api/profile", isAuthenticated, async (req: any, res) => {
+  app.get("/api/auth/user", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const authReq = req as AuthRequest;
+      const [user] = await db.select().from(users).where(eq(users.id, authReq.userId));
+      res.json(user || null);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  app.put("/api/auth/user", isAuthenticated, async (req, res) => {
+    try {
+      const authReq = req as AuthRequest;
+      const { firstName, lastName } = req.body;
+      const [updated] = await db
+        .update(users)
+        .set({ firstName, lastName, updatedAt: new Date() })
+        .where(eq(users.id, authReq.userId))
+        .returning();
+      res.json(updated);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+
+  app.get("/api/profile", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
       const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId));
       res.json(profile || null);
     } catch (error) {
@@ -16,9 +77,9 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.put("/api/profile", isAuthenticated, async (req: any, res) => {
+  app.put("/api/profile", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req as AuthRequest).userId;
       const data = { ...req.body, userId, updatedAt: new Date() };
       const [existing] = await db.select().from(profiles).where(eq(profiles.userId, userId));
       if (existing) {
@@ -34,9 +95,9 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.get("/api/vaccinations", isAuthenticated, async (req: any, res) => {
+  app.get("/api/vaccinations", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req as AuthRequest).userId;
       const records = await db.select().from(vaccinations).where(eq(vaccinations.userId, userId));
       res.json(records);
     } catch (error) {
@@ -45,9 +106,9 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.post("/api/vaccinations", isAuthenticated, async (req: any, res) => {
+  app.post("/api/vaccinations", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req as AuthRequest).userId;
       const [record] = await db.insert(vaccinations).values({ ...req.body, userId }).returning();
       res.json(record);
     } catch (error) {
@@ -56,10 +117,10 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.delete("/api/vaccinations/:id", isAuthenticated, async (req: any, res) => {
+  app.delete("/api/vaccinations/:id", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const id = parseInt(req.params.id);
+      const userId = (req as AuthRequest).userId;
+      const id = parseInt(req.params.id as string);
       await db.delete(vaccinations).where(and(eq(vaccinations.id, id), eq(vaccinations.userId, userId)));
       res.json({ success: true });
     } catch (error) {
@@ -68,9 +129,9 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.get("/api/documents", isAuthenticated, async (req: any, res) => {
+  app.get("/api/documents", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req as AuthRequest).userId;
       const docs = await db.select().from(documents).where(eq(documents.userId, userId));
       res.json(docs);
     } catch (error) {
@@ -79,10 +140,21 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.post("/api/documents", isAuthenticated, async (req: any, res) => {
+  app.post("/api/documents", isAuthenticated, upload.single("file"), async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const [doc] = await db.insert(documents).values({ ...req.body, userId }).returning();
+      const userId = (req as AuthRequest).userId;
+      const file = req.file;
+      const { name, type, country } = req.body;
+
+      const docData: any = { name, type, country, userId };
+      if (file) {
+        docData.fileName = file.originalname;
+        docData.filePath = file.filename;
+        docData.mimeType = file.mimetype;
+        docData.fileSize = file.size;
+      }
+
+      const [doc] = await db.insert(documents).values(docData).returning();
       res.json(doc);
     } catch (error) {
       console.error("Error creating document:", error);
@@ -90,10 +162,38 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.delete("/api/documents/:id", isAuthenticated, async (req: any, res) => {
+  app.get("/api/documents/:id/download", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const id = parseInt(req.params.id);
+      const userId = (req as AuthRequest).userId;
+      const id = parseInt(req.params.id as string);
+      const [doc] = await db.select().from(documents).where(and(eq(documents.id, id), eq(documents.userId, userId)));
+
+      if (!doc || !doc.filePath) {
+        return res.status(404).json({ message: "File not found" });
+      }
+
+      const filePath = path.resolve(__dirname, "../uploads", doc.filePath);
+      res.download(filePath, doc.fileName || doc.name);
+    } catch (error) {
+      console.error("Error downloading document:", error);
+      res.status(500).json({ message: "Failed to download document" });
+    }
+  });
+
+  app.delete("/api/documents/:id", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const id = parseInt(req.params.id as string);
+      const [doc] = await db.select().from(documents).where(and(eq(documents.id, id), eq(documents.userId, userId)));
+
+      if (doc?.filePath) {
+        const fs = await import("fs");
+        const filePath = path.resolve(__dirname, "../uploads", doc.filePath);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
+      }
+
       await db.delete(documents).where(and(eq(documents.id, id), eq(documents.userId, userId)));
       res.json({ success: true });
     } catch (error) {
@@ -102,9 +202,9 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.get("/api/country-history", isAuthenticated, async (req: any, res) => {
+  app.get("/api/country-history", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req as AuthRequest).userId;
       const periods = await db.select().from(countryHistory).where(eq(countryHistory.userId, userId));
       res.json(periods);
     } catch (error) {
@@ -113,9 +213,9 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.post("/api/country-history", isAuthenticated, async (req: any, res) => {
+  app.post("/api/country-history", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = (req as AuthRequest).userId;
       const [period] = await db.insert(countryHistory).values({ ...req.body, userId }).returning();
       res.json(period);
     } catch (error) {
@@ -124,10 +224,10 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  app.delete("/api/country-history/:id", isAuthenticated, async (req: any, res) => {
+  app.delete("/api/country-history/:id", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const id = parseInt(req.params.id);
+      const userId = (req as AuthRequest).userId;
+      const id = parseInt(req.params.id as string);
       await db.delete(countryHistory).where(and(eq(countryHistory.id, id), eq(countryHistory.userId, userId)));
       res.json({ success: true });
     } catch (error) {

@@ -40,12 +40,12 @@ export function PublicNavbar() {
           </div>
 
           <div className="flex items-center gap-3">
-            <a
-              href="/api/login"
+            <Link
+              to="/login"
               className="hidden md:inline-flex items-center px-6 py-2.5 bg-[#1051a5] text-white rounded-lg hover:bg-[#0d4185] transition-all shadow-md hover:shadow-lg font-medium"
             >
               Sign In
-            </a>
+            </Link>
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -74,12 +74,13 @@ export function PublicNavbar() {
                 {link.label}
               </Link>
             ))}
-            <a
-              href="/api/login"
+            <Link
+              to="/login"
+              onClick={() => setMobileOpen(false)}
               className="block w-full text-center mt-2 bg-[#1051a5] text-white font-medium px-5 py-2.5 rounded-lg"
             >
               Sign In
-            </a>
+            </Link>
           </div>
         </div>
       )}

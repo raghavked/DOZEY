@@ -38,6 +38,10 @@ export const documents = pgTable("documents", {
   name: varchar("name").notNull(),
   type: varchar("type").notNull(),
   country: varchar("country"),
+  fileName: varchar("file_name"),
+  filePath: varchar("file_path"),
+  mimeType: varchar("mime_type"),
+  fileSize: integer("file_size"),
   uploadDate: timestamp("upload_date").defaultNow(),
 });
 

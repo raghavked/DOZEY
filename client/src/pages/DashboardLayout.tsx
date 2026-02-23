@@ -8,13 +8,10 @@ import { VaccinationTimeline } from '@/components/VaccinationTimeline';
 import { ShareRecords } from '@/components/ShareRecords';
 import { Alerts } from '@/components/Alerts';
 import { useProfile, useVaccinations, useDocuments, useCountryHistory } from '@/hooks/use-api';
-import type { User } from '@shared/models/auth';
+import { useAuth } from '@/hooks/use-auth';
 
-interface DashboardLayoutProps {
-  user: User;
-}
-
-export function DashboardLayout({ user }: DashboardLayoutProps) {
+export function DashboardLayout() {
+  const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState<'dashboard' | 'profile' | 'countries' | 'upload' | 'timeline' | 'share' | 'alerts'>('dashboard');
   
   const { profile, isLoading: profileLoading, saveProfile } = useProfile();
@@ -36,7 +33,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
   }
 
   const defaultProfile = profile || {
-    fullName: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'New User',
+    fullName: user?.email?.split('@')[0] || 'New User',
     dateOfBirth: '',
     currentCountry: '',
     currentState: '',
@@ -47,7 +44,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
     targetCountry: '',
   };
 
-  const userName = user.firstName || user.email || 'User';
+  const userName = user?.email?.split('@')[0] || 'User';
 
   const renderPage = () => {
     switch (currentPage) {
@@ -75,7 +72,7 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
         return (
           <DocumentUpload
             documents={documents}
-            onUpload={(doc) => addDocument(doc)}
+            onUpload={(formData) => addDocument(formData)}
             onDelete={(id) => deleteDocument(String(id))}
             onAddVaccination={(v) => addVaccination(v)}
           />
@@ -115,7 +112,6 @@ export function DashboardLayout({ user }: DashboardLayoutProps) {
         currentPage={currentPage}
         onNavigate={setCurrentPage}
         userName={userName}
-        userImage={user.profileImageUrl || undefined}
       />
       <main className="max-w-7xl mx-auto px-4 py-8">
         {renderPage()}

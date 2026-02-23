@@ -1,17 +1,27 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { VaccinationRecord, UserProfile, CountryPeriod, UploadedDocument } from '@/types';
+import { supabase } from '@/lib/supabase';
+
+async function getToken(): Promise<string> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) throw new Error('Not authenticated');
+  return session.access_token;
+}
 
 async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(url, { credentials: 'include' });
+  const token = await getToken();
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
   return res.json();
 }
 
 async function postJson<T>(url: string, data: any): Promise<T> {
+  const token = await getToken();
   const res = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
@@ -19,10 +29,10 @@ async function postJson<T>(url: string, data: any): Promise<T> {
 }
 
 async function putJson<T>(url: string, data: any): Promise<T> {
+  const token = await getToken();
   const res = await fetch(url, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
@@ -30,8 +40,23 @@ async function putJson<T>(url: string, data: any): Promise<T> {
 }
 
 async function deleteJson(url: string): Promise<void> {
-  const res = await fetch(url, { method: 'DELETE', credentials: 'include' });
+  const token = await getToken();
+  const res = await fetch(url, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${token}` },
+  });
   if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+}
+
+async function uploadFile(url: string, formData: FormData): Promise<any> {
+  const token = await getToken();
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+  if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+  return res.json();
 }
 
 export function useProfile() {
@@ -115,12 +140,15 @@ export function useDocuments() {
         type: d.type,
         uploadDate: d.uploadDate,
         country: d.country || '',
+        fileName: d.fileName || null,
+        fileSize: d.fileSize || null,
+        mimeType: d.mimeType || null,
       }))
     ),
   });
 
   const add = useMutation({
-    mutationFn: (data: Omit<UploadedDocument, 'id' | 'uploadDate'>) => postJson('/api/documents', data),
+    mutationFn: (formData: FormData) => uploadFile('/api/documents', formData),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['documents'] }),
   });
 

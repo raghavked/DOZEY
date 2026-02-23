@@ -1,14 +1,16 @@
 import { User, Globe, Upload, Clock, Share2, Bell, LayoutDashboard, LogOut } from 'lucide-react';
-import logo from '@/assets/db39f476989fbee8be9ff6750587bd1f003c65d8.png';
+import { useAuth } from '@/hooks/use-auth';
+import dozeyLogo from '@/assets/dozey-logo.png';
 
 interface NavigationProps {
   currentPage: string;
   onNavigate: (page: 'dashboard' | 'profile' | 'countries' | 'upload' | 'timeline' | 'share' | 'alerts') => void;
   userName?: string;
-  userImage?: string;
 }
 
-export function Navigation({ currentPage, onNavigate, userName, userImage }: NavigationProps) {
+export function Navigation({ currentPage, onNavigate, userName }: NavigationProps) {
+  const { signOut } = useAuth();
+
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'profile', label: 'Profile', icon: User },
@@ -19,37 +21,37 @@ export function Navigation({ currentPage, onNavigate, userName, userImage }: Nav
     { id: 'alerts', label: 'Alerts', icon: Bell },
   ] as const;
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (err) {
+      console.error('Sign out error:', err);
+    }
+  };
+
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="DOZEY Logo" className="h-12" />
-            <div>
-              <h1 className="text-[#1051a5]">DOZEY</h1>
-              <p className="text-[#22283a] text-sm">Healthcare that moves with you!</p>
-            </div>
+            <img src={dozeyLogo} alt="DOZEY" className="h-12" />
           </div>
           <div className="flex items-center gap-3">
             {userName && (
               <div className="flex items-center gap-2">
-                {userImage ? (
-                  <img src={userImage} alt={userName} className="w-8 h-8 rounded-full" />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-[#1051a5] text-white flex items-center justify-center text-sm font-medium">
-                    {userName.charAt(0).toUpperCase()}
-                  </div>
-                )}
+                <div className="w-8 h-8 rounded-full bg-[#1051a5] text-white flex items-center justify-center text-sm font-medium">
+                  {userName.charAt(0).toUpperCase()}
+                </div>
                 <span className="text-sm text-[#22283a] hidden sm:inline">{userName}</span>
               </div>
             )}
-            <a
-              href="/api/logout"
+            <button
+              onClick={handleSignOut}
               className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Sign Out</span>
-            </a>
+            </button>
           </div>
         </div>
         

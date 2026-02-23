@@ -1,14 +1,17 @@
 import express from "express";
 import path from "path";
-import { setupAuth, registerAuthRoutes } from "./replit_integrations/auth";
 import { registerRoutes } from "./routes";
 
 const app = express();
 app.use(express.json());
 
 async function main() {
-  await setupAuth(app);
-  registerAuthRoutes(app);
+  const uploadsDir = path.resolve(__dirname, "../uploads");
+  const fs = await import("fs");
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+
   registerRoutes(app);
 
   if (process.env.NODE_ENV === "production") {

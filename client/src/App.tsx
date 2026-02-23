@@ -6,10 +6,12 @@ import { FeaturesPage } from '@/pages/FeaturesPage';
 import { ProgressPage } from '@/pages/ProgressPage';
 import { TeamPage } from '@/pages/TeamPage';
 import { ContactPage } from '@/pages/ContactPage';
+import { LoginPage } from '@/pages/LoginPage';
+import { RegisterPage } from '@/pages/RegisterPage';
 import { DashboardLayout } from '@/pages/DashboardLayout';
 
 export default function App() {
-  const { user, isLoading, isAuthenticated } = useAuth();
+  const { isLoading, isAuthenticated } = useAuth();
 
   if (isLoading) {
     return (
@@ -27,19 +29,21 @@ export default function App() {
       <Routes>
         {isAuthenticated ? (
           <>
-            <Route path="/app/*" element={<DashboardLayout user={user!} />} />
+            <Route path="/app/*" element={<DashboardLayout />} />
             <Route path="*" element={<Navigate to="/app" replace />} />
           </>
         ) : (
           <>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
             <Route element={<PublicLayout />}>
               <Route index element={<HomePage />} />
               <Route path="features" element={<FeaturesPage />} />
               <Route path="progress" element={<ProgressPage />} />
               <Route path="team" element={<TeamPage />} />
               <Route path="contact" element={<ContactPage />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
+            <Route path="*" element={<Navigate to="/" replace />} />
           </>
         )}
       </Routes>

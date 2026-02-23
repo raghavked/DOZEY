@@ -37,5 +37,7 @@ export interface UploadedDocument {
   type: string;
   uploadDate: string;
   country: string;
-  url?: string;
+  fileName?: string | null;
+  fileSize?: number | null;
+  mimeType?: string | null;
 }

@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { UploadedDocument, VaccinationRecord } from '@/types';
-import { Upload, FileText, Image, FileCheck, Trash2, Plus } from 'lucide-react';
+import { Upload, FileText, Image, Trash2, Plus, Download } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 interface DocumentUploadProps {
   documents: UploadedDocument[];
-  onUpload: (doc: Omit<UploadedDocument, 'id' | 'uploadDate'>) => void;
+  onUpload: (formData: FormData) => void;
   onDelete: (id: string) => void;
   onAddVaccination: (vaccination: Omit<VaccinationRecord, 'id'>) => void;
 }
@@ -12,7 +13,8 @@ interface DocumentUploadProps {
 export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination }: DocumentUploadProps) {
   const [dragActive, setDragActive] = useState(false);
   const [showManualEntry, setShowManualEntry] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -41,22 +43,42 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
     }
   };
 
-  const handleFiles = (files: FileList) => {
-    Array.from(files).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const country = prompt('Which country is this document from?');
-        if (country) {
-          onUpload({
-            name: file.name,
-            type: file.type,
-            country: country,
-            url: e.target?.result as string,
-          });
-        }
-      };
-      reader.readAsDataURL(file);
-    });
+  const handleFiles = async (files: FileList) => {
+    setUploading(true);
+    for (const file of Array.from(files)) {
+      const country = prompt('Which country is this document from?') || 'Unknown';
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('name', file.name);
+      formData.append('type', file.type.includes('pdf') ? 'pdf' : file.type.startsWith('image/') ? 'image' : 'document');
+      formData.append('country', country);
+      onUpload(formData);
+    }
+    setUploading(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleDownload = async (docId: string, docName: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`/api/documents/${docId}/download`, {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      if (!res.ok) throw new Error('Download failed');
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = docName;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      console.error('Download error:', err);
+    }
   };
 
   const [manualForm, setManualForm] = useState({
@@ -86,9 +108,15 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
     setShowManualEntry(false);
   };
 
+  const formatFileSize = (bytes: number | null | undefined) => {
+    if (!bytes) return '';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Upload Area */}
       <div className="bg-white rounded-xl shadow-lg p-8">
         <div className="flex items-center gap-3 mb-6">
           <Upload className="w-8 h-8 text-[#1051a5]" />
@@ -109,21 +137,28 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
         >
           <input
             type="file"
+            ref={fileInputRef}
             id="file-upload"
             multiple
-            accept="image/*,.pdf"
+            accept="image/*,.pdf,.doc,.docx"
             onChange={handleChange}
             className="hidden"
           />
           <label htmlFor="file-upload" className="cursor-pointer">
             <div className="flex flex-col items-center">
               <Upload className="w-16 h-16 text-gray-400 mb-4" />
-              <p className="text-gray-700 mb-2">
-                Drag and drop files here, or click to select
-              </p>
-              <p className="text-gray-500 text-sm">
-                Supports: PDFs, JPG, PNG (International vaccine cards, clinic records, etc.)
-              </p>
+              {uploading ? (
+                <p className="text-[#1051a5] mb-2 font-medium">Uploading...</p>
+              ) : (
+                <>
+                  <p className="text-gray-700 mb-2">
+                    Drag and drop files here, or click to select
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    Supports: PDFs, JPG, PNG, Word docs (max 10MB)
+                  </p>
+                </>
+              )}
             </div>
           </label>
         </div>
@@ -139,16 +174,13 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
         </div>
       </div>
 
-      {/* Manual Entry Form */}
       {showManualEntry && (
         <div className="bg-white rounded-xl shadow-lg p-8">
           <h2 className="text-gray-900 mb-6">Manual Entry</h2>
           <form onSubmit={handleManualSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="vaccineName" className="block text-gray-700 mb-2">
-                  Vaccine Name *
-                </label>
+                <label htmlFor="vaccineName" className="block text-gray-700 mb-2">Vaccine Name *</label>
                 <input
                   type="text"
                   id="vaccineName"
@@ -159,11 +191,8 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
                 />
               </div>
-
               <div>
-                <label htmlFor="date" className="block text-gray-700 mb-2">
-                  Date Administered *
-                </label>
+                <label htmlFor="date" className="block text-gray-700 mb-2">Date Administered *</label>
                 <input
                   type="date"
                   id="date"
@@ -173,11 +202,8 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
                 />
               </div>
-
               <div>
-                <label htmlFor="countryGiven" className="block text-gray-700 mb-2">
-                  Country Given *
-                </label>
+                <label htmlFor="countryGiven" className="block text-gray-700 mb-2">Country Given *</label>
                 <input
                   type="text"
                   id="countryGiven"
@@ -188,11 +214,8 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
                 />
               </div>
-
               <div>
-                <label htmlFor="doseNumber" className="block text-gray-700 mb-2">
-                  Dose Number *
-                </label>
+                <label htmlFor="doseNumber" className="block text-gray-700 mb-2">Dose Number *</label>
                 <select
                   id="doseNumber"
                   value={manualForm.doseNumber}
@@ -205,11 +228,8 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
                   ))}
                 </select>
               </div>
-
               <div>
-                <label htmlFor="location" className="block text-gray-700 mb-2">
-                  Location *
-                </label>
+                <label htmlFor="location" className="block text-gray-700 mb-2">Location *</label>
                 <input
                   type="text"
                   id="location"
@@ -220,11 +240,8 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
                 />
               </div>
-
               <div>
-                <label htmlFor="provider" className="block text-gray-700 mb-2">
-                  Healthcare Provider *
-                </label>
+                <label htmlFor="provider" className="block text-gray-700 mb-2">Healthcare Provider *</label>
                 <input
                   type="text"
                   id="provider"
@@ -235,11 +252,8 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
                 />
               </div>
-
               <div className="md:col-span-2">
-                <label htmlFor="notes" className="block text-gray-700 mb-2">
-                  Notes (Optional)
-                </label>
+                <label htmlFor="notes" className="block text-gray-700 mb-2">Notes (Optional)</label>
                 <textarea
                   id="notes"
                   value={manualForm.notes}
@@ -252,17 +266,10 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
             </div>
 
             <div className="flex gap-3">
-              <button
-                type="submit"
-                className="flex-1 bg-[#1051a5] hover:bg-[#0d4185] text-white py-3 rounded-lg transition-colors"
-              >
+              <button type="submit" className="flex-1 bg-[#1051a5] hover:bg-[#0d4185] text-white py-3 rounded-lg transition-colors">
                 Add Vaccine Record
               </button>
-              <button
-                type="button"
-                onClick={() => setShowManualEntry(false)}
-                className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg transition-colors"
-              >
+              <button type="button" onClick={() => setShowManualEntry(false)} className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg transition-colors">
                 Cancel
               </button>
             </div>
@@ -270,7 +277,6 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
         </div>
       )}
 
-      {/* Documents List */}
       {documents.length > 0 && (
         <div className="bg-white rounded-xl shadow-lg p-8">
           <h2 className="text-gray-900 mb-6">Uploaded Documents</h2>
@@ -278,7 +284,7 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
             {documents.map(doc => (
               <div key={doc.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                 <div className="flex items-start gap-3">
-                  {doc.type.startsWith('image/') ? (
+                  {doc.mimeType?.startsWith('image/') || doc.type === 'image' ? (
                     <Image className="w-10 h-10 text-blue-500 flex-shrink-0" />
                   ) : (
                     <FileText className="w-10 h-10 text-red-500 flex-shrink-0" />
@@ -286,16 +292,31 @@ export function DocumentUpload({ documents, onUpload, onDelete, onAddVaccination
                   <div className="flex-1 min-w-0">
                     <h4 className="text-gray-900 truncate">{doc.name}</h4>
                     <p className="text-gray-600 text-sm">From: {doc.country}</p>
+                    {doc.fileSize && (
+                      <p className="text-gray-500 text-xs">{formatFileSize(doc.fileSize)}</p>
+                    )}
                     <p className="text-gray-500 text-sm">
                       {new Date(doc.uploadDate).toLocaleDateString()}
                     </p>
                   </div>
-                  <button
-                    onClick={() => onDelete(doc.id)}
-                    className="text-gray-400 hover:text-red-500 transition-colors"
-                  >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
+                  <div className="flex gap-1">
+                    {doc.fileName && (
+                      <button
+                        onClick={() => handleDownload(doc.id, doc.fileName || doc.name)}
+                        className="text-gray-400 hover:text-blue-500 transition-colors"
+                        title="Download"
+                      >
+                        <Download className="w-5 h-5" />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => onDelete(doc.id)}
+                      className="text-gray-400 hover:text-red-500 transition-colors"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

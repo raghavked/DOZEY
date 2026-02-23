@@ -41,13 +41,13 @@ export function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a
-              href="/api/login"
+            <Link
+              to="/register"
               className="inline-flex items-center px-8 py-4 bg-[#1051a5] text-white rounded-xl hover:bg-[#0d4185] transition-all shadow-xl hover:shadow-2xl hover:scale-105 font-medium"
             >
               Get Started
               <ArrowRight className="ml-2 w-5 h-5" />
-            </a>
+            </Link>
 
             <Link
               to="/features"
