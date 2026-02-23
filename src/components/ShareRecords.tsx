@@ -1,0 +1,330 @@
+import { useState } from 'react';
+import { VaccinationRecord, UserProfile, CountryPeriod } from '../App';
+import { Share2, Download, Link as LinkIcon, Mail, Copy, CheckCircle } from 'lucide-react';
+
+interface ShareRecordsProps {
+  vaccinations: VaccinationRecord[];
+  profile: UserProfile | null;
+  countryHistory: CountryPeriod[];
+}
+
+export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRecordsProps) {
+  const [shareMethod, setShareMethod] = useState<'link' | 'email' | 'pdf' | null>(null);
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [expirationDays, setExpirationDays] = useState(7);
+  const [allowDownload, setAllowDownload] = useState(true);
+  const [copied, setCopied] = useState(false);
+
+  const mockShareLink = 'https://globalvaccinetracker.app/share/abc123xyz';
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(mockShareLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const generatePDF = () => {
+    // This would generate a PDF in a real implementation
+    const content = generateSummaryText();
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'vaccination-records.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const generateSummaryText = () => {
+    let summary = '═══════════════════════════════════════\n';
+    summary += '   VACCINATION RECORDS SUMMARY\n';
+    summary += '═══════════════════════════════════════\n\n';
+
+    if (profile) {
+      summary += 'PATIENT INFORMATION\n';
+      summary += '───────────────────────────────────────\n';
+      summary += `Name: ${profile.fullName}\n`;
+      summary += `Date of Birth: ${new Date(profile.dateOfBirth).toLocaleDateString()}\n`;
+      summary += `Country of Origin: ${profile.countryOfOrigin}\n`;
+      summary += `Current Location: ${profile.currentState}, ${profile.currentCountry}\n`;
+      if (profile.citizenships.length > 0) {
+        summary += `Citizenships: ${profile.citizenships.join(', ')}\n`;
+      }
+      if (profile.languages.length > 0) {
+        summary += `Languages: ${profile.languages.join(', ')}\n`;
+      }
+      if (profile.primaryProvider) {
+        summary += `Primary Provider: ${profile.primaryProvider}\n`;
+      }
+      summary += '\n';
+    }
+
+    if (countryHistory.length > 0) {
+      summary += 'RESIDENCE HISTORY\n';
+      summary += '───────────────────────────────────────\n';
+      countryHistory
+        .sort((a, b) => a.startYear - b.startYear)
+        .forEach(period => {
+          summary += `• ${period.country}${period.state ? `, ${period.state}` : ''}\n`;
+          summary += `  ${period.startYear} - ${period.endYear}\n`;
+        });
+      summary += '\n';
+    }
+
+    summary += 'VACCINATION RECORDS\n';
+    summary += '───────────────────────────────────────\n';
+    summary += `Total Vaccines: ${vaccinations.length}\n`;
+    summary += `Verified: ${vaccinations.filter(v => v.verified).length}\n`;
+    summary += `Pending Verification: ${vaccinations.filter(v => !v.verified).length}\n\n`;
+
+    const sortedVaccinations = [...vaccinations].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
+    sortedVaccinations.forEach((vax, index) => {
+      summary += `${index + 1}. ${vax.vaccineName} - Dose ${vax.doseNumber}\n`;
+      summary += `   Date: ${new Date(vax.date).toLocaleDateString()}\n`;
+      summary += `   Country: ${vax.countryGiven}\n`;
+      summary += `   Location: ${vax.location}\n`;
+      summary += `   Provider: ${vax.provider}\n`;
+      summary += `   Status: ${vax.verified ? 'Verified ✓' : 'Pending Review'}\n`;
+      if (vax.notes) {
+        summary += `   Notes: ${vax.notes}\n`;
+      }
+      summary += '\n';
+    });
+
+    summary += '═══════════════════════════════════════\n';
+    summary += `Generated: ${new Date().toLocaleString()}\n`;
+    summary += 'DOZEY - Vaccine Records\n';
+    summary += '═══════════════════════════════════════\n';
+
+    return summary;
+  };
+
+  const handleSendEmail = () => {
+    alert(`Email would be sent to: ${email}\n\nIn a production app, this would send a secure link to the recipient.`);
+    setEmail('');
+    setMessage('');
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-white rounded-xl shadow-lg p-8">
+        <div className="flex items-center gap-3 mb-6">
+          <Share2 className="w-8 h-8 text-[#97bf2d]" />
+          <div>
+            <h1 className="text-[#22283a]">Share Records</h1>
+            <p className="text-gray-600">Securely share your vaccination records with healthcare providers</p>
+          </div>
+        </div>
+
+        {/* Share Method Selection */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <button
+            onClick={() => setShareMethod('link')}
+            className={`p-6 rounded-xl border-2 transition-all ${
+              shareMethod === 'link'
+                ? 'border-purple-500 bg-purple-50'
+                : 'border-gray-200 hover:border-purple-300'
+            }`}
+          >
+            <LinkIcon className="w-8 h-8 text-[#97bf2d] mx-auto mb-3" />
+            <h3 className="text-[#22283a] mb-1">Share Link</h3>
+            <p className="text-gray-600 text-sm">Generate a secure shareable link</p>
+          </button>
+
+          <button
+            onClick={() => setShareMethod('email')}
+            className={`p-6 rounded-xl border-2 transition-all ${
+              shareMethod === 'email'
+                ? 'border-purple-500 bg-purple-50'
+                : 'border-gray-200 hover:border-purple-300'
+            }`}
+          >
+            <Mail className="w-8 h-8 text-[#97bf2d] mx-auto mb-3" />
+            <h3 className="text-[#22283a] mb-1">Send Email</h3>
+            <p className="text-gray-600 text-sm">Email directly to provider</p>
+          </button>
+
+          <button
+            onClick={() => setShareMethod('pdf')}
+            className={`p-6 rounded-xl border-2 transition-all ${
+              shareMethod === 'pdf'
+                ? 'border-purple-500 bg-purple-50'
+                : 'border-gray-200 hover:border-purple-300'
+            }`}
+          >
+            <Download className="w-8 h-8 text-[#97bf2d] mx-auto mb-3" />
+            <h3 className="text-[#22283a] mb-1">Download PDF</h3>
+            <p className="text-gray-600 text-sm">Download printable summary</p>
+          </button>
+        </div>
+
+        {/* Share Link */}
+        {shareMethod === 'link' && (
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h3 className="text-gray-900 mb-4">Generate Secure Link</h3>
+            
+            <div className="space-y-4 mb-6">
+              <div>
+                <label htmlFor="expiration" className="block text-gray-700 mb-2">
+                  Link Expiration
+                </label>
+                <select
+                  id="expiration"
+                  value={expirationDays}
+                  onChange={(e) => setExpirationDays(parseInt(e.target.value))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                >
+                  <option value={1}>1 day</option>
+                  <option value={7}>7 days</option>
+                  <option value={30}>30 days</option>
+                  <option value={90}>90 days</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="allowDownload"
+                  checked={allowDownload}
+                  onChange={(e) => setAllowDownload(e.target.checked)}
+                  className="w-4 h-4 text-[#97bf2d]"
+                />
+                <label htmlFor="allowDownload" className="text-[#22283a]">
+                  Allow recipient to download records
+                </label>
+              </div>
+            </div>
+
+            <div className="bg-white p-4 rounded-lg border border-gray-200 flex items-center gap-3 mb-4">
+              <code className="flex-1 text-sm text-gray-600 break-all">{mockShareLink}</code>
+              <button
+                onClick={handleCopyLink}
+                className="bg-[#97bf2d] hover:bg-[#7a9924] text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+              >
+                {copied ? (
+                  <>
+                    <CheckCircle className="w-4 h-4" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    Copy
+                  </>
+                )}
+              </button>
+            </div>
+
+            <p className="text-gray-500 text-sm">
+              This link will expire in {expirationDays} day{expirationDays !== 1 ? 's' : ''} and can be accessed by anyone with the URL.
+            </p>
+          </div>
+        )}
+
+        {/* Email */}
+        {shareMethod === 'email' && (
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h3 className="text-gray-900 mb-4">Send via Email</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="recipientEmail" className="block text-gray-700 mb-2">
+                  Recipient Email *
+                </label>
+                <input
+                  type="email"
+                  id="recipientEmail"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="doctor@clinic.com"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="emailMessage" className="block text-gray-700 mb-2">
+                  Message (Optional)
+                </label>
+                <textarea
+                  id="emailMessage"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  rows={4}
+                  placeholder="Add a message to your healthcare provider..."
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none resize-none"
+                />
+              </div>
+
+              <button
+                onClick={handleSendEmail}
+                disabled={!email}
+                className="w-full bg-[#97bf2d] hover:bg-[#7a9924] disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <Mail className="w-5 h-5" />
+                Send Email
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* PDF Download */}
+        {shareMethod === 'pdf' && (
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h3 className="text-gray-900 mb-4">Download Medical Summary</h3>
+            
+            <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
+              <h4 className="text-gray-900 mb-3">What's included:</h4>
+              <ul className="space-y-2 text-gray-600">
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  Complete patient profile
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  Full vaccination history ({vaccinations.length} records)
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  Country residence timeline
+                </li>
+                <li className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  Verification status for each vaccine
+                </li>
+              </ul>
+            </div>
+
+            <button
+              onClick={generatePDF}
+              className="w-full bg-[#97bf2d] hover:bg-[#7a9924] text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <Download className="w-5 h-5" />
+              Download Summary (TXT)
+            </button>
+            
+            <p className="text-gray-500 text-sm mt-4">
+              Note: In a production version, this would generate a professionally formatted PDF document.
+            </p>
+          </div>
+        )}
+
+        {/* Privacy Notice */}
+        <div className="mt-8 bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+          <h4 className="text-blue-900 mb-2">Privacy & Security</h4>
+          <ul className="text-blue-700 text-sm space-y-1">
+            <li>• All shared links are encrypted and expire automatically</li>
+            <li>• You can revoke access at any time from your dashboard</li>
+            <li>• Recipients cannot modify your records</li>
+            <li>• You'll be notified when someone accesses your records</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
