@@ -5,6 +5,7 @@ import { ProfileSection } from '@/components/ProfileSection';
 import { CountryHistory } from '@/components/CountryHistory';
 import { DocumentUpload } from '@/components/DocumentUpload';
 import { VaccinationTimeline } from '@/components/VaccinationTimeline';
+import { ComplianceReport } from '@/components/ComplianceReport';
 import { ShareRecords } from '@/components/ShareRecords';
 import { Alerts } from '@/components/Alerts';
 import { DozeChat } from '@/components/DozeChat';
@@ -13,7 +14,7 @@ import { useAuth } from '@/hooks/use-auth';
 
 export function DashboardLayout() {
   const { user } = useAuth();
-  const [currentPage, setCurrentPage] = useState<'dashboard' | 'profile' | 'countries' | 'upload' | 'timeline' | 'share' | 'alerts'>('dashboard');
+  const [currentPage, setCurrentPage] = useState<'dashboard' | 'profile' | 'countries' | 'upload' | 'timeline' | 'compliance' | 'share' | 'alerts'>('dashboard');
   
   const { profile, isLoading: profileLoading, saveProfile } = useProfile();
   const { vaccinations, isLoading: vaccLoading, addVaccination, deleteVaccination } = useVaccinations();
@@ -43,6 +44,7 @@ export function DashboardLayout() {
     languages: [],
     primaryProvider: '',
     targetCountry: '',
+    targetInstitution: '',
   };
 
   const userName = user?.email?.split('@')[0] || 'User';
@@ -86,6 +88,13 @@ export function DashboardLayout() {
             vaccinations={vaccinations}
             onAdd={(v) => addVaccination(v)}
             onDelete={(id) => deleteVaccination(String(id))}
+          />
+        );
+      case 'compliance':
+        return (
+          <ComplianceReport
+            vaccinations={vaccinations}
+            profile={defaultProfile}
           />
         );
       case 'share':

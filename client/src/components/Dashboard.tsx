@@ -7,7 +7,7 @@ interface DashboardProps {
   profile: UserProfile | null;
   countryHistory: CountryPeriod[];
   documents: UploadedDocument[];
-  onNavigate: (page: 'dashboard' | 'profile' | 'countries' | 'upload' | 'timeline' | 'share' | 'alerts') => void;
+  onNavigate: (page: 'dashboard' | 'profile' | 'countries' | 'upload' | 'timeline' | 'compliance' | 'share' | 'alerts') => void;
 }
 
 // U.S. Undergrad Vaccination Requirements
@@ -186,10 +186,10 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
             Upload Vaccine Document
           </button>
           <button
-            onClick={() => onNavigate('timeline')}
+            onClick={() => onNavigate('compliance')}
             className="bg-[#26844f] hover:bg-[#1e6a3f] text-white py-4 rounded-lg transition-colors"
           >
-            Check Compliance Goal
+            Check Compliance
           </button>
           <button
             onClick={() => onNavigate('share')}

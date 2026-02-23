@@ -87,6 +87,7 @@ export function useProfile() {
         languages: p.languages ? JSON.parse(p.languages) : [],
         primaryProvider: p.primaryProvider || '',
         targetCountry: p.targetCountry || '',
+        targetInstitution: p.targetInstitution || '',
       } as UserProfile;
     }),
   });

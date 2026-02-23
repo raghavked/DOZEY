@@ -13,6 +13,7 @@ export const profiles = pgTable("profiles", {
   languages: text("languages"),
   primaryProvider: varchar("primary_provider"),
   targetCountry: varchar("target_country"),
+  targetInstitution: varchar("target_institution"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

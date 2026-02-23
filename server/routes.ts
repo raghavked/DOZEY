@@ -6,6 +6,7 @@ import { db } from "./db";
 import { users, profiles, vaccinations, documents, countryHistory } from "../shared/schema";
 import { eq, and } from "drizzle-orm";
 import { processDocument } from "./ai-pipeline";
+import { lookupInstitutionRequirements, checkCompliance, generateFormattedReport } from "./compliance-engine";
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
@@ -380,6 +381,83 @@ export function registerRoutes(app: Express) {
     } catch (error) {
       console.error("Error importing vaccinations:", error);
       res.status(500).json({ message: "Failed to import vaccinations" });
+    }
+  });
+
+  app.post("/api/compliance/lookup", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const { institutionName } = req.body;
+
+      if (!institutionName || institutionName.trim().length < 2) {
+        return res.status(400).json({ message: "Institution name is required" });
+      }
+
+      const requirements = await lookupInstitutionRequirements(institutionName.trim());
+
+      const userVaccinations = await db
+        .select()
+        .from(vaccinations)
+        .where(eq(vaccinations.userId, userId));
+
+      const { compliance, overallPercentage, totalRequired, totalCompleted } = checkCompliance(
+        requirements,
+        userVaccinations
+      );
+
+      res.json({
+        institution: requirements,
+        compliance,
+        overallPercentage,
+        totalRequired,
+        totalCompleted,
+      });
+    } catch (error: any) {
+      console.error("Compliance lookup error:", error);
+      res.status(500).json({ message: error.message || "Failed to look up institution requirements" });
+    }
+  });
+
+  app.post("/api/compliance/report", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const { institution, compliance, overallPercentage } = req.body;
+
+      if (!institution || !compliance) {
+        return res.status(400).json({ message: "Institution and compliance data required" });
+      }
+
+      const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId));
+      const userVaccinations = await db.select().from(vaccinations).where(eq(vaccinations.userId, userId));
+
+      const profileData = {
+        fullName: profile?.fullName || "Not provided",
+        dateOfBirth: profile?.dateOfBirth || "",
+        countryOfOrigin: profile?.countryOfOrigin || "Not provided",
+      };
+
+      const vaccinationData = userVaccinations.map(v => ({
+        vaccineName: v.vaccineName,
+        date: v.date,
+        doseNumber: v.doseNumber,
+        provider: v.provider || "",
+        location: v.location || "",
+        countryGiven: v.countryGiven || "",
+        verified: v.verified || false,
+      }));
+
+      const report = generateFormattedReport(
+        institution,
+        compliance,
+        profileData,
+        vaccinationData,
+        overallPercentage
+      );
+
+      res.json({ report });
+    } catch (error: any) {
+      console.error("Report generation error:", error);
+      res.status(500).json({ message: error.message || "Failed to generate report" });
     }
   });
 

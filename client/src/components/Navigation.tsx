@@ -1,11 +1,11 @@
-import { User, Globe, Upload, Clock, Share2, Bell, LayoutDashboard, LogOut } from 'lucide-react';
+import { User, Globe, Upload, Clock, Share2, Bell, LayoutDashboard, LogOut, Target } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import dozeyLogo from '@/assets/dozey-logo.png';
 
 interface NavigationProps {
   currentPage: string;
-  onNavigate: (page: 'dashboard' | 'profile' | 'countries' | 'upload' | 'timeline' | 'share' | 'alerts') => void;
+  onNavigate: (page: 'dashboard' | 'profile' | 'countries' | 'upload' | 'timeline' | 'compliance' | 'share' | 'alerts') => void;
   userName?: string;
 }
 
@@ -18,6 +18,7 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
     { id: 'countries', label: 'Country History', icon: Globe },
     { id: 'upload', label: 'Upload Documents', icon: Upload },
     { id: 'timeline', label: 'Vaccine Timeline', icon: Clock },
+    { id: 'compliance', label: 'Compliance', icon: Target },
     { id: 'share', label: 'Share', icon: Share2 },
     { id: 'alerts', label: 'Alerts', icon: Bell },
   ] as const;

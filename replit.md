@@ -112,7 +112,17 @@ docs/                      # Documentation
 - `DEEPL_API_KEY` - DeepL API key for translation (secret)
 - `OPENAI_API_KEY` - OpenAI API key for parsing and chatbot (secret)
 
+## Compliance Engine
+- AI-powered institution requirements lookup using OpenAI (gpt-4o-mini)
+- Server: `server/compliance-engine.ts` - lookupInstitutionRequirements, checkCompliance, generateFormattedReport
+- Endpoints: `/api/compliance/lookup`, `/api/compliance/report`
+- Vaccine alias matching with 15 categories including Indian vaccine brands (Covishield, Covaxin, Pentavac, etc.)
+- Formatted downloadable compliance report for institution submission
+- ComplianceReport component: institution search, requirement-by-requirement status, gap analysis, export
+- Profile includes `targetInstitution` field for destination school/institution
+
 ## Recent Changes
+- 2026-02-23: Added institution compliance check system with AI-powered requirements lookup, vaccine alias matching, and formatted export
 - 2026-02-23: Wired up AI document processing pipeline (Mistral OCR, DeepL translation, OpenAI parsing) with full frontend UI
 - 2026-02-23: Added HIPAA-compliant Terms of Service and Privacy Policy pages with mandatory acceptance on registration
 - 2026-02-23: Added Doze AI chatbot, language selector (7 languages), autocomplete data, document rename, chat API endpoint

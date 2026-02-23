@@ -19,6 +19,7 @@ export function ProfileSection({ profile, onSave }: ProfileSectionProps) {
       languages: [],
       primaryProvider: '',
       targetCountry: '',
+      targetInstitution: '',
     }
   );
 
@@ -278,6 +279,24 @@ export function ProfileSection({ profile, onSave }: ProfileSectionProps) {
                 />
                 <p className="text-gray-500 text-sm mt-1">
                   If you're planning to study or work in another country, enter it here to track compliance requirements.
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="targetInstitution" className="block text-gray-700 mb-2">
+                  Destination Institution (Optional)
+                </label>
+                <input
+                  type="text"
+                  id="targetInstitution"
+                  name="targetInstitution"
+                  value={formData.targetInstitution || ''}
+                  onChange={handleChange}
+                  placeholder="e.g., University of California Berkeley, Stanford University"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                />
+                <p className="text-gray-500 text-sm mt-1">
+                  Enter the school or institution you're sending records to. Use the Compliance Check page to see their specific requirements.
                 </p>
               </div>
             </div>

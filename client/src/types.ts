@@ -21,6 +21,38 @@ export interface UserProfile {
   languages: string[];
   primaryProvider?: string;
   targetCountry?: string;
+  targetInstitution?: string;
+}
+
+export interface InstitutionRequirements {
+  institutionName: string;
+  location: string;
+  requirements: Array<{
+    vaccine_name: string;
+    required_doses: number;
+    notes: string | null;
+    deadline_info: string | null;
+  }>;
+  additional_requirements: string[];
+  submission_instructions: string;
+  forms_needed: string[];
+  contact_info: string;
+  source_notes: string;
+}
+
+export interface ComplianceResult {
+  institution: InstitutionRequirements;
+  compliance: Array<{
+    vaccine_name: string;
+    required_doses: number;
+    completed_doses: number;
+    status: 'complete' | 'partial' | 'missing';
+    matching_records: string[];
+    notes: string | null;
+  }>;
+  overallPercentage: number;
+  totalRequired: number;
+  totalCompleted: number;
 }
 
 export interface CountryPeriod {
