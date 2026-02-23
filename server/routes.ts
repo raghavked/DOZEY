@@ -6,7 +6,7 @@ import { db } from "./db";
 import { users, profiles, vaccinations, documents, countryHistory } from "../shared/schema";
 import { eq, and } from "drizzle-orm";
 import { processDocument } from "./ai-pipeline";
-import { lookupInstitutionRequirements, checkCompliance, generateFormattedReport } from "./compliance-engine";
+import { lookupInstitutionRequirements, lookupEmployerRequirements, lookupCountryRequirements, checkCompliance, generateFormattedReport, type ComplianceLookupType } from "./compliance-engine";
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
@@ -387,13 +387,27 @@ export function registerRoutes(app: Express) {
   app.post("/api/compliance/lookup", isAuthenticated, async (req, res) => {
     try {
       const userId = (req as AuthRequest).userId;
-      const { institutionName } = req.body;
+      const { institutionName, lookupType = "institution" } = req.body;
 
       if (!institutionName || institutionName.trim().length < 2) {
-        return res.status(400).json({ message: "Institution name is required" });
+        return res.status(400).json({ message: "Search query is required" });
       }
 
-      const requirements = await lookupInstitutionRequirements(institutionName.trim());
+      let requirements;
+      const query = institutionName.trim();
+      
+      switch (lookupType as ComplianceLookupType) {
+        case "employer":
+          requirements = await lookupEmployerRequirements(query);
+          break;
+        case "country":
+          requirements = await lookupCountryRequirements(query);
+          break;
+        case "institution":
+        default:
+          requirements = await lookupInstitutionRequirements(query);
+          break;
+      }
 
       const userVaccinations = await db
         .select()
@@ -414,14 +428,14 @@ export function registerRoutes(app: Express) {
       });
     } catch (error: any) {
       console.error("Compliance lookup error:", error);
-      res.status(500).json({ message: error.message || "Failed to look up institution requirements" });
+      res.status(500).json({ message: error.message || "Failed to look up requirements" });
     }
   });
 
   app.post("/api/compliance/report", isAuthenticated, async (req, res) => {
     try {
       const userId = (req as AuthRequest).userId;
-      const { institution, compliance, overallPercentage } = req.body;
+      const { institution, compliance, overallPercentage, lookupType = "institution" } = req.body;
 
       if (!institution || !compliance) {
         return res.status(400).json({ message: "Institution and compliance data required" });
@@ -451,7 +465,8 @@ export function registerRoutes(app: Express) {
         compliance,
         profileData,
         vaccinationData,
-        overallPercentage
+        overallPercentage,
+        lookupType as ComplianceLookupType
       );
 
       res.json({ report });

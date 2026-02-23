@@ -14,6 +14,7 @@ export const profiles = pgTable("profiles", {
   primaryProvider: varchar("primary_provider"),
   targetCountry: varchar("target_country"),
   targetInstitution: varchar("target_institution"),
+  targetEmployment: varchar("target_employment"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

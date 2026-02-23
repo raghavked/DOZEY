@@ -1,20 +1,98 @@
 import { useState } from 'react';
 import { VaccinationRecord, UserProfile, ComplianceResult } from '@/types';
-import { Search, Target, CheckCircle2, AlertCircle, XCircle, Download, Loader2, Building2, MapPin, FileText, ClipboardList, Info } from 'lucide-react';
+import { Search, Target, CheckCircle2, AlertCircle, XCircle, Download, Loader2, Building2, MapPin, FileText, ClipboardList, Info, GraduationCap, Briefcase, Globe } from 'lucide-react';
 import { getSupabase } from '@/lib/supabase';
 import { Progress } from './ui/progress';
+
+type LookupType = 'institution' | 'employer' | 'country';
 
 interface ComplianceReportProps {
   vaccinations: VaccinationRecord[];
   profile: UserProfile | null;
 }
 
+const lookupTabs: { type: LookupType; label: string; icon: typeof GraduationCap; description: string; placeholder: string; defaultQuery: (p: UserProfile | null) => string }[] = [
+  {
+    type: 'institution',
+    label: 'School / Institution',
+    icon: GraduationCap,
+    description: 'Check vaccination requirements for universities, colleges, and schools',
+    placeholder: 'Search for a university, college, or school...',
+    defaultQuery: (p) => p?.targetInstitution || '',
+  },
+  {
+    type: 'employer',
+    label: 'Employer',
+    icon: Briefcase,
+    description: 'Check health requirements for employers and organizations',
+    placeholder: 'Search for an employer or organization...',
+    defaultQuery: (p) => p?.targetEmployment || '',
+  },
+  {
+    type: 'country',
+    label: 'Country / Visa',
+    icon: Globe,
+    description: 'Check vaccination requirements for immigration and visa applications',
+    placeholder: 'Search for a country...',
+    defaultQuery: (p) => p?.targetCountry || '',
+  },
+];
+
+const popularSuggestions: Record<LookupType, string[]> = {
+  institution: [
+    'University of California, Berkeley',
+    'University of California, Los Angeles',
+    'Stanford University',
+    'Harvard University',
+    'MIT',
+    'University of Michigan',
+    'University of Toronto',
+    'University of Oxford',
+    'Columbia University',
+    'New York University',
+  ],
+  employer: [
+    'Kaiser Permanente',
+    'Mayo Clinic',
+    'Cleveland Clinic',
+    'Johns Hopkins Hospital',
+    'World Health Organization',
+    'United Nations',
+    'US Military',
+    'Amazon Warehouse',
+    'Doctors Without Borders',
+    'Peace Corps',
+  ],
+  country: [
+    'United States',
+    'Canada',
+    'United Kingdom',
+    'Australia',
+    'Germany',
+    'Saudi Arabia',
+    'United Arab Emirates',
+    'Japan',
+    'Singapore',
+    'New Zealand',
+  ],
+};
+
 export function ComplianceReport({ vaccinations, profile }: ComplianceReportProps) {
+  const [lookupType, setLookupType] = useState<LookupType>('institution');
   const [searchQuery, setSearchQuery] = useState(profile?.targetInstitution || '');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ComplianceResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [downloading, setDownloading] = useState(false);
+  const [activeResultType, setActiveResultType] = useState<LookupType>('institution');
+
+  const handleTabChange = (type: LookupType) => {
+    setLookupType(type);
+    const tab = lookupTabs.find(t => t.type === type);
+    setSearchQuery(tab?.defaultQuery(profile) || '');
+    setResult(null);
+    setError(null);
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +111,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session?.access_token}`,
         },
-        body: JSON.stringify({ institutionName: searchQuery.trim() }),
+        body: JSON.stringify({ institutionName: searchQuery.trim(), lookupType }),
       });
 
       if (!res.ok) {
@@ -43,6 +121,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
 
       const data = await res.json();
       setResult(data);
+      setActiveResultType(lookupType);
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {
@@ -67,6 +146,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
           institution: result.institution,
           compliance: result.compliance,
           overallPercentage: result.overallPercentage,
+          lookupType: activeResultType,
         }),
       });
 
@@ -77,7 +157,8 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `DOZEY-Compliance-Report-${result.institution.institutionName.replace(/\s+/g, '-')}.txt`;
+      const prefix = activeResultType === 'country' ? 'Visa' : activeResultType === 'employer' ? 'Employment' : 'Compliance';
+      a.download = `DOZEY-${prefix}-Report-${result.institution.institutionName.replace(/\s+/g, '-')}.txt`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -89,18 +170,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
     }
   };
 
-  const popularInstitutions = [
-    'University of California, Berkeley',
-    'University of California, Los Angeles',
-    'Stanford University',
-    'Harvard University',
-    'MIT',
-    'University of Michigan',
-    'University of Toronto',
-    'University of Oxford',
-    'Columbia University',
-    'New York University',
-  ];
+  const activeTab = lookupTabs.find(t => t.type === lookupType)!;
 
   const statusIcon = (status: string) => {
     switch (status) {
@@ -120,6 +190,22 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
     }
   };
 
+  const resultIcon = () => {
+    switch (activeResultType) {
+      case 'employer': return <Briefcase className="w-8 h-8" />;
+      case 'country': return <Globe className="w-8 h-8" />;
+      default: return <Building2 className="w-8 h-8" />;
+    }
+  };
+
+  const resultLabel = () => {
+    switch (activeResultType) {
+      case 'employer': return 'EMPLOYER';
+      case 'country': return 'DESTINATION COUNTRY';
+      default: return 'INSTITUTION';
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div className="bg-white rounded-xl shadow-lg p-8">
@@ -127,11 +213,33 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
           <Target className="w-8 h-8 text-[#1051a5]" />
           <div>
             <h1 className="text-[#22283a]">Compliance Check</h1>
-            <p className="text-gray-600">Search your destination school, employer, or institution to see their vaccination requirements and check your compliance</p>
+            <p className="text-gray-600">Check vaccination and health requirements for schools, employers, or countries</p>
           </div>
         </div>
 
-        <form onSubmit={handleSearch} className="mt-6">
+        <div className="flex gap-2 mt-6 mb-4 bg-gray-100 p-1 rounded-lg">
+          {lookupTabs.map(tab => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.type}
+                onClick={() => handleTabChange(tab.type)}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-md text-sm font-medium transition-all ${
+                  lookupType === tab.type
+                    ? 'bg-white text-[#1051a5] shadow-sm'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="hidden sm:inline">{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <p className="text-sm text-gray-500 mb-4">{activeTab.description}</p>
+
+        <form onSubmit={handleSearch}>
           <div className="flex gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -139,7 +247,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search for a university, school, or institution..."
+                placeholder={activeTab.placeholder}
                 className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
               />
             </div>
@@ -156,7 +264,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
               ) : (
                 <>
                   <Search className="w-5 h-5" />
-                  Check Requirements
+                  Check
                 </>
               )}
             </button>
@@ -165,15 +273,17 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
 
         {!result && !loading && !error && (
           <div className="mt-6">
-            <p className="text-gray-500 text-sm mb-3">Popular institutions:</p>
+            <p className="text-gray-500 text-sm mb-3">
+              {lookupType === 'institution' ? 'Popular institutions:' : lookupType === 'employer' ? 'Popular employers:' : 'Popular destinations:'}
+            </p>
             <div className="flex flex-wrap gap-2">
-              {popularInstitutions.map(inst => (
+              {popularSuggestions[lookupType].map(item => (
                 <button
-                  key={inst}
-                  onClick={() => { setSearchQuery(inst); }}
+                  key={item}
+                  onClick={() => setSearchQuery(item)}
                   className="px-3 py-1.5 bg-gray-100 hover:bg-[#1051a5] hover:text-white text-gray-700 text-sm rounded-full transition-colors"
                 >
-                  {inst}
+                  {item}
                 </button>
               ))}
             </div>
@@ -192,7 +302,13 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
         <div className="bg-white rounded-xl shadow-lg p-12 text-center">
           <Loader2 className="w-12 h-12 text-[#1051a5] animate-spin mx-auto mb-4" />
           <h3 className="text-[#22283a] text-lg mb-2">Looking up requirements...</h3>
-          <p className="text-gray-500">Searching for vaccination requirements at {searchQuery}</p>
+          <p className="text-gray-500">
+            {lookupType === 'employer' 
+              ? `Searching for health requirements at ${searchQuery}` 
+              : lookupType === 'country'
+              ? `Searching for immigration requirements for ${searchQuery}`
+              : `Searching for vaccination requirements at ${searchQuery}`}
+          </p>
         </div>
       )}
 
@@ -201,8 +317,9 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
           <div className="bg-gradient-to-br from-[#1051a5] to-[#26844f] rounded-xl shadow-lg p-6 text-white">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <Building2 className="w-8 h-8" />
+                {resultIcon()}
                 <div>
+                  <p className="text-white/60 text-xs font-semibold uppercase tracking-wider">{resultLabel()}</p>
                   <h2 className="text-white text-xl">{result.institution.institutionName}</h2>
                   <div className="flex items-center gap-1 text-white/80 text-sm">
                     <MapPin className="w-4 h-4" />

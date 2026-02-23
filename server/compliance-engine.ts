@@ -22,6 +22,109 @@ export interface InstitutionRequirements {
   source_notes: string;
 }
 
+export type ComplianceLookupType = "institution" | "employer" | "country";
+
+export async function lookupEmployerRequirements(employerName: string): Promise<InstitutionRequirements> {
+  const openai = getOpenAIClient();
+
+  const systemPrompt = `You are an expert on employer and organizational health/vaccination requirements worldwide. Given an employer or organization name, return the vaccination and health screening requirements that employees must meet.
+
+Return a JSON object with this exact structure:
+{
+  "institutionName": "Full official name of the employer/organization",
+  "location": "City, State/Province, Country (or 'Global' if multinational)",
+  "requirements": [
+    {
+      "vaccine_name": "Standard vaccine name (e.g., Hepatitis B, Influenza, COVID-19)",
+      "required_doses": 2,
+      "notes": "Any specific notes (e.g., annual booster required, titer accepted)",
+      "deadline_info": "When this must be completed (e.g., before start date, annually)"
+    }
+  ],
+  "additional_requirements": ["Annual TB screening", "Fit-for-duty exam", "Drug screening", etc.],
+  "submission_instructions": "How and where to submit health records to employer",
+  "forms_needed": ["Names of specific forms required"],
+  "contact_info": "Occupational health or HR contact information",
+  "source_notes": "Brief note about data accuracy and recommendation to verify with employer"
+}
+
+Rules:
+- Healthcare employers (hospitals, clinics) typically require: Hepatitis B (3 doses), Influenza (annual), Tdap, MMR (2 doses), Varicella (2 doses), COVID-19, TB screening
+- Military organizations require extensive vaccinations including: Smallpox, Anthrax, Adenovirus, etc.
+- International organizations (UN, WHO, NGOs) may require: Yellow Fever, Typhoid, Hepatitis A, Rabies depending on deployment regions
+- Food service/childcare employers may require: Hepatitis A, TB screening
+- General office employers may have minimal requirements (COVID-19, Flu recommended)
+- Always include a source_notes field reminding users to verify with the employer directly
+- Be specific about dose counts and any alternatives`;
+
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: `What are the vaccination/health requirements for employees at: ${employerName}` },
+    ],
+    max_tokens: 2000,
+    temperature: 0.2,
+    response_format: { type: "json_object" },
+  });
+
+  const content = completion.choices[0]?.message?.content;
+  if (!content) throw new Error("No response from AI");
+  return JSON.parse(content);
+}
+
+export async function lookupCountryRequirements(countryName: string): Promise<InstitutionRequirements> {
+  const openai = getOpenAIClient();
+
+  const systemPrompt = `You are an expert on country-level immigration and visa vaccination requirements worldwide. Given a country name, return the vaccination requirements for immigration, visa applications, and entry.
+
+Return a JSON object with this exact structure:
+{
+  "institutionName": "Country name - Immigration/Visa Requirements",
+  "location": "Country",
+  "requirements": [
+    {
+      "vaccine_name": "Standard vaccine name (e.g., Yellow Fever, Polio, COVID-19)",
+      "required_doses": 1,
+      "notes": "Any specific notes (e.g., required for travelers from endemic areas, certificate valid for life)",
+      "deadline_info": "When this must be completed (e.g., 10 days before arrival, before visa interview)"
+    }
+  ],
+  "additional_requirements": ["Medical examination by panel physician", "Chest X-ray for TB", "Blood tests", etc.],
+  "submission_instructions": "How and where to submit vaccination records for visa/immigration",
+  "forms_needed": ["Names of specific immigration health forms"],
+  "contact_info": "Immigration health services or embassy contact",
+  "source_notes": "Brief note about data accuracy and recommendation to verify with embassy/consulate"
+}
+
+Rules:
+- For the United States: Immigration requires MMR, Polio, Tdap, Hepatitis A & B, Varicella, Influenza, COVID-19, Meningococcal, Hib, Pneumococcal, Rotavirus (age-dependent). Medical exam by USCIS-designated civil surgeon. Form I-693 required.
+- For Canada: Immigration medical exam, TB screening, proof of vaccinations per IRCC requirements
+- For Australia: Must meet immunization requirements per Department of Home Affairs, medical exam required
+- For UK: TB test required for some nationalities, NHS surcharge
+- For Gulf states (Saudi Arabia, UAE): Meningococcal for work visa, Yellow Fever if from endemic areas
+- For countries in Africa: Yellow Fever certificate often mandatory
+- Include IHR (International Health Regulations) requirements when applicable
+- Always mention the medical examination requirement for immigration if applicable
+- Always include a source_notes field reminding users to verify with the embassy/consulate directly
+- Be specific about which vaccines are legally required vs recommended`;
+
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: `What are the vaccination and health requirements for immigration/visa to: ${countryName}` },
+    ],
+    max_tokens: 2000,
+    temperature: 0.2,
+    response_format: { type: "json_object" },
+  });
+
+  const content = completion.choices[0]?.message?.content;
+  if (!content) throw new Error("No response from AI");
+  return JSON.parse(content);
+}
+
 export async function lookupInstitutionRequirements(institutionName: string): Promise<InstitutionRequirements> {
   const openai = getOpenAIClient();
 
@@ -154,28 +257,48 @@ export function generateFormattedReport(
   compliance: ComplianceCheckResult[],
   profile: { fullName: string; dateOfBirth: string; countryOfOrigin: string },
   vaccinations: Array<{ vaccineName: string; date: string; doseNumber: number; provider: string; location: string; countryGiven: string; verified: boolean }>,
-  overallPercentage: number
+  overallPercentage: number,
+  lookupType: ComplianceLookupType = "institution"
 ): string {
   const now = new Date();
   let report = "";
 
+  const reportTitle = lookupType === "employer"
+    ? "EMPLOYMENT HEALTH COMPLIANCE REPORT"
+    : lookupType === "country"
+    ? "IMMIGRATION / VISA HEALTH COMPLIANCE REPORT"
+    : "IMMUNIZATION COMPLIANCE REPORT";
+
+  const preparedLabel = lookupType === "employer"
+    ? "Employer"
+    : lookupType === "country"
+    ? "Destination"
+    : "Prepared for";
+
+  const personLabel = lookupType === "employer"
+    ? "EMPLOYEE / APPLICANT INFORMATION"
+    : lookupType === "country"
+    ? "VISA APPLICANT / IMMIGRANT INFORMATION"
+    : "STUDENT / APPLICANT INFORMATION";
+
   report += "╔══════════════════════════════════════════════════════════════╗\n";
-  report += "║           IMMUNIZATION COMPLIANCE REPORT                   ║\n";
-  report += `║           Prepared for: ${institution.institutionName.substring(0, 35).padEnd(35)}║\n`;
+  report += `║           ${reportTitle.padEnd(49)}║\n`;
+  report += `║           ${preparedLabel}: ${institution.institutionName.substring(0, 35 - preparedLabel.length).padEnd(49 - preparedLabel.length - 2)}║\n`;
   report += "╚══════════════════════════════════════════════════════════════╝\n\n";
 
   report += `Report Generated: ${now.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}\n`;
   report += `Powered by DOZEY - Healthcare That Moves With You\n\n`;
 
   report += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-  report += "  STUDENT / APPLICANT INFORMATION\n";
+  report += `  ${personLabel}\n`;
   report += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
   report += `  Full Name:         ${profile.fullName}\n`;
   report += `  Date of Birth:     ${profile.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "Not provided"}\n`;
   report += `  Country of Origin: ${profile.countryOfOrigin}\n\n`;
 
+  const destLabel = lookupType === "employer" ? "EMPLOYER" : lookupType === "country" ? "DESTINATION COUNTRY" : "DESTINATION INSTITUTION";
   report += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-  report += `  DESTINATION: ${institution.institutionName.toUpperCase()}\n`;
+  report += `  ${destLabel}: ${institution.institutionName.toUpperCase()}\n`;
   report += `  Location: ${institution.location}\n`;
   report += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
 

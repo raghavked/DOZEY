@@ -22,6 +22,7 @@ export interface UserProfile {
   primaryProvider?: string;
   targetCountry?: string;
   targetInstitution?: string;
+  targetEmployment?: string;
 }
 
 export interface InstitutionRequirements {

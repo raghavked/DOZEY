@@ -20,6 +20,7 @@ export function ProfileSection({ profile, onSave }: ProfileSectionProps) {
       primaryProvider: '',
       targetCountry: '',
       targetInstitution: '',
+      targetEmployment: '',
     }
   );
 
@@ -266,7 +267,7 @@ export function ProfileSection({ profile, onSave }: ProfileSectionProps) {
               
               <div>
                 <label htmlFor="targetCountry" className="block text-gray-700 mb-2">
-                  Target Country (Optional)
+                  Target Country for Visa / Immigration (Optional)
                 </label>
                 <input
                   type="text"
@@ -278,13 +279,13 @@ export function ProfileSection({ profile, onSave }: ProfileSectionProps) {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
                 />
                 <p className="text-gray-500 text-sm mt-1">
-                  If you're planning to study or work in another country, enter it here to track compliance requirements.
+                  The country you're applying for a visa to. Use the Compliance page to check that country's vaccination requirements for immigration.
                 </p>
               </div>
 
               <div>
                 <label htmlFor="targetInstitution" className="block text-gray-700 mb-2">
-                  Destination Institution (Optional)
+                  Destination Institution / School (Optional)
                 </label>
                 <input
                   type="text"
@@ -296,7 +297,25 @@ export function ProfileSection({ profile, onSave }: ProfileSectionProps) {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
                 />
                 <p className="text-gray-500 text-sm mt-1">
-                  Enter the school or institution you're sending records to. Use the Compliance Check page to see their specific requirements.
+                  The school or institution you're sending records to. Use the Compliance page to check their vaccination requirements.
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="targetEmployment" className="block text-gray-700 mb-2">
+                  Target Employer / Organization (Optional)
+                </label>
+                <input
+                  type="text"
+                  id="targetEmployment"
+                  name="targetEmployment"
+                  value={formData.targetEmployment || ''}
+                  onChange={handleChange}
+                  placeholder="e.g., Kaiser Permanente, World Health Organization, US Army"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                />
+                <p className="text-gray-500 text-sm mt-1">
+                  The employer or organization requiring your health records. Use the Compliance page to check their vaccination requirements.
                 </p>
               </div>
             </div>
