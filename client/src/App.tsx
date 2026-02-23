@@ -9,6 +9,8 @@ import { ContactPage } from '@/pages/ContactPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { DashboardLayout } from '@/pages/DashboardLayout';
+import { TermsOfService } from '@/pages/TermsOfService';
+import { PrivacyPolicy } from '@/pages/PrivacyPolicy';
 
 export default function App() {
   const { isLoading, isAuthenticated } = useAuth();
@@ -27,6 +29,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
         {isAuthenticated ? (
           <>
             <Route path="/app/*" element={<DashboardLayout />} />

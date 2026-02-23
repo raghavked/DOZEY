@@ -27,17 +27,22 @@ client/                    # React frontend
     pages/
       LandingPage.tsx     # Public landing page with sections
       LoginPage.tsx       # Email/password login
-      RegisterPage.tsx    # Registration with email verification
+      RegisterPage.tsx    # Registration with TOS checkbox + email verification
       DashboardLayout.tsx # Protected dashboard wrapper
+      TermsOfService.tsx  # Full Terms of Service (19 sections, HIPAA compliance)
+      PrivacyPolicy.tsx   # Privacy Policy & HIPAA Notice of Privacy Practices
     components/           # Dashboard feature components
-      Navigation.tsx      # App navigation with user info
+      Navigation.tsx      # App navigation with user info + LanguageSelector
       Dashboard.tsx       # Main dashboard view
       ProfileSection.tsx  # User profile management
       CountryHistory.tsx  # Residence history tracking
-      DocumentUpload.tsx  # Document management with file upload
+      DocumentUpload.tsx  # Document management with file upload + inline rename
       VaccinationTimeline.tsx  # Vaccination timeline
       ShareRecords.tsx    # Record sharing
       Alerts.tsx          # Compliance alerts
+      DozeChat.tsx        # AI chatbot widget (OpenAI-powered)
+      LanguageSelector.tsx # 7-language selector dropdown
+      AutocompleteInput.tsx # Smart autocomplete for forms
       ui/                 # shadcn/ui components
     assets/               # Images/logos
   vite.config.ts          # Vite config with Tailwind plugin
@@ -87,7 +92,16 @@ docs/                      # Documentation
 ## Domain
 - Production domain: dozeyrecords.com
 
+## HIPAA Compliance
+- Terms of Service with comprehensive HIPAA sections (19 sections covering PHI handling, safeguards, breach notification, user rights)
+- Privacy Policy & HIPAA Notice of Privacy Practices (12 sections)
+- Registration requires mandatory acceptance of ToS + Privacy Policy + HIPAA Notice
+- TOS acceptance timestamp stored in users table (tos_accepted_at column)
+- Footer links to Terms and Privacy on all public pages
+
 ## Recent Changes
+- 2026-02-23: Added HIPAA-compliant Terms of Service and Privacy Policy pages with mandatory acceptance on registration
+- 2026-02-23: Added Doze AI chatbot, language selector (7 languages), autocomplete data, document rename, chat API endpoint
 - 2026-02-23: Added Supabase email templates (5 types), AI agent recommendations doc, comprehensive Supabase SQL schema (18 tables with RLS)
 - 2026-02-23: Replaced Replit Auth with Supabase Auth (email/password + email verification)
 - 2026-02-23: Added file upload support with multer

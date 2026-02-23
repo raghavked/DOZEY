@@ -50,6 +50,21 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  app.post("/api/auth/accept-tos", isAuthenticated, async (req, res) => {
+    try {
+      const authReq = req as AuthRequest;
+      const [updated] = await db
+        .update(users)
+        .set({ tosAcceptedAt: new Date(), updatedAt: new Date() })
+        .where(eq(users.id, authReq.userId))
+        .returning();
+      res.json({ success: true, tosAcceptedAt: updated.tosAcceptedAt });
+    } catch (error) {
+      console.error("Error accepting TOS:", error);
+      res.status(500).json({ message: "Failed to record TOS acceptance" });
+    }
+  });
+
   app.put("/api/auth/user", isAuthenticated, async (req, res) => {
     try {
       const authReq = req as AuthRequest;

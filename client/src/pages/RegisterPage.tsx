@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/use-auth';
 import { Mail, Lock, Eye, EyeOff, UserPlus, CheckCircle } from 'lucide-react';
+import { getSupabase } from '@/lib/supabase';
 import dozeyLogo from '@/assets/dozey-logo.png';
 
 export function RegisterPage() {
@@ -10,6 +11,7 @@ export function RegisterPage() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [tosAccepted, setTosAccepted] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -26,10 +28,23 @@ export function RegisterPage() {
       setError('Passwords do not match.');
       return;
     }
+    if (!tosAccepted) {
+      setError('You must agree to the Terms of Service and Privacy Policy to create an account.');
+      return;
+    }
 
     setLoading(true);
     try {
-      await signUp(email, password);
+      const result = await signUp(email, password);
+      if (result?.session?.access_token) {
+        await fetch('/api/auth/accept-tos', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${result.session.access_token}`,
+          },
+        });
+      }
       setSuccess(true);
     } catch (err: any) {
       setError(err.message || 'Failed to create account. Please try again.');
@@ -134,10 +149,31 @@ export function RegisterPage() {
               </div>
             </div>
 
+            <div className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                id="tosAccepted"
+                checked={tosAccepted}
+                onChange={e => setTosAccepted(e.target.checked)}
+                className="mt-1 w-4 h-4 text-[#1051a5] border-gray-300 rounded focus:ring-[#1051a5] cursor-pointer"
+              />
+              <label htmlFor="tosAccepted" className="text-sm text-gray-600 leading-relaxed cursor-pointer">
+                I have read and agree to the{' '}
+                <Link to="/terms" target="_blank" className="text-[#1051a5] hover:underline font-medium">
+                  Terms of Service
+                </Link>
+                {' '}and{' '}
+                <Link to="/privacy" target="_blank" className="text-[#1051a5] hover:underline font-medium">
+                  Privacy Policy
+                </Link>
+                , including the HIPAA Notice of Privacy Practices. I understand how my health information will be collected, used, and protected.
+              </label>
+            </div>
+
             <button
               type="submit"
-              disabled={loading}
-              className="w-full bg-[#1051a5] hover:bg-[#0d4185] text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              disabled={loading || !tosAccepted}
+              className="w-full bg-[#1051a5] hover:bg-[#0d4185] text-white py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating account...' : 'Create Account'}
               {!loading && <UserPlus className="w-5 h-5" />}

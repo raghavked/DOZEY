@@ -8,6 +8,7 @@ export const users = pgTable("users", {
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
   emailVerified: boolean("email_verified").default(false),
+  tosAcceptedAt: timestamp("tos_accepted_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
