@@ -3,9 +3,9 @@ import path from "path";
 import multer from "multer";
 import { isAuthenticated, type AuthRequest } from "./auth";
 import { db } from "./db";
-import { users, profiles, vaccinations, documents, countryHistory } from "../shared/schema";
+import { users, profiles, vaccinations, documents, countryHistory, medicalExemptions } from "../shared/schema";
 import { eq, and } from "drizzle-orm";
-import { processDocument } from "./ai-pipeline";
+import { processDocument, processDoctorNotesDocument } from "./ai-pipeline";
 import { lookupInstitutionRequirements, lookupEmployerRequirements, lookupCountryRequirements, checkCompliance, generateFormattedReport, type ComplianceLookupType } from "./compliance-engine";
 
 const storage = multer.diskStorage({
@@ -384,6 +384,120 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  app.post("/api/documents/:id/process-doctor-notes", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const id = parseInt(req.params.id as string);
+      const [doc] = await db
+        .select()
+        .from(documents)
+        .where(and(eq(documents.id, id), eq(documents.userId, userId)));
+
+      if (!doc) return res.status(404).json({ message: "Document not found" });
+      if (!doc.fileName) return res.status(400).json({ message: "No file attached to this document" });
+
+      await db.update(documents).set({ processingStatus: "processing" }).where(eq(documents.id, id));
+
+      const result = await processDoctorNotesDocument(doc.fileName, doc.mimeType || "application/pdf");
+
+      await db.update(documents).set({
+        extractedText: result.extractedText,
+        translatedText: result.translatedText,
+        originalLanguage: result.originalLanguage,
+        parsedData: JSON.stringify(result.parsedData),
+        processingStatus: "completed",
+      }).where(eq(documents.id, id));
+
+      res.json({ success: true, parsedData: result.parsedData });
+    } catch (error: any) {
+      const id = parseInt(req.params.id as string);
+      await db.update(documents).set({ processingStatus: "error" }).where(eq(documents.id, id));
+      console.error("Error processing doctor notes:", error);
+      res.status(500).json({ message: error.message || "Failed to process doctor notes" });
+    }
+  });
+
+  app.post("/api/documents/:id/import-exemptions", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const id = parseInt(req.params.id as string);
+      const [doc] = await db
+        .select()
+        .from(documents)
+        .where(and(eq(documents.id, id), eq(documents.userId, userId)));
+
+      if (!doc || !doc.parsedData) {
+        return res.status(400).json({ message: "Document has no parsed data" });
+      }
+
+      const parsed = JSON.parse(doc.parsedData);
+      const exempts = parsed.exemptions || [];
+
+      if (exempts.length === 0) {
+        return res.status(400).json({ message: "No medical exemptions found in document" });
+      }
+
+      const inserted = [];
+      for (const ex of exempts) {
+        const [record] = await db
+          .insert(medicalExemptions)
+          .values({
+            userId,
+            vaccineName: ex.vaccine_name || "Unknown",
+            exemptionType: ex.exemption_type || "other",
+            reason: ex.reason || "See attached document",
+            doctorName: ex.doctor_name || null,
+            doctorLicense: ex.doctor_license || null,
+            documentDate: ex.document_date || null,
+            documentId: doc.id,
+            notes: ex.notes || null,
+            verified: false,
+          })
+          .returning();
+        inserted.push(record);
+      }
+
+      res.json({ success: true, imported: inserted.length, exemptions: inserted });
+    } catch (error) {
+      console.error("Error importing exemptions:", error);
+      res.status(500).json({ message: "Failed to import exemptions" });
+    }
+  });
+
+  app.get("/api/exemptions", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const results = await db.select().from(medicalExemptions).where(eq(medicalExemptions.userId, userId));
+      res.json(results);
+    } catch (error) {
+      console.error("Error fetching exemptions:", error);
+      res.status(500).json({ message: "Failed to fetch exemptions" });
+    }
+  });
+
+  app.post("/api/exemptions", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const [record] = await db.insert(medicalExemptions).values({ ...req.body, userId }).returning();
+      res.json(record);
+    } catch (error) {
+      console.error("Error creating exemption:", error);
+      res.status(500).json({ message: "Failed to create exemption" });
+    }
+  });
+
+  app.delete("/api/exemptions/:id", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const id = parseInt(req.params.id as string);
+      await db.delete(medicalExemptions).where(and(eq(medicalExemptions.id, id), eq(medicalExemptions.userId, userId)));
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting exemption:", error);
+      res.status(500).json({ message: "Failed to delete exemption" });
+    }
+  });
+
   app.post("/api/compliance/lookup", isAuthenticated, async (req, res) => {
     try {
       const userId = (req as AuthRequest).userId;
@@ -414,9 +528,15 @@ export function registerRoutes(app: Express) {
         .from(vaccinations)
         .where(eq(vaccinations.userId, userId));
 
+      const userExemptions = await db
+        .select()
+        .from(medicalExemptions)
+        .where(eq(medicalExemptions.userId, userId));
+
       const { compliance, overallPercentage, totalRequired, totalCompleted } = checkCompliance(
         requirements,
-        userVaccinations
+        userVaccinations,
+        userExemptions
       );
 
       res.json({

@@ -186,9 +186,17 @@ export interface ComplianceCheckResult {
   notes: string | null;
 }
 
+export interface ExemptionRecord {
+  vaccineName: string;
+  exemptionType: string;
+  reason: string;
+  doctorName?: string | null;
+}
+
 export function checkCompliance(
   requirements: InstitutionRequirements,
-  vaccinations: Array<{ vaccineName: string; date: string; doseNumber: number; id: number }>
+  vaccinations: Array<{ vaccineName: string; date: string; doseNumber: number; id: number }>,
+  exemptions: ExemptionRecord[] = []
 ): { compliance: ComplianceCheckResult[]; overallPercentage: number; totalRequired: number; totalCompleted: number } {
   const vaccineAliases: Record<string, string[]> = {
     "mmr": ["mmr", "measles", "mumps", "rubella", "measles-mumps-rubella", "m-m-r", "mr vaccine", "priorix", "tresivac"],
@@ -228,22 +236,44 @@ export function checkCompliance(
 
   const compliance: ComplianceCheckResult[] = requirements.requirements.map(req => {
     const matching = vaccinations.filter(v => matchesVaccine(v.vaccineName, req.vaccine_name));
-    const completedDoses = Math.min(matching.length, req.required_doses);
+    const matchingExemptions = exemptions.filter(e => matchesVaccine(e.vaccineName, req.vaccine_name));
+    const hasExemption = matchingExemptions.length > 0;
+
+    const completedDoses = hasExemption ? req.required_doses : Math.min(matching.length, req.required_doses);
 
     totalRequired += req.required_doses;
     totalCompleted += completedDoses;
 
     let status: "complete" | "partial" | "missing" = "missing";
-    if (completedDoses >= req.required_doses) status = "complete";
+    if (hasExemption || completedDoses >= req.required_doses) status = "complete";
     else if (completedDoses > 0) status = "partial";
+
+    const matchingRecords = matching.map(m => `${m.vaccineName} (${m.date})`);
+    if (hasExemption) {
+      const exemptionTypeLabels: Record<string, string> = {
+        natural_immunity: "Natural Immunity",
+        medical_contraindication: "Medical Exemption",
+        prior_infection: "Prior Infection",
+        titer_positive: "Positive Titer/Antibody",
+        other: "Medical Exemption",
+      };
+      matchingExemptions.forEach(e => {
+        const label = exemptionTypeLabels[e.exemptionType] || "Exemption";
+        matchingRecords.push(`${label}: ${e.reason}${e.doctorName ? ` (Dr. ${e.doctorName})` : ''}`);
+      });
+    }
+
+    const notesArr: string[] = [];
+    if (req.notes) notesArr.push(req.notes);
+    if (hasExemption) notesArr.push("Requirement satisfied by medical exemption/immunity documentation");
 
     return {
       vaccine_name: req.vaccine_name,
       required_doses: req.required_doses,
       completed_doses: completedDoses,
       status,
-      matching_records: matching.map(m => `${m.vaccineName} (${m.date})`),
-      notes: req.notes,
+      matching_records: matchingRecords,
+      notes: notesArr.length > 0 ? notesArr.join(". ") : null,
     };
   });
 

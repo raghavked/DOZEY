@@ -80,6 +80,39 @@ export interface UploadedDocument {
   processingStatus?: string | null;
 }
 
+export interface MedicalExemption {
+  id: string;
+  vaccineName: string;
+  exemptionType: string;
+  reason: string;
+  doctorName?: string;
+  doctorLicense?: string;
+  documentDate?: string;
+  documentId?: number;
+  notes?: string;
+  verified: boolean;
+}
+
+export interface ParsedDoctorNotesData {
+  vaccinations: ParsedVaccinationData['vaccinations'];
+  exemptions: Array<{
+    vaccine_name: string;
+    exemption_type: 'natural_immunity' | 'medical_contraindication' | 'prior_infection' | 'titer_positive' | 'other';
+    reason: string;
+    doctor_name: string | null;
+    doctor_license: string | null;
+    document_date: string | null;
+    notes: string | null;
+  }>;
+  patient_info?: {
+    full_name: string | null;
+    date_of_birth: string | null;
+    id_number: string | null;
+  };
+  document_type?: string;
+  summary?: string;
+}
+
 export interface ParsedVaccinationData {
   vaccinations: Array<{
     vaccine_name: string;

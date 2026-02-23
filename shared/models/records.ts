@@ -61,6 +61,21 @@ export const countryHistory = pgTable("country_history", {
   endYear: varchar("end_year").notNull(),
 });
 
+export const medicalExemptions = pgTable("medical_exemptions", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  vaccineName: varchar("vaccine_name").notNull(),
+  exemptionType: varchar("exemption_type").notNull(),
+  reason: text("reason").notNull(),
+  doctorName: varchar("doctor_name"),
+  doctorLicense: varchar("doctor_license"),
+  documentDate: varchar("document_date"),
+  documentId: integer("document_id"),
+  notes: text("notes"),
+  verified: boolean("verified").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export type Profile = typeof profiles.$inferSelect;
 export type InsertProfile = typeof profiles.$inferInsert;
 export type Vaccination = typeof vaccinations.$inferSelect;
@@ -69,3 +84,5 @@ export type Document = typeof documents.$inferSelect;
 export type InsertDocument = typeof documents.$inferInsert;
 export type CountryPeriod = typeof countryHistory.$inferSelect;
 export type InsertCountryPeriod = typeof countryHistory.$inferInsert;
+export type MedicalExemption = typeof medicalExemptions.$inferSelect;
+export type InsertMedicalExemption = typeof medicalExemptions.$inferInsert;

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { VaccinationRecord, UserProfile, CountryPeriod, UploadedDocument } from '@/types';
+import type { VaccinationRecord, UserProfile, CountryPeriod, UploadedDocument, MedicalExemption } from '@/types';
 import { getSupabase } from '@/lib/supabase';
 
 async function getToken(): Promise<string> {
@@ -88,6 +88,7 @@ export function useProfile() {
         primaryProvider: p.primaryProvider || '',
         targetCountry: p.targetCountry || '',
         targetInstitution: p.targetInstitution || '',
+        targetEmployment: p.targetEmployment || '',
       } as UserProfile;
     }),
   });
@@ -192,6 +193,45 @@ export function useDocuments() {
     deleteDocument: remove.mutate,
     refreshDocuments,
     refreshAll: () => { refreshDocuments(); refreshVaccinations(); },
+  };
+}
+
+export function useExemptions() {
+  const queryClient = useQueryClient();
+  const query = useQuery<MedicalExemption[]>({
+    queryKey: ['exemptions'],
+    queryFn: () => fetchJson<any[]>('/api/exemptions').then(records =>
+      records.map(r => ({
+        id: String(r.id),
+        vaccineName: r.vaccineName,
+        exemptionType: r.exemptionType,
+        reason: r.reason,
+        doctorName: r.doctorName || undefined,
+        doctorLicense: r.doctorLicense || undefined,
+        documentDate: r.documentDate || undefined,
+        documentId: r.documentId || undefined,
+        notes: r.notes || undefined,
+        verified: r.verified || false,
+      }))
+    ),
+  });
+
+  const add = useMutation({
+    mutationFn: (data: Omit<MedicalExemption, 'id'>) => postJson('/api/exemptions', data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['exemptions'] }),
+  });
+
+  const remove = useMutation({
+    mutationFn: (id: string) => deleteJson(`/api/exemptions/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['exemptions'] }),
+  });
+
+  return {
+    exemptions: query.data || [],
+    isLoading: query.isLoading,
+    addExemption: add.mutate,
+    deleteExemption: remove.mutate,
+    refreshExemptions: () => queryClient.invalidateQueries({ queryKey: ['exemptions'] }),
   };
 }
 

@@ -121,6 +121,122 @@ Rules:
   return JSON.parse(content);
 }
 
+export async function parseDoctorNotes(text: string): Promise<any> {
+  const openai = getOpenAIClient();
+
+  const systemPrompt = `You are a medical document parser specializing in handwritten doctor's notes, medical letters, and clinical records for the DOZEY vaccination records system. Your task is to extract BOTH vaccination records AND medical exemptions/immunity evidence from the text.
+
+Medical exemptions include:
+- Natural immunity from prior disease (e.g., "patient had chickenpox in 2005" = varicella immunity)
+- Positive titer/antibody tests proving immunity (e.g., "MMR titer positive", "Varicella IgG positive")
+- Medical contraindications (e.g., "allergic to egg protein - cannot receive influenza vaccine", "immunocompromised - live vaccines contraindicated")
+- Prior infection documentation (e.g., "confirmed COVID-19 infection March 2023")
+- Doctor recommendations against vaccination (e.g., "Tdap contraindicated due to prior adverse reaction")
+
+Common disease-to-vaccine mappings:
+- Had chickenpox/varicella → Varicella vaccine exemption
+- Had measles → MMR/Measles vaccine exemption  
+- Had mumps → MMR/Mumps vaccine exemption
+- Had rubella/German measles → MMR/Rubella vaccine exemption
+- Had hepatitis A → Hepatitis A vaccine exemption
+- Had hepatitis B → Hepatitis B vaccine exemption
+- Had COVID-19 → COVID-19 vaccine may be deferred
+- Positive titer for any disease → Corresponding vaccine exemption
+
+Return a JSON object with this exact structure:
+{
+  "vaccinations": [
+    {
+      "vaccine_name": "Full vaccine name",
+      "date": "YYYY-MM-DD if available",
+      "dose_number": 1,
+      "provider": "Healthcare provider name if mentioned",
+      "country_given": "Country if mentioned",
+      "location": "Clinic/hospital if mentioned",
+      "notes": "Any additional notes"
+    }
+  ],
+  "exemptions": [
+    {
+      "vaccine_name": "Name of vaccine this exempts (use standard name: MMR, Varicella, Hepatitis B, etc.)",
+      "exemption_type": "natural_immunity | medical_contraindication | prior_infection | titer_positive | other",
+      "reason": "Clear explanation of why this exempts the requirement (e.g., 'Patient had confirmed chickenpox infection in childhood, conferring natural immunity to varicella')",
+      "doctor_name": "Name of the doctor who wrote the note",
+      "doctor_license": "Medical license number if found",
+      "document_date": "YYYY-MM-DD of the doctor's note/letter",
+      "notes": "Any additional clinical details"
+    }
+  ],
+  "patient_info": {
+    "full_name": "Patient name if found",
+    "date_of_birth": "YYYY-MM-DD if found",
+    "id_number": "Any patient ID if found"
+  },
+  "document_type": "doctor_note | medical_letter | lab_result | titer_report | exemption_form | clinical_record | other",
+  "summary": "Brief 2-3 sentence summary of the document, noting key exemptions/immunity evidence found"
+}
+
+Rules:
+- This is often HANDWRITTEN text that has been OCR'd, so expect spelling errors, abbreviations, and messy formatting
+- Common handwriting abbreviations: "pt" = patient, "hx" = history, "dx" = diagnosis, "rx" = prescription, "c/o" = complaining of, "s/p" = status post, "w/" = with, "w/o" = without
+- Look for ANY evidence of prior disease, positive titers, or medical reasons not to vaccinate
+- If the doctor notes the patient "had" or "contracted" a disease, that's natural immunity
+- Titer results showing "positive", "immune", or "reactive" indicate immunity
+- Extract the doctor's name and credentials whenever visible
+- If vaccination records are also mentioned, include those too
+- Be generous in interpreting exemptions - if there's reasonable evidence of immunity, include it
+- Always include enough detail in the "reason" field to support the exemption claim`;
+
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: `Parse the following doctor's note/medical document (may be from handwriting OCR) and extract all vaccination records AND medical exemptions/immunity evidence:\n\n${text}` },
+    ],
+    max_tokens: 3000,
+    temperature: 0.1,
+    response_format: { type: "json_object" },
+  });
+
+  const content = completion.choices[0]?.message?.content;
+  if (!content) throw new Error("No response from parsing model");
+  return JSON.parse(content);
+}
+
+export async function processDoctorNotesDocument(filePath: string, mimeType: string): Promise<{
+  extractedText: string;
+  translatedText: string;
+  originalLanguage: string;
+  parsedData: any;
+}> {
+  const { text } = await extractTextFromDocument(filePath, mimeType);
+
+  if (!text || text.trim().length === 0) {
+    throw new Error("No text could be extracted from the document. The handwriting may be too difficult to read - try a clearer scan.");
+  }
+
+  let translatedText = text;
+  let detectedLanguage = "en";
+
+  try {
+    const translation = await detectAndTranslateText(text);
+    translatedText = translation.translatedText;
+    detectedLanguage = translation.detectedLanguage;
+  } catch (translationError) {
+    console.warn("Translation failed, proceeding with original text:", translationError);
+  }
+
+  const textForParsing = translatedText || text;
+  const parsedData = await parseDoctorNotes(textForParsing);
+
+  return {
+    extractedText: text,
+    translatedText: detectedLanguage.toLowerCase() === "en" ? text : translatedText,
+    originalLanguage: detectedLanguage,
+    parsedData,
+  };
+}
+
 export async function processDocument(filePath: string, mimeType: string): Promise<{
   extractedText: string;
   translatedText: string;

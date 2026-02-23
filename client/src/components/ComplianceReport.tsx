@@ -379,9 +379,14 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                   {item.matching_records.length > 0 && (
                     <div className="mt-2 ml-8">
                       <p className="text-xs text-gray-500 mb-1">Your records:</p>
-                      {item.matching_records.map((rec, i) => (
-                        <p key={i} className="text-xs text-gray-600">- {rec}</p>
-                      ))}
+                      {item.matching_records.map((rec, i) => {
+                        const isExemption = rec.startsWith('Natural Immunity:') || rec.startsWith('Medical Exemption:') || rec.startsWith('Titer:');
+                        return (
+                          <p key={i} className={`text-xs ${isExemption ? 'text-purple-700 font-medium' : 'text-gray-600'}`}>
+                            - {isExemption ? '🛡️ ' : ''}{rec}
+                          </p>
+                        );
+                      })}
                     </div>
                   )}
                   {item.notes && (

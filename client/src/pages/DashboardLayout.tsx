@@ -9,7 +9,7 @@ import { ComplianceReport } from '@/components/ComplianceReport';
 import { ShareRecords } from '@/components/ShareRecords';
 import { Alerts } from '@/components/Alerts';
 import { DozeChat } from '@/components/DozeChat';
-import { useProfile, useVaccinations, useDocuments, useCountryHistory } from '@/hooks/use-api';
+import { useProfile, useVaccinations, useDocuments, useCountryHistory, useExemptions } from '@/hooks/use-api';
 import { useAuth } from '@/hooks/use-auth';
 
 export function DashboardLayout() {
@@ -20,8 +20,9 @@ export function DashboardLayout() {
   const { vaccinations, isLoading: vaccLoading, addVaccination, deleteVaccination } = useVaccinations();
   const { documents, isLoading: docsLoading, addDocument, updateDocument, deleteDocument, refreshAll } = useDocuments();
   const { countryHistory, isLoading: historyLoading, addCountryPeriod, deleteCountryPeriod } = useCountryHistory();
+  const { exemptions, isLoading: exemptionsLoading, refreshExemptions } = useExemptions();
 
-  const isLoading = profileLoading || vaccLoading || docsLoading || historyLoading;
+  const isLoading = profileLoading || vaccLoading || docsLoading || historyLoading || exemptionsLoading;
 
   if (isLoading) {
     return (
@@ -45,6 +46,7 @@ export function DashboardLayout() {
     primaryProvider: '',
     targetCountry: '',
     targetInstitution: '',
+    targetEmployment: '',
   };
 
   const userName = user?.email?.split('@')[0] || 'User';
@@ -79,7 +81,8 @@ export function DashboardLayout() {
             onUpdate={(id, data) => updateDocument({ id, data })}
             onDelete={(id) => deleteDocument(String(id))}
             onAddVaccination={(v) => addVaccination(v)}
-            onRefresh={refreshAll}
+            onRefresh={() => { refreshAll(); refreshExemptions(); }}
+            exemptions={exemptions}
           />
         );
       case 'timeline':

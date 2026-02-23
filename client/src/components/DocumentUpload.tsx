@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
-import { UploadedDocument, VaccinationRecord, ParsedVaccinationData } from '@/types';
-import { Upload, FileText, Image, Trash2, Plus, Download, Pencil, Check, X, Sparkles, Loader2, ChevronDown, ChevronUp, Import, AlertCircle, CheckCircle2, Globe } from 'lucide-react';
+import { UploadedDocument, VaccinationRecord, ParsedVaccinationData, MedicalExemption } from '@/types';
+import { Upload, FileText, Image, Trash2, Plus, Download, Pencil, Check, X, Sparkles, Loader2, ChevronDown, ChevronUp, Import, AlertCircle, CheckCircle2, Globe, Stethoscope, ShieldCheck } from 'lucide-react';
 import { getSupabase } from '@/lib/supabase';
 
 interface DocumentUploadProps {
@@ -10,6 +10,7 @@ interface DocumentUploadProps {
   onDelete: (id: string) => void;
   onAddVaccination: (vaccination: Omit<VaccinationRecord, 'id'>) => void;
   onRefresh?: () => void;
+  exemptions?: MedicalExemption[];
 }
 
 function ProcessingStatusBadge({ status }: { status: string | null | undefined }) {
@@ -29,7 +30,7 @@ function ProcessingStatusBadge({ status }: { status: string | null | undefined }
   );
 }
 
-export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddVaccination, onRefresh }: DocumentUploadProps) {
+export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddVaccination, onRefresh, exemptions = [] }: DocumentUploadProps) {
   const [dragActive, setDragActive] = useState(false);
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -157,6 +158,62 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
       onRefresh?.();
     } catch (err: any) {
       alert(err.message || 'Failed to import vaccinations');
+    } finally {
+      setImportingId(null);
+    }
+  };
+
+  const handleProcessDoctorNotes = async (docId: string) => {
+    setProcessingId(docId);
+    setProcessError(null);
+    try {
+      const sb = await getSupabase();
+      const { data: { session } } = await sb.auth.getSession();
+      const res = await fetch(`/api/documents/${docId}/process-doctor-notes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Processing failed');
+      }
+
+      setExpandedDoc(docId);
+      onRefresh?.();
+    } catch (err: any) {
+      setProcessError(err.message || 'Failed to process doctor notes');
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const handleImportExemptions = async (docId: string) => {
+    setImportingId(docId);
+    try {
+      const sb = await getSupabase();
+      const { data: { session } } = await sb.auth.getSession();
+      const res = await fetch(`/api/documents/${docId}/import-exemptions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Import failed');
+      }
+
+      const data = await res.json();
+      alert(`Successfully imported ${data.imported} medical exemption${data.imported !== 1 ? 's' : ''}!`);
+      onRefresh?.();
+    } catch (err: any) {
+      alert(err.message || 'Failed to import exemptions');
     } finally {
       setImportingId(null);
     }
@@ -446,21 +503,36 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                           {new Date(doc.uploadDate).toLocaleDateString()}
                         </p>
                       </div>
-                      <div className="flex gap-1 flex-shrink-0">
+                      <div className="flex gap-1 flex-shrink-0 flex-wrap justify-end">
                         {doc.fileName && (!doc.processingStatus || doc.processingStatus === 'pending' || doc.processingStatus === 'error') && (
-                          <button
-                            onClick={() => handleProcess(doc.id)}
-                            disabled={isProcessing}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-[#97bf2d] hover:bg-[#87af1d] text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
-                            title="Extract & translate with AI"
-                          >
-                            {isProcessing ? (
-                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            ) : (
-                              <Sparkles className="w-3.5 h-3.5" />
-                            )}
-                            {isProcessing ? 'Processing...' : 'AI Extract'}
-                          </button>
+                          <>
+                            <button
+                              onClick={() => handleProcess(doc.id)}
+                              disabled={isProcessing}
+                              className="flex items-center gap-1 px-3 py-1.5 bg-[#97bf2d] hover:bg-[#87af1d] text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                              title="Extract vaccination records with AI"
+                            >
+                              {isProcessing ? (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              ) : (
+                                <Sparkles className="w-3.5 h-3.5" />
+                              )}
+                              {isProcessing ? 'Processing...' : 'AI Extract'}
+                            </button>
+                            <button
+                              onClick={() => handleProcessDoctorNotes(doc.id)}
+                              disabled={isProcessing}
+                              className="flex items-center gap-1 px-3 py-1.5 bg-[#1051a5] hover:bg-[#0d4185] text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                              title="Analyze handwritten doctor notes for exemptions & immunity"
+                            >
+                              {isProcessing ? (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              ) : (
+                                <Stethoscope className="w-3.5 h-3.5" />
+                              )}
+                              {isProcessing ? 'Analyzing...' : 'Doctor Notes'}
+                            </button>
+                          </>
                         )}
                         {onUpdate && editingId !== doc.id && (
                           <button
@@ -497,9 +569,12 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                           className="flex items-center gap-1 text-sm text-[#1051a5] hover:text-[#0d4185] font-medium"
                         >
                           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                          {parsed.vaccinations?.length
-                            ? `${parsed.vaccinations.length} vaccination${parsed.vaccinations.length !== 1 ? 's' : ''} found`
-                            : 'View extracted data'}
+                          {(() => {
+                            const parts = [];
+                            if (parsed.vaccinations?.length) parts.push(`${parsed.vaccinations.length} vaccination${parsed.vaccinations.length !== 1 ? 's' : ''}`);
+                            if ((parsed as any).exemptions?.length) parts.push(`${(parsed as any).exemptions.length} exemption${(parsed as any).exemptions.length !== 1 ? 's' : ''}`);
+                            return parts.length > 0 ? parts.join(' & ') + ' found' : 'View extracted data';
+                          })()}
                         </button>
                       </div>
                     )}
@@ -562,9 +637,60 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                         </div>
                       )}
 
-                      {parsed.vaccinations?.length === 0 && (
+                      {(parsed as any).exemptions && (parsed as any).exemptions.length > 0 && (
+                        <div>
+                          <div className="flex items-center justify-between mb-3">
+                            <h5 className="text-xs font-semibold text-gray-500 uppercase flex items-center gap-1">
+                              <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
+                              Medical Exemptions / Immunity Evidence
+                            </h5>
+                            <button
+                              onClick={() => handleImportExemptions(doc.id)}
+                              disabled={isImporting}
+                              className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                            >
+                              {isImporting ? (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              ) : (
+                                <ShieldCheck className="w-3.5 h-3.5" />
+                              )}
+                              {isImporting ? 'Importing...' : 'Import Exemptions'}
+                            </button>
+                          </div>
+                          <div className="space-y-2">
+                            {(parsed as any).exemptions.map((ex: any, i: number) => {
+                              const typeLabels: Record<string, { label: string; color: string }> = {
+                                natural_immunity: { label: 'Natural Immunity', color: 'bg-green-100 text-green-700' },
+                                medical_contraindication: { label: 'Medical Exemption', color: 'bg-red-100 text-red-700' },
+                                prior_infection: { label: 'Prior Infection', color: 'bg-orange-100 text-orange-700' },
+                                titer_positive: { label: 'Positive Titer', color: 'bg-blue-100 text-blue-700' },
+                                other: { label: 'Other', color: 'bg-gray-100 text-gray-700' },
+                              };
+                              const typeInfo = typeLabels[ex.exemption_type] || typeLabels.other;
+                              return (
+                                <div key={i} className="bg-white rounded-lg p-3 border border-purple-200">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <ShieldCheck className="w-4 h-4 text-purple-600" />
+                                    <span className="font-medium text-sm text-gray-900">{ex.vaccine_name}</span>
+                                    <span className={`text-xs px-1.5 py-0.5 rounded ${typeInfo.color}`}>{typeInfo.label}</span>
+                                  </div>
+                                  <p className="text-xs text-gray-700 ml-6 mb-1">{ex.reason}</p>
+                                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 text-xs text-gray-500 ml-6">
+                                    {ex.doctor_name && <span>Doctor: {ex.doctor_name}</span>}
+                                    {ex.doctor_license && <span>License: {ex.doctor_license}</span>}
+                                    {ex.document_date && <span>Date: {ex.document_date}</span>}
+                                  </div>
+                                  {ex.notes && <p className="text-xs text-gray-500 mt-1 ml-6 italic">{ex.notes}</p>}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {parsed.vaccinations?.length === 0 && !(parsed as any).exemptions?.length && (
                         <div className="text-sm text-gray-500 text-center py-2">
-                          No vaccination records found in this document.
+                          No vaccination records or exemptions found in this document.
                         </div>
                       )}
                     </div>
@@ -573,6 +699,45 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
               );
             })}
           </div>
+        </div>
+      )}
+
+      {exemptions.length > 0 && (
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-purple-600" />
+            Saved Medical Exemptions ({exemptions.length})
+          </h3>
+          <div className="space-y-2">
+            {exemptions.map((ex) => {
+              const typeLabels: Record<string, { label: string; color: string }> = {
+                natural_immunity: { label: 'Natural Immunity', color: 'bg-green-100 text-green-700' },
+                medical_contraindication: { label: 'Medical Exemption', color: 'bg-red-100 text-red-700' },
+                prior_infection: { label: 'Prior Infection', color: 'bg-orange-100 text-orange-700' },
+                titer_positive: { label: 'Positive Titer', color: 'bg-blue-100 text-blue-700' },
+                other: { label: 'Other', color: 'bg-gray-100 text-gray-700' },
+              };
+              const typeInfo = typeLabels[ex.exemptionType] || typeLabels.other;
+              return (
+                <div key={ex.id} className="flex items-center justify-between bg-purple-50 rounded-lg p-3 border border-purple-200">
+                  <div className="flex items-center gap-3">
+                    <ShieldCheck className="w-4 h-4 text-purple-600 flex-shrink-0" />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-gray-900">{ex.vaccineName}</span>
+                        <span className={`text-xs px-1.5 py-0.5 rounded ${typeInfo.color}`}>{typeInfo.label}</span>
+                      </div>
+                      <p className="text-xs text-gray-600">{ex.reason}</p>
+                      {ex.doctorName && <p className="text-xs text-gray-500">Dr. {ex.doctorName}</p>}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-xs text-gray-500 mt-3">
+            These exemptions will be considered when checking compliance requirements.
+          </p>
         </div>
       )}
     </div>
