@@ -113,15 +113,19 @@ docs/                      # Documentation
 - `OPENAI_API_KEY` - OpenAI API key for parsing and chatbot (secret)
 
 ## Compliance Engine
-- AI-powered institution requirements lookup using OpenAI (gpt-4o-mini)
-- Server: `server/compliance-engine.ts` - lookupInstitutionRequirements, checkCompliance, generateFormattedReport
-- Endpoints: `/api/compliance/lookup`, `/api/compliance/report`
+- AI-powered requirements lookup using OpenAI (gpt-4o-mini) with 3 lookup types:
+  - **Institution/School**: University/college vaccination requirements for enrollment
+  - **Employer**: Occupational health requirements (healthcare, military, NGOs, etc.)
+  - **Country/Visa**: Immigration and visa vaccination requirements
+- Server: `server/compliance-engine.ts` - lookupInstitutionRequirements, lookupEmployerRequirements, lookupCountryRequirements, checkCompliance, generateFormattedReport
+- Endpoints: `/api/compliance/lookup` (accepts `lookupType` param), `/api/compliance/report`
 - Vaccine alias matching with 15 categories including Indian vaccine brands (Covishield, Covaxin, Pentavac, etc.)
-- Formatted downloadable compliance report for institution submission
-- ComplianceReport component: institution search, requirement-by-requirement status, gap analysis, export
-- Profile includes `targetInstitution` field for destination school/institution
+- Context-aware formatted downloadable reports (titles/labels change per lookup type)
+- ComplianceReport component: 3-tab selector, popular suggestions per type, requirement-by-requirement status, gap analysis, export
+- Profile includes `targetInstitution`, `targetEmployment`, and `targetCountry` fields
 
 ## Recent Changes
+- 2026-02-23: Expanded compliance check to 3 types: institution, employer, and country/visa with context-aware reports and tab selector UI
 - 2026-02-23: Added institution compliance check system with AI-powered requirements lookup, vaccine alias matching, and formatted export
 - 2026-02-23: Wired up AI document processing pipeline (Mistral OCR, DeepL translation, OpenAI parsing) with full frontend UI
 - 2026-02-23: Added HIPAA-compliant Terms of Service and Privacy Policy pages with mandatory acceptance on registration
