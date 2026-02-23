@@ -394,11 +394,11 @@ export function registerRoutes(app: Express) {
         .where(and(eq(documents.id, id), eq(documents.userId, userId)));
 
       if (!doc) return res.status(404).json({ message: "Document not found" });
-      if (!doc.fileName) return res.status(400).json({ message: "No file attached to this document" });
+      if (!doc.filePath) return res.status(400).json({ message: "No file attached to this document" });
 
       await db.update(documents).set({ processingStatus: "processing" }).where(eq(documents.id, id));
 
-      const result = await processDoctorNotesDocument(doc.fileName, doc.mimeType || "application/pdf");
+      const result = await processDoctorNotesDocument(doc.filePath, doc.mimeType || "application/pdf");
 
       await db.update(documents).set({
         extractedText: result.extractedText,
