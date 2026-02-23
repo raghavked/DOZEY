@@ -12,7 +12,7 @@ export function TeamPage() {
       bio: 'UC Davis student passionate about bridging healthcare accessibility gaps through technology. Experienced the challenges of vaccine record management firsthand across multiple countries.',
       photo: aashImg,
       social: {
-        linkedin: 'https://www.linkedin.com/in/aashreeti-deo-704902192',
+        linkedin: 'https://www.linkedin.com/in/aashreeti-deo/',
       },
     },
     {
@@ -21,7 +21,7 @@ export function TeamPage() {
       bio: 'UC Davis Computer Science student with expertise in AI and secure systems. Dedicated to building technology that solves real-world healthcare challenges.',
       photo: isaacImg,
       social: {
-        linkedin: 'https://www.linkedin.com/in/isaac-k-4aa14b262/',
+        linkedin: 'https://www.linkedin.com/in/isaac-karottu-95242b2b3/',
       },
     },
     {
