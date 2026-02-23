@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UserProfile } from '@/types';
 import { User, Save, AlertCircle } from 'lucide-react';
 import { AutocompleteInput } from '@/components/AutocompleteInput';
@@ -30,6 +30,12 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
   const [citizenshipInput, setCitizenshipInput] = useState('');
   const [languageInput, setLanguageInput] = useState('');
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (profile) {
+      setFormData(profile);
+    }
+  }, [profile]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

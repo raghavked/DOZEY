@@ -66,7 +66,7 @@ export function DashboardLayout() {
     targetEmployment: '',
   };
 
-  const userName = user?.email?.split('@')[0] || 'User';
+  const userName = profile?.fullName || user?.email?.split('@')[0] || 'User';
 
   const renderPage = () => {
     switch (currentPage) {
