@@ -1,14 +1,32 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageCircle, X, Send } from 'lucide-react';
 import { getSupabase } from '@/lib/supabase';
+import { useI18n } from '@/lib/i18n';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
 }
 
-const WELCOME_MESSAGE = "Hey! I'm Doze, your DOZEY health assistant! I can help you navigate the app, understand vaccination requirements, and manage your health records. What can I help you with?";
-const ERROR_MESSAGE = "I'm not fully set up yet, but I'll be ready soon! In the meantime, feel free to explore the app.";
+const WELCOME_MESSAGES: Record<string, string> = {
+  en: "Hey! I'm Doze, your DOZEY health assistant! I can help you navigate the app, understand vaccination requirements, and manage your health records. What can I help you with?",
+  es: "¡Hola! Soy Doze, tu asistente de salud de DOZEY. Puedo ayudarte a navegar la app, entender los requisitos de vacunación y gestionar tus registros médicos. ¿En qué puedo ayudarte?",
+  fr: "Salut ! Je suis Doze, votre assistant santé DOZEY ! Je peux vous aider à naviguer dans l'application, comprendre les exigences de vaccination et gérer vos dossiers médicaux. Comment puis-je vous aider ?",
+  hi: "नमस्ते! मैं Doze हूँ, आपका DOZEY स्वास्थ्य सहायक! मैं ऐप को नेविगेट करने, टीकाकरण आवश्यकताओं को समझने और आपके स्वास्थ्य रिकॉर्ड प्रबंधित करने में मदद कर सकता हूँ। मैं आपकी कैसे मदद कर सकता हूँ?",
+  zh: "你好！我是 Doze，你的 DOZEY 健康助手！我可以帮你使用应用程序、了解疫苗接种要求，以及管理你的健康记录。有什么可以帮你的吗？",
+  pt: "Olá! Sou o Doze, seu assistente de saúde DOZEY! Posso ajudá-lo a navegar no app, entender os requisitos de vacinação e gerenciar seus registros de saúde. Como posso ajudar?",
+  ar: "مرحباً! أنا Doze، مساعدك الصحي في DOZEY! يمكنني مساعدتك في التنقل في التطبيق وفهم متطلبات التطعيم وإدارة سجلاتك الصحية. كيف يمكنني مساعدتك؟",
+};
+
+const ERROR_MESSAGES: Record<string, string> = {
+  en: "I'm having a bit of trouble right now. Please try again in a moment!",
+  es: "Estoy teniendo un pequeño problema. ¡Inténtalo de nuevo en un momento!",
+  fr: "J'ai un petit souci en ce moment. Réessayez dans un instant !",
+  hi: "मुझे अभी थोड़ी समस्या हो रही है। कृपया कुछ समय बाद पुनः प्रयास करें!",
+  zh: "我现在遇到了一点问题，请稍后再试！",
+  pt: "Estou com um pequeno problema agora. Tente novamente em instantes!",
+  ar: "أواجه مشكلة صغيرة الآن. يرجى المحاولة مرة أخرى بعد قليل!",
+};
 
 function DozeAvatar({ size = 32 }: { size?: number }) {
   return (
@@ -88,7 +106,29 @@ function TypingIndicator() {
   );
 }
 
+function escapeHtml(text: string): string {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function formatMessage(content: string) {
+  const parts = content.split('\n').filter(line => line.trim() !== '');
+  return parts.map((line, i) => {
+    let formatted = escapeHtml(line)
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+    const isBullet = /^[-•]\s/.test(line.trim());
+    const isNumbered = /^\d+[.)]\s/.test(line.trim());
+
+    if (isBullet || isNumbered) {
+      return <div key={i} className="ml-3 mb-0.5" dangerouslySetInnerHTML={{ __html: formatted }} />;
+    }
+    return <div key={i} className="mb-1.5" dangerouslySetInnerHTML={{ __html: formatted }} />;
+  });
+}
+
 export function DozeChat() {
+  const { language } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
@@ -115,7 +155,7 @@ export function DozeChat() {
     setIsOpen(true);
     if (!hasOpened) {
       setHasOpened(true);
-      setMessages([{ role: 'assistant', content: WELCOME_MESSAGE }]);
+      setMessages([{ role: 'assistant', content: WELCOME_MESSAGES[language] || WELCOME_MESSAGES.en }]);
     }
   };
 
@@ -147,6 +187,7 @@ export function DozeChat() {
         body: JSON.stringify({
           message: trimmed,
           history: updatedMessages.map(m => ({ role: m.role, content: m.content })),
+          language,
         }),
       });
 
@@ -157,7 +198,7 @@ export function DozeChat() {
       const data = await res.json();
       setMessages(prev => [...prev, { role: 'assistant', content: data.reply }]);
     } catch {
-      setMessages(prev => [...prev, { role: 'assistant', content: ERROR_MESSAGE }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: ERROR_MESSAGES[language] || ERROR_MESSAGES.en }]);
     } finally {
       setIsLoading(false);
     }
@@ -213,7 +254,7 @@ export function DozeChat() {
                     : 'bg-white text-[#22283a] rounded-bl-md shadow-sm border border-gray-100'
                 }`}
               >
-                {msg.content}
+                {msg.role === 'assistant' ? formatMessage(msg.content) : msg.content}
               </div>
             </div>
           ))}

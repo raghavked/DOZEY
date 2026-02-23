@@ -36,7 +36,7 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center gap-3">
-            <img src={dozeyLogo} alt="DOZEY" className="h-12" />
+            <img src={dozeyLogo} alt="DOZEY" className="h-16" />
           </div>
           <div className="flex items-center gap-3">
             <LanguageSelector />
