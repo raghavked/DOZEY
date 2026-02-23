@@ -2,6 +2,9 @@ import { useState, useRef } from 'react';
 import { UploadedDocument, VaccinationRecord, ParsedVaccinationData, MedicalExemption } from '@/types';
 import { Upload, FileText, Image, Trash2, Plus, Download, Pencil, Check, X, Sparkles, Loader2, ChevronDown, ChevronUp, Import, AlertCircle, CheckCircle2, Globe, Stethoscope, ShieldCheck } from 'lucide-react';
 import { getSupabase } from '@/lib/supabase';
+import { CustomSelect } from '@/components/CustomSelect';
+import { AutocompleteInput } from '@/components/AutocompleteInput';
+import { VACCINES, COUNTRIES, HEALTHCARE_PROVIDERS } from '@/lib/autocomplete-data';
 
 interface DocumentUploadProps {
   documents: UploadedDocument[];
@@ -326,18 +329,15 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
           <h2 className="text-gray-900 mb-6">Manual Entry</h2>
           <form onSubmit={handleManualSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="vaccineName" className="block text-gray-700 mb-2">Vaccine Name *</label>
-                <input
-                  type="text"
-                  id="vaccineName"
-                  value={manualForm.vaccineName}
-                  onChange={(e) => setManualForm(prev => ({ ...prev, vaccineName: e.target.value }))}
-                  required
-                  placeholder="e.g., COVID-19, Measles, Hepatitis B"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-                />
-              </div>
+              <AutocompleteInput
+                id="vaccineName"
+                label="Vaccine Name"
+                value={manualForm.vaccineName}
+                onChange={(val) => setManualForm(prev => ({ ...prev, vaccineName: val }))}
+                suggestions={VACCINES}
+                required
+                placeholder="e.g., COVID-19, Measles, Hepatitis B"
+              />
               <div>
                 <label htmlFor="date" className="block text-gray-700 mb-2">Date Administered *</label>
                 <input
@@ -346,59 +346,44 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                   value={manualForm.date}
                   onChange={(e) => setManualForm(prev => ({ ...prev, date: e.target.value }))}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
                 />
               </div>
-              <div>
-                <label htmlFor="countryGiven" className="block text-gray-700 mb-2">Country Given *</label>
-                <input
-                  type="text"
-                  id="countryGiven"
-                  value={manualForm.countryGiven}
-                  onChange={(e) => setManualForm(prev => ({ ...prev, countryGiven: e.target.value }))}
-                  required
-                  placeholder="e.g., India, USA, Germany"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-                />
-              </div>
-              <div>
-                <label htmlFor="doseNumber" className="block text-gray-700 mb-2">Dose Number *</label>
-                <select
-                  id="doseNumber"
-                  value={manualForm.doseNumber}
-                  onChange={(e) => setManualForm(prev => ({ ...prev, doseNumber: parseInt(e.target.value) }))}
-                  required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-                >
-                  {[1, 2, 3, 4, 5].map(num => (
-                    <option key={num} value={num}>Dose {num}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="location" className="block text-gray-700 mb-2">Location *</label>
-                <input
-                  type="text"
-                  id="location"
-                  value={manualForm.location}
-                  onChange={(e) => setManualForm(prev => ({ ...prev, location: e.target.value }))}
-                  required
-                  placeholder="e.g., City Hospital, Local Clinic"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-                />
-              </div>
-              <div>
-                <label htmlFor="provider" className="block text-gray-700 mb-2">Healthcare Provider *</label>
-                <input
-                  type="text"
-                  id="provider"
-                  value={manualForm.provider}
-                  onChange={(e) => setManualForm(prev => ({ ...prev, provider: e.target.value }))}
-                  required
-                  placeholder="e.g., Dr. Smith"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-                />
-              </div>
+              <AutocompleteInput
+                id="countryGiven"
+                label="Country Given"
+                value={manualForm.countryGiven}
+                onChange={(val) => setManualForm(prev => ({ ...prev, countryGiven: val }))}
+                suggestions={COUNTRIES}
+                required
+                placeholder="e.g., India, USA, Germany"
+              />
+              <CustomSelect
+                id="doseNumber"
+                label="Dose Number"
+                value={String(manualForm.doseNumber)}
+                onChange={(val) => setManualForm(prev => ({ ...prev, doseNumber: parseInt(val) }))}
+                options={[1, 2, 3, 4, 5].map(n => ({ value: String(n), label: `Dose ${n}` }))}
+                required
+              />
+              <AutocompleteInput
+                id="location"
+                label="Location / Country"
+                value={manualForm.location}
+                onChange={(val) => setManualForm(prev => ({ ...prev, location: val }))}
+                suggestions={COUNTRIES}
+                required
+                placeholder="e.g., City Hospital, Local Clinic"
+              />
+              <AutocompleteInput
+                id="provider"
+                label="Healthcare Provider"
+                value={manualForm.provider}
+                onChange={(val) => setManualForm(prev => ({ ...prev, provider: val }))}
+                suggestions={HEALTHCARE_PROVIDERS}
+                required
+                placeholder="e.g., Dr. Smith"
+              />
               <div className="md:col-span-2">
                 <label htmlFor="notes" className="block text-gray-700 mb-2">Notes (Optional)</label>
                 <textarea

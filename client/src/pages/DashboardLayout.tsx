@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Dashboard } from '@/components/Dashboard';
 import { ProfileSection } from '@/components/ProfileSection';
@@ -15,6 +15,7 @@ import { useAuth } from '@/hooks/use-auth';
 export function DashboardLayout() {
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState<'dashboard' | 'profile' | 'countries' | 'upload' | 'timeline' | 'compliance' | 'share' | 'alerts'>('dashboard');
+  const [isNewUser, setIsNewUser] = useState(false);
   
   const { profile, isLoading: profileLoading, saveProfile } = useProfile();
   const { vaccinations, isLoading: vaccLoading, addVaccination, deleteVaccination } = useVaccinations();
@@ -23,6 +24,22 @@ export function DashboardLayout() {
   const { exemptions, isLoading: exemptionsLoading, refreshExemptions } = useExemptions();
 
   const isLoading = profileLoading || vaccLoading || docsLoading || historyLoading || exemptionsLoading;
+
+  useEffect(() => {
+    if (!isLoading) {
+      const isProfileEmpty = !profile || (!profile.fullName && !profile.dateOfBirth && !profile.currentCountry && !profile.primaryProvider);
+      if (isProfileEmpty) {
+        setCurrentPage('profile');
+        setIsNewUser(true);
+      }
+    }
+  }, [isLoading, profile]);
+
+  useEffect(() => {
+    if (isNewUser && currentPage !== 'profile' && profile) {
+      setIsNewUser(false);
+    }
+  }, [currentPage, isNewUser, profile]);
 
   if (isLoading) {
     return (
@@ -64,7 +81,7 @@ export function DashboardLayout() {
           />
         );
       case 'profile':
-        return <ProfileSection profile={defaultProfile} onSave={(p) => saveProfile(p)} />;
+        return <ProfileSection profile={defaultProfile} onSave={(p) => saveProfile(p)} isNewUser={isNewUser} />;
       case 'countries':
         return (
           <CountryHistory

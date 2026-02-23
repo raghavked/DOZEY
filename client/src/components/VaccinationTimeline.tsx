@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { VaccinationRecord } from '@/types';
 import { Clock, CheckCircle, AlertCircle, Trash2, Filter } from 'lucide-react';
+import { CustomSelect } from '@/components/CustomSelect';
 
 interface VaccinationTimelineProps {
   vaccinations: VaccinationRecord[];
@@ -46,38 +47,28 @@ export function VaccinationTimeline({ vaccinations, onAdd, onDelete }: Vaccinati
             <h3 className="text-[#22283a]">Filters</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="filterCountry" className="block text-[#22283a] mb-2">
-                Country
-              </label>
-              <select
-                id="filterCountry"
-                value={filterCountry}
-                onChange={(e) => setFilterCountry(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
-              >
-                <option value="all">All Countries</option>
-                {countries.map(country => (
-                  <option key={country} value={country}>{country}</option>
-                ))}
-              </select>
-            </div>
+            <CustomSelect
+              id="filterCountry"
+              label="Country"
+              value={filterCountry}
+              onChange={setFilterCountry}
+              options={[
+                { value: 'all', label: 'All Countries' },
+                ...countries.map(c => ({ value: c, label: c })),
+              ]}
+            />
 
-            <div>
-              <label htmlFor="filterVerified" className="block text-[#22283a] mb-2">
-                Status
-              </label>
-              <select
-                id="filterVerified"
-                value={filterVerified}
-                onChange={(e) => setFilterVerified(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
-              >
-                <option value="all">All Status</option>
-                <option value="verified">Verified Only</option>
-                <option value="unverified">Unverified Only</option>
-              </select>
-            </div>
+            <CustomSelect
+              id="filterVerified"
+              label="Status"
+              value={filterVerified}
+              onChange={setFilterVerified}
+              options={[
+                { value: 'all', label: 'All Status' },
+                { value: 'verified', label: 'Verified Only' },
+                { value: 'unverified', label: 'Unverified Only' },
+              ]}
+            />
           </div>
         </div>
 

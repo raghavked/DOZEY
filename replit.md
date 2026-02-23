@@ -125,6 +125,11 @@ docs/                      # Documentation
 - Profile includes `targetInstitution`, `targetEmployment`, and `targetCountry` fields
 
 ## Recent Changes
+- 2026-02-23: New user onboarding: redirects to profile page on first sign-up with welcome banner
+- 2026-02-23: Made healthcare provider required in profile; added smart autocomplete to all text inputs (countries, vaccines, providers, languages, institutions, employers, states)
+- 2026-02-23: Replaced all native select dropdowns with styled CustomSelect component matching app design
+- 2026-02-23: Added CustomSelect component, expanded autocomplete-data.ts with providers, states, institutions, employers
+- 2026-02-23: Added doctor notes processing UI and medical exemptions display/import in DocumentUpload
 - 2026-02-23: Expanded compliance check to 3 types: institution, employer, and country/visa with context-aware reports and tab selector UI
 - 2026-02-23: Added institution compliance check system with AI-powered requirements lookup, vaccine alias matching, and formatted export
 - 2026-02-23: Wired up AI document processing pipeline (Mistral OCR, DeepL translation, OpenAI parsing) with full frontend UI

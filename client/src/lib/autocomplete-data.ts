@@ -40,6 +40,69 @@ export const LANGUAGES_LIST = [
   "Hebrew","Persian (Farsi)","Malay","Indonesian","Tagalog","Tamil","Telugu","Gujarati","Marathi","Punjabi"
 ];
 
+export const HEALTHCARE_PROVIDERS = [
+  "Primary Care Physician","Family Medicine","Internal Medicine","Pediatrician","OB/GYN",
+  "General Practitioner","Urgent Care Clinic","Community Health Center","Hospital Outpatient",
+  "Veterans Affairs (VA)","Kaiser Permanente","Cleveland Clinic","Mayo Clinic","Johns Hopkins",
+  "Mass General Brigham","Mount Sinai","NYU Langone","UCSF Medical","Stanford Health Care",
+  "Cedars-Sinai","Duke Health","University Hospital","Public Health Department","CDC Travel Clinic",
+  "Passport Health","CVS MinuteClinic","Walgreens Healthcare","Planned Parenthood","Military Health (TRICARE)",
+  "Indian Health Service","Academic Medical Center","Federally Qualified Health Center",
+  "World Health Organization","Doctors Without Borders","International SOS","CIGNA Global Health",
+  "Aetna International","United Healthcare Global","NHS (UK)","Apollo Hospitals (India)",
+  "Medanta (India)","Fortis Healthcare (India)","Max Healthcare (India)","SUS (Brazil)",
+  "Medicare (Australia)","Private Practice"
+];
+
+export const US_STATES = [
+  "Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware",
+  "Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky",
+  "Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi",
+  "Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico",
+  "New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania",
+  "Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont",
+  "Virginia","Washington","West Virginia","Wisconsin","Wyoming","District of Columbia",
+  "Puerto Rico","Guam","U.S. Virgin Islands","American Samoa","Northern Mariana Islands"
+];
+
+export const INSTITUTIONS = [
+  "Harvard University","Stanford University","MIT","Yale University","Princeton University",
+  "Columbia University","University of Pennsylvania","University of Chicago","Duke University",
+  "Northwestern University","Johns Hopkins University","Caltech","Brown University",
+  "Cornell University","Rice University","Vanderbilt University","Georgetown University",
+  "University of Michigan","University of Virginia","UCLA","UC Berkeley","USC",
+  "University of Florida","Penn State","Ohio State University","University of Texas at Austin",
+  "Georgia Tech","University of Illinois","University of Wisconsin-Madison",
+  "University of Washington","NYU","Boston University","Tufts University","Emory University",
+  "University of Notre Dame","Carnegie Mellon University","University of North Carolina",
+  "University of Maryland","Purdue University","Indiana University","Rutgers University",
+  "Arizona State University","University of Minnesota","University of Colorado Boulder",
+  "University of Oregon","University of Arizona","Michigan State University",
+  "University of Pittsburgh","University of Iowa","University of Connecticut",
+  "University of Toronto","McGill University","University of British Columbia",
+  "University of Oxford","University of Cambridge","Imperial College London","LSE",
+  "University of Edinburgh","University of Melbourne","University of Sydney",
+  "National University of Singapore","University of Hong Kong","Tsinghua University",
+  "Peking University","University of Tokyo","Seoul National University",
+  "IIT Bombay","IIT Delhi","University of Delhi","University of São Paulo"
+];
+
+export const EMPLOYERS = [
+  "Kaiser Permanente","Cleveland Clinic","Mayo Clinic","Johns Hopkins Medicine",
+  "HCA Healthcare","Ascension Health","CommonSpirit Health","Trinity Health",
+  "United Nations","World Health Organization","UNICEF","Red Cross / Red Crescent",
+  "Doctors Without Borders","Peace Corps","USAID","World Bank",
+  "US Army","US Navy","US Air Force","US Marines","US Coast Guard",
+  "US Department of Defense","Department of Homeland Security","FEMA",
+  "CDC (Centers for Disease Control)","NIH (National Institutes of Health)","FDA",
+  "Amazon","Google","Apple","Microsoft","Meta","Tesla","SpaceX",
+  "JPMorgan Chase","Goldman Sachs","Bank of America","Deloitte","McKinsey",
+  "PwC","Ernst & Young","KPMG","Accenture","Boeing","Lockheed Martin",
+  "Northrop Grumman","Raytheon","General Dynamics","BAE Systems",
+  "Pfizer","Johnson & Johnson","Merck","AbbVie","Moderna","Novartis",
+  "UnitedHealth Group","Anthem","Cigna","Aetna","Humana"
+];
+
 export const DOCUMENT_TYPES = [
   "Vaccination Card","Lab Report","Prescription","Medical Record","Insurance Card",
   "Passport Health Page","Travel Health Certificate","Immunization Record",

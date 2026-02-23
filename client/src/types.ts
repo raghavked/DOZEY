@@ -19,7 +19,7 @@ export interface UserProfile {
   countryOfOrigin: string;
   citizenships: string[];
   languages: string[];
-  primaryProvider?: string;
+  primaryProvider: string;
   targetCountry?: string;
   targetInstitution?: string;
   targetEmployment?: string;

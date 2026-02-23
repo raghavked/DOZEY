@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { CountryPeriod } from '@/types';
 import { Globe, Plus, Trash2, MapPin } from 'lucide-react';
+import { AutocompleteInput } from '@/components/AutocompleteInput';
+import { COUNTRIES, US_STATES } from '@/lib/autocomplete-data';
 
 interface CountryHistoryProps {
   periods: CountryPeriod[];
@@ -58,34 +60,24 @@ export function CountryHistory({ periods, onAdd, onDelete }: CountryHistoryProps
           <form onSubmit={handleSubmit} className="bg-gray-50 p-6 rounded-lg mb-6">
             <h3 className="text-gray-900 mb-4">Add Period</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label htmlFor="country" className="block text-gray-700 mb-2">
-                  Country *
-                </label>
-                <input
-                  type="text"
-                  id="country"
-                  value={formData.country}
-                  onChange={(e) => setFormData(prev => ({ ...prev, country: e.target.value }))}
-                  required
-                  placeholder="e.g., Canada, India, USA"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
-                />
-              </div>
+              <AutocompleteInput
+                id="country"
+                label="Country"
+                value={formData.country}
+                onChange={(val) => setFormData(prev => ({ ...prev, country: val }))}
+                suggestions={COUNTRIES}
+                required
+                placeholder="e.g., Canada, India, USA"
+              />
 
-              <div>
-                <label htmlFor="state" className="block text-gray-700 mb-2">
-                  State/Province (Optional)
-                </label>
-                <input
-                  type="text"
-                  id="state"
-                  value={formData.state}
-                  onChange={(e) => setFormData(prev => ({ ...prev, state: e.target.value }))}
-                  placeholder="e.g., Ontario, California"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none"
-                />
-              </div>
+              <AutocompleteInput
+                id="state"
+                label="State/Province (Optional)"
+                value={formData.state}
+                onChange={(val) => setFormData(prev => ({ ...prev, state: val }))}
+                suggestions={US_STATES}
+                placeholder="e.g., Ontario, California"
+              />
 
               <div>
                 <label htmlFor="startYear" className="block text-gray-700 mb-2">

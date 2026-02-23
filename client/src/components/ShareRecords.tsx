@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { VaccinationRecord, UserProfile, CountryPeriod } from '@/types';
 import { Share2, Download, Link as LinkIcon, Mail, Copy, CheckCircle } from 'lucide-react';
+import { CustomSelect } from '@/components/CustomSelect';
 
 interface ShareRecordsProps {
   vaccinations: VaccinationRecord[];
@@ -170,22 +171,18 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
             <h3 className="text-gray-900 mb-4">Generate Secure Link</h3>
             
             <div className="space-y-4 mb-6">
-              <div>
-                <label htmlFor="expiration" className="block text-gray-700 mb-2">
-                  Link Expiration
-                </label>
-                <select
-                  id="expiration"
-                  value={expirationDays}
-                  onChange={(e) => setExpirationDays(parseInt(e.target.value))}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
-                >
-                  <option value={1}>1 day</option>
-                  <option value={7}>7 days</option>
-                  <option value={30}>30 days</option>
-                  <option value={90}>90 days</option>
-                </select>
-              </div>
+              <CustomSelect
+                id="expiration"
+                label="Link Expiration"
+                value={String(expirationDays)}
+                onChange={(val) => setExpirationDays(parseInt(val))}
+                options={[
+                  { value: '1', label: '1 day' },
+                  { value: '7', label: '7 days' },
+                  { value: '30', label: '30 days' },
+                  { value: '90', label: '90 days' },
+                ]}
+              />
 
               <div className="flex items-center gap-2">
                 <input
