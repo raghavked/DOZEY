@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/use-auth';
-import { PublicNavbar } from '@/components/PublicNavbar';
-import { PublicFooter } from '@/components/PublicFooter';
+import { PublicLayout } from '@/pages/PublicLayout';
 import { HomePage } from '@/pages/HomePage';
 import { FeaturesPage } from '@/pages/FeaturesPage';
 import { ProgressPage } from '@/pages/ProgressPage';
@@ -33,23 +32,14 @@ export default function App() {
           </>
         ) : (
           <>
-            <Route
-              path="/*"
-              element={
-                <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-green-50/20 text-[#22283a]">
-                  <PublicNavbar />
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/features" element={<FeaturesPage />} />
-                    <Route path="/progress" element={<ProgressPage />} />
-                    <Route path="/team" element={<TeamPage />} />
-                    <Route path="/contact" element={<ContactPage />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                  </Routes>
-                  <PublicFooter />
-                </div>
-              }
-            />
+            <Route element={<PublicLayout />}>
+              <Route index element={<HomePage />} />
+              <Route path="features" element={<FeaturesPage />} />
+              <Route path="progress" element={<ProgressPage />} />
+              <Route path="team" element={<TeamPage />} />
+              <Route path="contact" element={<ContactPage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Route>
           </>
         )}
       </Routes>
