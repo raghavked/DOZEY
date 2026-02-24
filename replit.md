@@ -130,26 +130,26 @@ docs/                      # Documentation
 - ComplianceReport component: 3-tab selector, popular suggestions per type, requirement-by-requirement status, gap analysis, export
 - Profile includes `targetInstitution`, `targetEmployment`, and `targetCountry` fields
 
-## Design System (Episense-Inspired)
-- Bold minimal aesthetic: oversized typography (text-5xl to text-8xl), font-extrabold
-- Transparent navbar overlaying gradient hero sections, scroll-triggered solid background
+## Design System (Apple/Episense-Inspired)
+- Sleek minimal aesthetic: centered hero text, font-semibold (not extrabold), clean gradients
+- Transparent navbar with frosted glass (backdrop-blur-2xl, bg-white/80) on scroll
 - Scroll animations: fadeInUp, fadeIn, scaleIn, slideInLeft, slideInRight via IntersectionObserver
-- Rounded-full CTAs, muted secondary text (white/30-40, gray-400), uppercase tracking-widest labels
+- Rounded-full CTAs (white on hero, brand blue elsewhere), muted text (white/40, gray-400), xs tracking-widest labels
 - Dark off-black (#22283a) panels for auth pages, minimal bullet-point trust signals
+- Light footer (#fafafa) with border-top, "Actively in development" only in footer
 - Dashboard: spacious layout, outline-style buttons, pill-tab navigation, no gradient banners
+- Icons use subtle opacity (text-[#22283a]/40) rather than bold colors
+- Feature grids use gap-px with bg-gray-200 for Apple-style grid lines
 
 ## Recent Changes
-- 2026-02-24: Login/Register: Dark off-black panels, minimal trust signals, rounded-full buttons, clean form layout
-- 2026-02-24: Episense-style redesign across all pages: oversized hero text, transparent navbar, scroll animations, flowing sections, minimal card usage
-- 2026-02-24: HomePage: Mission section, bold stats, active development banner, security section, how-it-works pipeline
-- 2026-02-24: ProgressPage: 22 impact stories with carousel and category filtering, achievements section
-- 2026-02-24: TeamPage: Updated roles (Isaac → Co-Founder & CRO, Raghav → Co-Founder & CTO), awards cards
-- 2026-02-24: FeaturesPage: AI pipeline steps with alternating layout, feature grid, security section
-- 2026-02-24: ContactPage: Contact form, info cards, waitlist section
-- 2026-02-24: PublicNavbar: Transparent with scroll transition; PublicFooter: Minimal with lower opacity
+- 2026-02-24: Apple-like refinement: centered heroes, font-semibold, frosted glass navbar, light footer, subtler typography
+- 2026-02-24: Removed "Actively in development" from header/hero, kept only in footer
+- 2026-02-24: PublicNavbar: slimmer (h-16), frosted glass, smaller text (13px), dark Sign In button
+- 2026-02-24: PublicFooter: Changed from dark to light (#fafafa) with border-top
+- 2026-02-24: All hero sections centered, gradient-to-b, consistent layout
+- 2026-02-24: Login/Register: Dark off-black panels, minimal trust signals, rounded-full buttons
 - 2026-02-24: Dashboard/Navigation: Cleaner stat cards, pill-tab nav, outline action buttons
 - 2026-02-24: ShareRecords: COVID-19 vaccine card format export option
-- 2026-02-24: Removed region references, replaced with "5 countries validated, expanding to more"
 - 2026-02-23: New user onboarding: redirects to profile page on first sign-up with welcome banner
 - 2026-02-23: Made healthcare provider required in profile; added smart autocomplete to all text inputs (countries, vaccines, providers, languages, institutions, employers, states)
 - 2026-02-23: Replaced all native select dropdowns with styled CustomSelect component matching app design
