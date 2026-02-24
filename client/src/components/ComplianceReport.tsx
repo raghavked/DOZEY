@@ -398,9 +398,39 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                 <span className="text-3xl font-semibold">{result.overallPercentage}%</span>
               </div>
               <Progress value={result.overallPercentage} className="h-3 bg-white/30" />
-              <p className="text-white/80 text-sm mt-2">
-                {result.totalCompleted} of {result.totalRequired} required doses completed
-              </p>
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-white/80 text-sm">
+                  {result.totalCompleted} of {result.totalRequired} required doses completed
+                </p>
+                <p className="text-white/80 text-sm">
+                  Based on {vaccinations.length} record{vaccinations.length !== 1 ? 's' : ''} in your timeline
+                </p>
+              </div>
+              {result.compliance.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-white/20">
+                  {result.compliance.map((item, idx) => (
+                    <span
+                      key={idx}
+                      className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full ${
+                        item.status === 'complete'
+                          ? 'bg-green-400/30 text-green-100'
+                          : item.status === 'partial'
+                          ? 'bg-yellow-400/30 text-yellow-100'
+                          : 'bg-red-400/30 text-red-100'
+                      }`}
+                    >
+                      {item.status === 'complete' ? (
+                        <CheckCircle2 className="w-3 h-3" />
+                      ) : item.status === 'partial' ? (
+                        <AlertCircle className="w-3 h-3" />
+                      ) : (
+                        <XCircle className="w-3 h-3" />
+                      )}
+                      {item.vaccine_name} ({item.completed_doses}/{item.required_doses})
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
