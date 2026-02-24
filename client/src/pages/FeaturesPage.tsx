@@ -1,147 +1,130 @@
-import { Upload, Brain, Shield, Share2, ArrowRight, Syringe, Lock, FileCheck } from 'lucide-react';
+import { Upload, Brain, Shield, Share2, ArrowRight, Syringe, Lock, FileCheck, Globe, Languages, ClipboardCheck, Zap, FileText, Stethoscope } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export function FeaturesPage() {
-  const features = [
-    {
-      icon: Upload,
-      title: 'Upload vaccination records',
-      description: 'PDFs, images, or documents',
-      color: '#1051a5',
-    },
-    {
-      icon: Brain,
-      title: 'AI-powered parsing & standardization',
-      description: 'Automatically extracts and organizes data',
-      color: '#97bf2d',
-    },
-    {
-      icon: Shield,
-      title: 'Secure, encrypted digital vaccine record',
-      description: 'Your data stays private and protected',
-      color: '#26844f',
-    },
-    {
-      icon: Share2,
-      title: 'Institution-ready sharing across borders',
-      description: 'Share verified records with healthcare providers globally',
-      color: '#1051a5',
-    },
-  ];
-
   return (
-    <div className="min-h-screen py-20">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none opacity-5 z-0">
-        <Syringe className="absolute top-10 right-1/4 w-40 h-40 text-[#1051a5] rotate-12" />
-        <Shield className="absolute bottom-20 left-10 w-36 h-36 text-[#26844f] -rotate-12" />
-        <FileCheck className="absolute top-1/2 right-10 w-32 h-32 text-[#97bf2d]" />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-16">
-          <div className="flex justify-center gap-3 mb-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center shadow-md">
-              <Syringe className="w-7 h-7 text-[#1051a5]" />
-            </div>
-            <div className="w-14 h-14 bg-gradient-to-br from-lime-100 to-lime-200 rounded-xl flex items-center justify-center shadow-md">
-              <Brain className="w-7 h-7 text-[#97bf2d]" />
-            </div>
-            <div className="w-14 h-14 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center shadow-md">
-              <Shield className="w-7 h-7 text-[#26844f]" />
-            </div>
-          </div>
-          <h1 className="text-5xl mb-6 text-[#22283a]">How DOZEY Works</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Our MVP provides a seamless, secure solution for managing and sharing
-            vaccination records internationally.
+    <div className="min-h-screen">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#1051a5] via-[#0d4290] to-[#22283a] text-white py-24 lg:py-32">
+        <div className="absolute inset-0 opacity-10">
+          <Syringe className="absolute top-10 right-1/4 w-48 h-48 rotate-45" />
+          <Shield className="absolute bottom-10 left-20 w-40 h-40 -rotate-12" />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <span className="inline-block bg-white/10 text-white/90 text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
+            Features
+          </span>
+          <h1 className="text-5xl lg:text-6xl font-bold mb-6">
+            How <span className="text-[#97bf2d]">DOZEY</span> Works
+          </h1>
+          <p className="text-xl text-white/80 max-w-3xl mx-auto">
+            A complete platform for managing, translating, and sharing your vaccination
+            records across borders — powered by AI.
           </p>
         </div>
+      </section>
 
-        <div className="relative">
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-[#1051a5] via-[#97bf2d] to-[#26844f] transform -translate-y-1/2 opacity-20"></div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
-            {features.map((feature, index) => {
-              const Icon = feature.icon;
-              const bgColors = ['from-blue-50 to-blue-100/50', 'from-lime-50 to-lime-100/50', 'from-emerald-50 to-emerald-100/50', 'from-indigo-50 to-indigo-100/50'];
-              const borderColors = ['border-blue-200/60', 'border-lime-200/60', 'border-emerald-200/60', 'border-indigo-200/60'];
-
-              return (
-                <div
-                  key={index}
-                  className={`bg-gradient-to-br ${bgColors[index]} rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all border-2 ${borderColors[index]} relative hover:scale-[1.02]`}
-                >
-                  <div className="absolute -top-4 -left-4 w-12 h-12 rounded-full bg-gradient-to-br from-[#1051a5] to-[#0d4185] border-4 border-white flex items-center justify-center shadow-lg">
-                    <span className="text-lg text-white font-bold">{index + 1}</span>
-                  </div>
-
-                  <div
-                    className="w-16 h-16 rounded-2xl mb-6 flex items-center justify-center shadow-md bg-white"
-                    style={{ borderWidth: '2px', borderColor: feature.color }}
-                  >
-                    <Icon className="w-8 h-8" style={{ color: feature.color }} />
-                  </div>
-
-                  <h3 className="text-xl mb-3 text-[#22283a] font-semibold">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-700">{feature.description}</p>
-
-                  {index < features.length - 1 && (
-                    <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2">
-                      <ArrowRight className="w-8 h-8 text-gray-400" />
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="mt-20 bg-gradient-to-br from-blue-100/70 via-indigo-100/60 to-green-100/60 rounded-2xl p-12 shadow-xl border-2 border-blue-200/50">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="flex justify-center mb-4">
-              <Lock className="w-12 h-12 text-[#1051a5]" />
-            </div>
-            <h2 className="text-3xl mb-4 text-[#22283a]">
-              Technical but Approachable
-            </h2>
-            <p className="text-lg text-gray-700 mb-8">
-              DOZEY combines cutting-edge AI technology with an intuitive user experience,
-              making complex healthcare data management simple and secure.
+      <section className="py-20 lg:py-28 bg-[#fefefe]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-[#22283a] mb-4">The DOZEY Pipeline</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              From upload to compliance in four simple steps
             </p>
+          </div>
 
-            <div className="grid md:grid-cols-3 gap-6 text-left">
-              <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all border-2 border-blue-200/50">
-                <div className="flex items-center gap-2 mb-3">
-                  <Lock className="w-6 h-6 text-[#1051a5]" />
-                  <h4 className="text-lg font-semibold text-[#1051a5]">Encrypted Storage</h4>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { step: '1', icon: Upload, title: 'Upload Records', desc: 'Upload vaccination cards, medical documents, or doctor\'s notes. We accept PDFs, images, and scanned documents in any language.', color: '#1051a5' },
+              { step: '2', icon: Brain, title: 'AI Extracts & Translates', desc: 'Our Mistral OCR reads handwritten and printed records. DeepL detects the language and translates everything to English automatically.', color: '#97bf2d' },
+              { step: '3', icon: Syringe, title: 'Records Organized', desc: 'OpenAI parses the translated text into structured data — vaccine names, dates, doses, and providers are added to your timeline.', color: '#26844f' },
+              { step: '4', icon: ClipboardCheck, title: 'Check Compliance', desc: 'Compare your records against requirements for any institution, employer, or country. Generate downloadable compliance reports.', color: '#1051a5' },
+            ].map(({ step, icon: Icon, title, desc, color }) => (
+              <div key={step} className="relative bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all hover:-translate-y-1">
+                <div className="absolute -top-5 left-6 w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg" style={{ backgroundColor: color }}>
+                  {step}
                 </div>
-                <p className="text-sm text-gray-600">
-                  Bank-level encryption ensures your health data remains private and secure
-                </p>
-              </div>
-              <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all border-2 border-lime-200/50">
-                <div className="flex items-center gap-2 mb-3">
-                  <Brain className="w-6 h-6 text-[#97bf2d]" />
-                  <h4 className="text-lg font-semibold text-[#97bf2d]">Smart Recognition</h4>
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 mt-3" style={{ backgroundColor: `${color}12` }}>
+                  <Icon className="w-8 h-8" style={{ color }} />
                 </div>
-                <p className="text-sm text-gray-600">
-                  AI automatically identifies and organizes vaccination information
-                </p>
+                <h3 className="text-xl font-bold text-[#22283a] mb-3">{title}</h3>
+                <p className="text-gray-600 leading-relaxed">{desc}</p>
               </div>
-              <div className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all border-2 border-green-200/50">
-                <div className="flex items-center gap-2 mb-3">
-                  <FileCheck className="w-6 h-6 text-[#26844f]" />
-                  <h4 className="text-lg font-semibold text-[#26844f]">Global Standards</h4>
-                </div>
-                <p className="text-sm text-gray-600">
-                  Compatible with international healthcare systems and requirements
-                </p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
+
+      <section className="py-20 lg:py-28 bg-gradient-to-br from-gray-50 to-blue-50/50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-[#22283a] mb-4">
+              Everything You Need for <span className="text-[#1051a5]">Health Record Portability</span>
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[
+              { icon: Languages, title: 'Multi-Language Support', desc: 'Records are automatically detected and translated from 7+ languages including Hindi, Chinese, Spanish, French, Portuguese, and Arabic.', color: '#1051a5' },
+              { icon: Globe, title: 'Cross-Border Compliance', desc: 'Check vaccination requirements for any country, university, or employer. Stay compliant as you move between countries.', color: '#26844f' },
+              { icon: FileText, title: 'Document Management', desc: 'Upload, organize, rename, and securely store all your medical documents with tamper-proof digital storage.', color: '#97bf2d' },
+              { icon: Stethoscope, title: 'Medical Exemptions', desc: 'AI extracts medical exemptions from doctor\'s notes and factors them into compliance checks automatically.', color: '#1051a5' },
+              { icon: Share2, title: 'Secure Sharing', desc: 'Share verified records with healthcare providers, schools, or employers with COVID-19 vaccine card format export.', color: '#26844f' },
+              { icon: Zap, title: 'AI Chatbot Assistant', desc: 'Doze, our AI assistant, helps you navigate the app, answer vaccination questions, and guides you through the process.', color: '#97bf2d' },
+            ].map(({ icon: Icon, title, desc, color }) => (
+              <div key={title} className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all hover:-translate-y-1 group">
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-colors duration-300" style={{ backgroundColor: `${color}12` }}>
+                  <Icon className="w-7 h-7" style={{ color }} />
+                </div>
+                <h3 className="text-xl font-bold text-[#22283a] mb-3">{title}</h3>
+                <p className="text-gray-600 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 lg:py-28 bg-[#fefefe]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-[#22283a] mb-4">Security & Privacy</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Your health data deserves the highest level of protection
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {[
+              { icon: Lock, title: 'HIPAA Compliant', desc: 'Following healthcare privacy standards with comprehensive Terms of Service and Privacy Policy.', color: '#1051a5' },
+              { icon: Shield, title: '256-bit Encryption', desc: 'Bank-level AES encryption protects your data at rest and in transit.', color: '#26844f' },
+              { icon: FileCheck, title: 'Audit Trail', desc: 'Every access to your records is logged with timestamps for complete transparency and accountability.', color: '#97bf2d' },
+            ].map(({ icon: Icon, title, desc, color }) => (
+              <div key={title} className="bg-gradient-to-br from-white to-gray-50 rounded-2xl p-10 shadow-lg border border-gray-100 text-center hover:shadow-xl transition-all">
+                <div className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: `${color}12` }}>
+                  <Icon className="w-10 h-10" style={{ color }} />
+                </div>
+                <h3 className="text-2xl font-bold text-[#22283a] mb-3">{title}</h3>
+                <p className="text-gray-600 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 lg:py-24 bg-gradient-to-br from-[#22283a] via-[#1051a5] to-[#0d4290] text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-bold mb-6">Ready to Get Started?</h2>
+          <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
+            Create your free account and start managing your health records the smart way.
+          </p>
+          <Link
+            to="/register"
+            className="inline-flex items-center gap-2 bg-[#97bf2d] hover:bg-[#88ad28] text-[#22283a] font-bold px-10 py-4 rounded-xl text-lg transition-all hover:shadow-xl hover:shadow-[#97bf2d]/30 active:scale-95"
+          >
+            Create Free Account
+            <ArrowRight className="w-5 h-5" />
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

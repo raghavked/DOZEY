@@ -131,6 +131,15 @@ docs/                      # Documentation
 - Profile includes `targetInstitution`, `targetEmployment`, and `targetCountry` fields
 
 ## Recent Changes
+- 2026-02-24: Complete website redesign: Episense/Equitle-inspired bold design with full-width sections, gradient heroes, trust signals, and bolder typography across all public pages
+- 2026-02-24: HomePage: Added mission section (moved from TeamPage), bold stats (5 countries, 60+ interviews, 86% validation, 10+ experts), active development banner, security section, how-it-works pipeline
+- 2026-02-24: ProgressPage: Added 22 interactive impact stories with carousel/slideshow and category filtering (Employment/Education/Refugee/Immigration), EIR at UC Davis + Hult Prize Regionals Winner achievements
+- 2026-02-24: TeamPage: Updated roles (Isaac → Co-Founder & CRO, Raghav → Co-Founder & CTO), removed mission section, added UC Davis + awards cards
+- 2026-02-24: FeaturesPage: Fuller design with AI pipeline steps, feature grid, security section
+- 2026-02-24: ContactPage: Professional layout with contact form, info cards, waitlist section
+- 2026-02-24: PublicNavbar: Sticky with backdrop blur, updated nav links; PublicFooter: Fuller design with active development badge, navigation + legal columns
+- 2026-02-24: ShareRecords: Added COVID-19 vaccine card format export option with card preview and download
+- 2026-02-24: Removed Europe/Mexico/India region references, replaced with "5 countries validated, expanding to more"
 - 2026-02-23: New user onboarding: redirects to profile page on first sign-up with welcome banner
 - 2026-02-23: Made healthcare provider required in profile; added smart autocomplete to all text inputs (countries, vaccines, providers, languages, institutions, employers, states)
 - 2026-02-23: Replaced all native select dropdowns with styled CustomSelect component matching app design

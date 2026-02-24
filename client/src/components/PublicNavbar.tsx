@@ -23,7 +23,7 @@ export function PublicNavbar() {
             <img src={dozeyLogo} alt="DOZEY" className="h-16" />
           </Link>
 
-          <div className="hidden md:flex md:items-center md:space-x-8">
+          <div className="hidden lg:flex lg:items-center lg:space-x-6">
             {links.map((link) => (
               <Link
                 key={link.to}
@@ -42,14 +42,14 @@ export function PublicNavbar() {
           <div className="flex items-center gap-3">
             <Link
               to="/login"
-              className="hidden md:inline-flex items-center px-6 py-2.5 bg-[#1051a5] text-white rounded-lg hover:bg-[#0d4185] transition-all shadow-md hover:shadow-lg font-medium"
+              className="hidden lg:inline-flex items-center px-6 py-2.5 bg-[#1051a5] text-white rounded-lg hover:bg-[#0d4185] transition-all shadow-md hover:shadow-lg font-medium"
             >
               Sign In
             </Link>
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden p-2 text-[#22283a] hover:bg-gray-100 rounded-lg"
+              className="lg:hidden p-2 text-[#22283a] hover:bg-gray-100 rounded-lg"
             >
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -58,14 +58,14 @@ export function PublicNavbar() {
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200">
+        <div className="lg:hidden bg-white border-t border-gray-200">
           <div className="px-4 py-3 space-y-1">
             {links.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
                 onClick={() => setMobileOpen(false)}
-                className={`block px-3 py-2 rounded-md text-sm font-medium ${
+                className={`block px-3 py-3 rounded-xl text-sm font-medium ${
                   location.pathname === link.to
                     ? 'text-[#1051a5] bg-blue-50'
                     : 'text-[#22283a] hover:bg-gray-50'
@@ -77,7 +77,7 @@ export function PublicNavbar() {
             <Link
               to="/login"
               onClick={() => setMobileOpen(false)}
-              className="block w-full text-center mt-2 bg-[#1051a5] text-white font-medium px-5 py-2.5 rounded-lg"
+              className="block w-full text-center mt-3 bg-[#1051a5] text-white font-medium px-5 py-3 rounded-xl"
             >
               Sign In
             </Link>
