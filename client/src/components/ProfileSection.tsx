@@ -4,6 +4,7 @@ import { User, Save, AlertCircle, Sparkles, X } from 'lucide-react';
 import { AutocompleteInput } from '@/components/AutocompleteInput';
 import { COUNTRIES, LANGUAGES_LIST, HEALTHCARE_PROVIDERS, US_STATES, INSTITUTIONS, EMPLOYERS } from '@/lib/autocomplete-data';
 import { extractProfileSuggestions, type ProfileSuggestion } from '@/lib/document-suggestions';
+import { useI18n } from '@/lib/i18n';
 
 interface ProfileSectionProps {
   profile: UserProfile | null;
@@ -13,6 +14,7 @@ interface ProfileSectionProps {
 }
 
 export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: ProfileSectionProps) {
+  const { t } = useI18n();
   const [formData, setFormData] = useState<UserProfile>(
     profile || {
       fullName: '',
@@ -267,10 +269,9 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
         <div className="bg-[#4a7fb5]/10 rounded-2xl p-4 mb-6 flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-[#4a7fb5] flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-semibold text-[#4a7fb5] mb-1">Welcome to DOZEY!</h3>
+            <h3 className="font-semibold text-[#4a7fb5] mb-1">{t('welcomeToApp')}</h3>
             <p className="text-sm text-[#86868b]">
-              Please complete your profile to get started. This information helps us manage your vaccination records 
-              and check compliance with your destination's requirements.
+              {t('completeYourProfile')}
             </p>
           </div>
         </div>
@@ -281,7 +282,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
           <div className="flex items-start gap-3 mb-3">
             <Sparkles className="w-5 h-5 text-[#4d9068] flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <h3 className="font-semibold text-[#4d9068] mb-1">Information found in your documents</h3>
+              <h3 className="font-semibold text-[#4d9068] mb-1">{t('suggestionsFromDocs')}</h3>
               <p className="text-sm text-[#86868b]">
                 We extracted the following from your uploaded records. Click to apply.
               </p>
@@ -301,7 +302,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
                 <div className="flex-1 min-w-0">
                   <span className="text-xs text-[#86868b]">{s.label}</span>
                   <p className="text-sm font-medium text-[#1d1d1f] truncate">{s.value}</p>
-                  <span className="text-xs text-[#86868b]">From: {s.source}</span>
+                  <span className="text-xs text-[#86868b]">{t('suggestedBy')}: {s.source}</span>
                 </div>
                 <button
                   onClick={() => applySuggestion(s)}
@@ -324,7 +325,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
       <div className="bg-white rounded-2xl p-8">
         <div className="flex items-center gap-3 mb-6">
           <User className="w-8 h-8 text-[#4a7fb5]" />
-          <h1 className="font-semibold text-[#1d1d1f]">Your Profile</h1>
+          <h1 className="font-semibold text-[#1d1d1f]">{t('profileInfo')}</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -333,7 +334,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
                 <label htmlFor="fullName" className="block text-xs text-[#86868b] font-medium mb-2">
-                  Full Legal Name *
+                  {t('fullName')} *
                 </label>
                 <input
                   type="text"
@@ -348,7 +349,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
 
               <div>
                 <label htmlFor="dateOfBirth" className="block text-xs text-[#86868b] font-medium mb-2">
-                  Date of Birth *
+                  {t('dateOfBirth')} *
                 </label>
                 <input
                   type="date"
@@ -363,7 +364,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
 
               <AutocompleteInput
                 id="countryOfOrigin"
-                label="Country of Origin"
+                label={t('countryOfOrigin')}
                 value={formData.countryOfOrigin}
                 onChange={handleFieldChange('countryOfOrigin')}
                 suggestions={COUNTRIES}
@@ -378,7 +379,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <AutocompleteInput
                 id="currentCountry"
-                label="Current Country"
+                label={t('currentCountry')}
                 value={formData.currentCountry}
                 onChange={handleFieldChange('currentCountry')}
                 suggestions={COUNTRIES}
@@ -387,7 +388,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
 
               <AutocompleteInput
                 id="currentState"
-                label="State / Province"
+                label={t('currentState')}
                 value={formData.currentState}
                 onChange={handleFieldChange('currentState')}
                 suggestions={US_STATES}
@@ -398,13 +399,13 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
           </div>
 
           <div>
-            <h2 className="text-sm font-semibold text-[#1d1d1f] uppercase tracking-wide mb-4">Citizenship(s)</h2>
+            <h2 className="text-sm font-semibold text-[#1d1d1f] uppercase tracking-wide mb-4">{t('citizenships')}</h2>
             <div className="flex gap-2 mb-3">
               <AutocompleteInput
                 value={citizenshipInput}
                 onChange={setCitizenshipInput}
                 suggestions={COUNTRIES}
-                placeholder="Add citizenship"
+                placeholder={t('addCitizenship')}
                 className="flex-1"
               />
               <button
@@ -412,7 +413,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
                 onClick={addCitizenship}
                 className="bg-[#4a7fb5] hover:bg-[#3d6d9e] text-white px-4 py-2 rounded-full transition-colors flex-shrink-0"
               >
-                Add
+                {t('add')}
               </button>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -435,13 +436,13 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
           </div>
 
           <div>
-            <h2 className="text-sm font-semibold text-[#1d1d1f] uppercase tracking-wide mb-4">Languages Spoken</h2>
+            <h2 className="text-sm font-semibold text-[#1d1d1f] uppercase tracking-wide mb-4">{t('languages')}</h2>
             <div className="flex gap-2 mb-3">
               <AutocompleteInput
                 value={languageInput}
                 onChange={setLanguageInput}
                 suggestions={LANGUAGES_LIST}
-                placeholder="Add language"
+                placeholder={t('addLanguage')}
                 className="flex-1"
               />
               <button
@@ -449,7 +450,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
                 onClick={addLanguage}
                 className="bg-[#4a7fb5] hover:bg-[#3d6d9e] text-white px-4 py-2 rounded-full transition-colors flex-shrink-0"
               >
-                Add
+                {t('add')}
               </button>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -476,7 +477,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
             <div className="grid grid-cols-1 gap-4">
               <AutocompleteInput
                 id="primaryProvider"
-                label="Primary Healthcare Provider"
+                label={t('primaryProvider')}
                 value={formData.primaryProvider}
                 onChange={handleFieldChange('primaryProvider')}
                 suggestions={HEALTHCARE_PROVIDERS}
@@ -525,7 +526,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
 
               <AutocompleteInput
                 id="targetCountry"
-                label="Target Country for Visa / Immigration (Optional)"
+                label={t('targetCountry')}
                 value={formData.targetCountry || ''}
                 onChange={handleFieldChange('targetCountry')}
                 suggestions={COUNTRIES}
@@ -537,7 +538,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
 
               <AutocompleteInput
                 id="targetInstitution"
-                label="Destination Institution / School (Optional)"
+                label={t('targetInstitution')}
                 value={formData.targetInstitution || ''}
                 onChange={handleFieldChange('targetInstitution')}
                 suggestions={INSTITUTIONS}
@@ -549,7 +550,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
 
               <AutocompleteInput
                 id="targetEmployment"
-                label="Target Employer / Organization (Optional)"
+                label={t('targetEmployment')}
                 value={formData.targetEmployment || ''}
                 onChange={handleFieldChange('targetEmployment')}
                 suggestions={EMPLOYERS}
@@ -570,7 +571,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
             }`}
           >
             <Save className="w-5 h-5" />
-            {saved ? 'Profile Saved!' : 'Save Profile'}
+            {saved ? t('profileSaved') : t('saveProfile')}
           </button>
         </form>
       </div>

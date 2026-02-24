@@ -152,6 +152,7 @@ docs/                      # Documentation
 - Auth pages: split layout, left brand gradient panel (from-[#4a7fb5] to-[#4d9068]), right clean form (#fbfbfd)
 
 ## Recent Changes
+- 2026-02-24: Full i18n wiring: All dashboard components (Navigation, Dashboard, Profile, CountryHistory, DocumentUpload, VaccinationTimeline, ShareRecords, Alerts, ComplianceReport, DashboardLayout) now use t() from useI18n hook. ~200+ translation keys covering 7 languages (en, es, fr, hi, zh, pt, ar). Language selector instantly changes all visible UI text.
 - 2026-02-24: Strict AI extraction: AI prompts now only extract data explicitly found in documents, never fabricate/assume. Missing fields use null. Confidence and missing_fields indicators added.
 - 2026-02-24: Review flow for incomplete records: records missing vaccine name or date are NOT auto-imported; instead flagged for user review with inline editing form to fill missing details before importing individually.
 - 2026-02-24: Import-single-vaccination endpoint: allows importing individual records with user-provided data for missing fields.

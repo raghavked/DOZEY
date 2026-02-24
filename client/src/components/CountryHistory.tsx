@@ -4,6 +4,7 @@ import { Globe, Plus, Trash2, MapPin, Sparkles, X, Check } from 'lucide-react';
 import { AutocompleteInput } from '@/components/AutocompleteInput';
 import { COUNTRIES, US_STATES } from '@/lib/autocomplete-data';
 import { extractCountrySuggestions } from '@/lib/document-suggestions';
+import { useI18n } from '@/lib/i18n';
 
 interface CountryHistoryProps {
   periods: CountryPeriod[];
@@ -14,6 +15,7 @@ interface CountryHistoryProps {
 }
 
 export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], documents = [] }: CountryHistoryProps) {
+  const { t } = useI18n();
   const [showForm, setShowForm] = useState(false);
   const [dismissedCountries, setDismissedCountries] = useState<Set<string>>(new Set());
   const [formData, setFormData] = useState({
@@ -60,8 +62,8 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
         <div className="flex items-center gap-3 mb-6">
           <Globe className="w-8 h-8 text-[#1d1d1f]/30" />
           <div>
-            <h1 className="font-semibold text-[#1d1d1f]">Country & Region History</h1>
-            <p className="text-[#86868b]">Track where you've lived throughout your life</p>
+            <h1 className="font-semibold text-[#1d1d1f]">{t('residenceHistory')}</h1>
+            <p className="text-[#86868b]">{t('residenceDescription')}</p>
           </div>
         </div>
 
@@ -71,7 +73,7 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
             className="w-full bg-[#4d9068] hover:bg-[#3f7a56] text-white py-3 rounded-full flex items-center justify-center gap-2 transition-colors mb-6"
           >
             <Plus className="w-5 h-5" />
-            Add Country/Region Period
+            {t('addCountry')}
           </button>
         )}
 
@@ -80,9 +82,9 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
             <div className="flex items-start gap-3 mb-3">
               <Sparkles className="w-5 h-5 text-[#4d9068] flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <h3 className="font-semibold text-[#4d9068] mb-1">Countries found in your records</h3>
+                <h3 className="font-semibold text-[#4d9068] mb-1">{t('countrySuggestions')}</h3>
                 <p className="text-sm text-[#86868b]">
-                  Your vaccination records mention these countries. Add them to your history?
+                  {t('addFromDocuments')}
                 </p>
               </div>
             </div>
@@ -101,7 +103,7 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
                     className="text-xs bg-[#4d9068]/10 text-[#4d9068] px-3 py-1.5 rounded-full hover:bg-[#4d9068]/20 transition-colors flex items-center gap-1"
                   >
                     <Check className="w-3 h-3" />
-                    Add
+                    {t('add')}
                   </button>
                   <button
                     onClick={() => dismissCountrySuggestion(s.country)}
@@ -117,11 +119,11 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
 
         {showForm && (
           <form onSubmit={handleSubmit} className="bg-[#f5f5f7] p-6 rounded-2xl mb-6">
-            <h3 className="text-sm font-semibold text-[#1d1d1f] uppercase tracking-wide mb-4">Add Period</h3>
+            <h3 className="text-sm font-semibold text-[#1d1d1f] uppercase tracking-wide mb-4">{t('addResidence')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <AutocompleteInput
                 id="country"
-                label="Country"
+                label={t('country')}
                 value={formData.country}
                 onChange={(val) => setFormData(prev => ({ ...prev, country: val }))}
                 suggestions={COUNTRIES}
@@ -131,7 +133,7 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
 
               <AutocompleteInput
                 id="state"
-                label="State/Province (Optional)"
+                label={t('state')}
                 value={formData.state}
                 onChange={(val) => setFormData(prev => ({ ...prev, state: val }))}
                 suggestions={US_STATES}
@@ -140,7 +142,7 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
 
               <div>
                 <label htmlFor="startYear" className="block text-xs text-[#86868b] font-medium mb-2">
-                  Start Year *
+                  {t('startYear')} *
                 </label>
                 <input
                   type="number"
@@ -156,7 +158,7 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
 
               <div>
                 <label htmlFor="endYear" className="block text-xs text-[#86868b] font-medium mb-2">
-                  End Year *
+                  {t('endYear')} *
                 </label>
                 <input
                   type="number"
@@ -179,14 +181,14 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
                 type="submit"
                 className="flex-1 bg-[#4d9068] hover:bg-[#3f7a56] text-white py-2 rounded-full transition-colors"
               >
-                Add Period
+                {t('addResidence')}
               </button>
               <button
                 type="button"
                 onClick={() => setShowForm(false)}
                 className="flex-1 bg-[#f5f5f7] text-[#1d1d1f] hover:bg-[#e8e8ed] py-2 rounded-full transition-colors"
               >
-                Cancel
+                {t('cancel')}
               </button>
             </div>
           </form>
@@ -195,8 +197,8 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
         {periods.length === 0 ? (
           <div className="text-center py-12 text-[#86868b]">
             <MapPin className="w-16 h-16 mx-auto mb-4 text-[#1d1d1f]/10" />
-            <p>No location history added yet</p>
-            <p className="text-sm mt-2">Add countries and regions where you've lived</p>
+            <p>{t('noCountries')}</p>
+            <p className="text-sm mt-2">{t('addCountriesToTrack')}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -222,7 +224,7 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
                           {period.country}{period.state ? `, ${period.state}` : ''}
                         </h4>
                         <p className="text-[#86868b]">
-                          {period.startYear} - {period.endYear === 'Present' ? 'Present' : period.endYear}
+                          {period.startYear} - {period.endYear === 'Present' ? t('present') : period.endYear}
                           {period.endYear !== 'Present' && (
                             <span className="text-[#86868b] ml-2">
                               ({(typeof period.endYear === 'number' ? period.endYear : 0) - period.startYear} years)

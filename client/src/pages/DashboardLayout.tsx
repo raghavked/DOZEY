@@ -11,9 +11,11 @@ import { Alerts } from '@/components/Alerts';
 import { DozeChat } from '@/components/DozeChat';
 import { useProfile, useVaccinations, useDocuments, useCountryHistory, useExemptions } from '@/hooks/use-api';
 import { useAuth } from '@/hooks/use-auth';
+import { useI18n } from '@/lib/i18n';
 
 export function DashboardLayout() {
   const { user } = useAuth();
+  const { t } = useI18n();
   const [currentPage, setCurrentPage] = useState<'dashboard' | 'profile' | 'countries' | 'upload' | 'timeline' | 'compliance' | 'share' | 'alerts'>('dashboard');
   const [isNewUser, setIsNewUser] = useState(false);
   
@@ -46,7 +48,7 @@ export function DashboardLayout() {
       <div className="min-h-screen flex items-center justify-center bg-[#f5f5f7]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-8 border-2 border-[#f5f5f7] border-t-[#4a7fb5] rounded-full animate-spin" />
-          <p className="text-[#86868b] text-sm">Loading your records...</p>
+          <p className="text-[#86868b] text-sm">{t('loadingRecords')}</p>
         </div>
       </div>
     );

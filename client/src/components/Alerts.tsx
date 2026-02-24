@@ -1,5 +1,6 @@
 import { VaccinationRecord, UserProfile, CountryPeriod } from '@/types';
 import { Bell, AlertCircle, CheckCircle, Info, Calendar } from 'lucide-react';
+import { useI18n } from '@/lib/i18n';
 
 interface AlertsProps {
   vaccinations: VaccinationRecord[];
@@ -8,6 +9,7 @@ interface AlertsProps {
 }
 
 export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
+  const { t } = useI18n();
   const generateAlerts = () => {
     const alerts: Array<{
       type: 'warning' | 'info' | 'success';
@@ -20,8 +22,8 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
     if (unverifiedCount > 0) {
       alerts.push({
         type: 'warning',
-        title: `${unverifiedCount} Unverified Vaccination${unverifiedCount !== 1 ? 's' : ''}`,
-        message: 'These records are pending verification by a healthcare provider. Consider uploading official documents or contacting your previous clinics.',
+        title: `${unverifiedCount} ${t('unverifiedVaccinationAlert')}`,
+        message: t('unverifiedVaccinationMessage'),
         icon: AlertCircle,
       });
     }
@@ -29,8 +31,8 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
     if (!profile) {
       alerts.push({
         type: 'warning',
-        title: 'Complete Your Profile',
-        message: 'Add your personal information to help doctors understand your vaccination history and needs.',
+        title: t('completeProfileAlert'),
+        message: t('completeProfileMessage'),
         icon: AlertCircle,
       });
     }
@@ -42,8 +44,8 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
     if (!hasMMR && profile) {
       alerts.push({
         type: 'info',
-        title: 'MMR Vaccine Recommendation',
-        message: 'Most countries require proof of MMR (Measles, Mumps, Rubella) vaccination for school and university enrollment.',
+        title: t('mmrRecommendation'),
+        message: t('mmrVaccineMessage'),
         icon: Info,
       });
     }
@@ -68,8 +70,8 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
       if (tenYearsLater < sixMonthsFromNow) {
         alerts.push({
           type: 'warning',
-          title: 'Tetanus Booster Due Soon',
-          message: `Your last tetanus shot was on ${vaccineDate.toLocaleDateString()}. Boosters are recommended every 10 years.`,
+          title: t('tetanusBoosterDue'),
+          message: `${t('tetanusBoosterMessage')}`,
           icon: Calendar,
         });
       }
@@ -85,8 +87,8 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
       if (!hasYellowFever) {
         alerts.push({
           type: 'info',
-          title: 'Yellow Fever Vaccination',
-          message: 'You lived in a tropical region. Some countries require yellow fever vaccination proof for entry.',
+          title: t('yellowFeverAlert'),
+          message: t('yellowFeverMessage'),
           icon: Info,
         });
       }
@@ -95,8 +97,8 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
     if (profile && profile.currentCountry !== profile.countryOfOrigin) {
       alerts.push({
         type: 'info',
-        title: 'International Student/Immigrant',
-        message: 'Many universities and employers require complete vaccination records. Make sure to keep your documents updated.',
+        title: t('internationalStudentAlert'),
+        message: t('internationalStudentMessage'),
         icon: Info,
       });
     }
@@ -109,8 +111,8 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
       if (!hasMeningococcal) {
         alerts.push({
           type: 'warning',
-          title: 'Meningococcal Vaccine Required',
-          message: 'U.S. colleges require the Meningococcal (MenACWY) vaccine for all students, especially those living in dormitories.',
+          title: t('meningococcalRequired'),
+          message: t('meningococcalMessage'),
           icon: AlertCircle,
         });
       }
@@ -119,8 +121,8 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
       if (polioCount < 4) {
         alerts.push({
           type: 'warning',
-          title: 'Polio Series Incomplete',
-          message: `You have ${polioCount} of 4 required Polio (IPV) doses. Complete the series before starting college in the U.S.`,
+          title: t('polioIncomplete'),
+          message: `${polioCount}/4 Polio (IPV) — ${t('missingDoses')}`,
           icon: AlertCircle,
         });
       }
@@ -129,8 +131,8 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
       if (hepACount < 2) {
         alerts.push({
           type: 'warning',
-          title: 'Hepatitis A Series Incomplete',
-          message: `You have ${hepACount} of 2 required Hepatitis A doses. The second dose should be given 6-12 months after the first.`,
+          title: t('hepAIncomplete'),
+          message: `${hepACount}/2 Hepatitis A — ${t('missingDoses')}`,
           icon: AlertCircle,
         });
       }
@@ -139,8 +141,8 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
     if (vaccinations.length >= 5 && vaccinations.filter(v => v.verified).length === vaccinations.length) {
       alerts.push({
         type: 'success',
-        title: 'Records Complete!',
-        message: 'All your vaccination records are verified and up to date. Great job!',
+        title: t('allUpToDate'),
+        message: t('allRecordsVerified'),
         icon: CheckCircle,
       });
     }
@@ -156,17 +158,17 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
         <div className="flex items-center gap-3 mb-6">
           <Bell className="w-8 h-8 text-[#1d1d1f]/30" />
           <div>
-            <h1 className="text-[#1d1d1f] font-semibold">Alerts & Recommendations</h1>
-            <p className="text-[#86868b]">Important notifications about your vaccination records</p>
+            <h1 className="text-[#1d1d1f] font-semibold">{t('alertsNotifications')}</h1>
+            <p className="text-[#86868b]">{t('alertsDescription')}</p>
           </div>
         </div>
 
         {alerts.length === 0 ? (
           <div className="text-center py-12">
             <CheckCircle className="w-16 h-16 text-[#1d1d1f]/10 mx-auto mb-4" />
-            <h3 className="text-[#1d1d1f] font-semibold mb-2">All Clear!</h3>
+            <h3 className="text-[#1d1d1f] font-semibold mb-2">{t('noAlerts')}</h3>
             <p className="text-[#86868b]">
-              No alerts at this time. Your records look good.
+              {t('noAlertsMessage')}
             </p>
           </div>
         ) : (
@@ -203,10 +205,10 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
         )}
 
         <div className="mt-8 pt-8 border-t border-black/5">
-          <h2 className="text-sm font-semibold text-[#1d1d1f] mb-4">Common Vaccination Requirements</h2>
+          <h2 className="text-sm font-semibold text-[#1d1d1f] mb-4">{t('commonRequirements')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div className="bg-[#f5f5f7] p-4 rounded-2xl">
-              <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">University Students</h4>
+              <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">{t('universityStudents')}</h4>
               <ul className="text-[#86868b] text-sm space-y-1">
                 <li>• MMR (Measles, Mumps, Rubella)</li>
                 <li>• Meningococcal (Meningitis)</li>
@@ -216,7 +218,7 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
             </div>
 
             <div className="bg-[#f5f5f7] p-4 rounded-2xl">
-              <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">Immigration/Work Visa</h4>
+              <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">{t('immigrationWorkVisa')}</h4>
               <ul className="text-[#86868b] text-sm space-y-1">
                 <li>• Varies by country</li>
                 <li>• Usually includes MMR, Varicella</li>
@@ -226,7 +228,7 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
             </div>
 
             <div className="bg-[#f5f5f7] p-4 rounded-2xl">
-              <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">International Travel</h4>
+              <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">{t('internationalTravel')}</h4>
               <ul className="text-[#86868b] text-sm space-y-1">
                 <li>• Yellow Fever (Africa, South America)</li>
                 <li>• Typhoid</li>
@@ -236,7 +238,7 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
             </div>
 
             <div className="bg-[#f5f5f7] p-4 rounded-2xl">
-              <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">Healthcare Workers</h4>
+              <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">{t('healthcareWorkers')}</h4>
               <ul className="text-[#86868b] text-sm space-y-1">
                 <li>• Hepatitis B</li>
                 <li>• Annual Flu vaccine</li>

@@ -2,6 +2,7 @@ import { VaccinationRecord, UserProfile, CountryPeriod, UploadedDocument } from 
 import { User, Globe, FileText, Syringe, AlertCircle, CheckCircle, Target, ArrowRight, Upload, Shield, Share2, Bell, Sparkles } from 'lucide-react';
 import { Progress } from './ui/progress';
 import { generateDashboardInsights } from '@/lib/document-suggestions';
+import { useI18n } from '@/lib/i18n';
 
 interface DashboardProps {
   vaccinations: VaccinationRecord[];
@@ -48,6 +49,7 @@ function calculateCompliance(vaccinations: VaccinationRecord[]) {
 }
 
 export function Dashboard({ vaccinations, profile, countryHistory, documents, onNavigate }: DashboardProps) {
+  const { t } = useI18n();
   const verifiedCount = vaccinations.filter(v => v.verified).length;
   const unverifiedCount = vaccinations.length - verifiedCount;
   const compliance = calculateCompliance(vaccinations);
@@ -57,10 +59,10 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-semibold text-[#1d1d1f] mb-1">
-          Welcome back{profile ? `, ${profile.fullName}` : ''}
+          {`${t('welcomeBack')}${profile ? `, ${profile.fullName}` : ''}`}
         </h1>
         <p className="text-[#86868b]">
-          {profile?.targetCountry ? `Tracking compliance for ${profile.targetCountry}` : 'Manage your vaccination records'}
+          {profile?.targetCountry ? `${t('trackingCompliance')} ${profile.targetCountry}` : t('manageRecords')}
         </p>
       </div>
 
@@ -68,7 +70,7 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
         <div className="bg-[#8aab45]/10 rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-5 h-5 text-[#4d9068]" />
-            <h2 className="font-semibold text-[#4d9068]">Smart Suggestions</h2>
+            <h2 className="font-semibold text-[#4d9068]">{t('smartSuggestions')}</h2>
           </div>
           <div className="space-y-2">
             {insights.map((insight, idx) => (
@@ -81,7 +83,7 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
                     onClick={() => onNavigate(insight.navigateTo!)}
                     className="text-xs bg-[#4d9068] text-white px-4 py-2 rounded-full hover:bg-[#3f7a56] transition-colors whitespace-nowrap"
                   >
-                    {insight.action}
+                    {t('apply')}
                   </button>
                 )}
               </div>
@@ -92,10 +94,10 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { id: 'timeline' as const, icon: Syringe, value: vaccinations.length, label: 'Vaccines', sub: `${verifiedCount} verified` },
-          { id: 'countries' as const, icon: Globe, value: countryHistory.length, label: 'Countries', sub: 'Residence history' },
-          { id: 'upload' as const, icon: FileText, value: documents.length, label: 'Documents', sub: 'Uploaded files' },
-          { id: 'profile' as const, icon: User, value: profile ? '100%' : '0%', label: 'Profile', sub: profile ? 'Complete' : 'Incomplete' },
+          { id: 'timeline' as const, icon: Syringe, value: vaccinations.length, label: t('vaccines'), sub: `${verifiedCount} ${t('verified')}` },
+          { id: 'countries' as const, icon: Globe, value: countryHistory.length, label: t('countries'), sub: t('residenceHistorySub') },
+          { id: 'upload' as const, icon: FileText, value: documents.length, label: t('documents'), sub: t('uploadedFiles') },
+          { id: 'profile' as const, icon: User, value: profile ? '100%' : '0%', label: t('profile'), sub: profile ? t('complete') : t('incomplete') },
         ].map((stat) => {
           const Icon = stat.icon;
           return (
@@ -128,15 +130,15 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
                     <Target className="w-5 h-5 text-[#86868b]" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-[#1d1d1f]">U.S. College Compliance</h2>
-                    <p className="text-[#86868b] text-xs">Required for undergraduate admission</p>
+                    <h2 className="text-lg font-semibold text-[#1d1d1f]">{t('usCollegeCompliance')}</h2>
+                    <p className="text-[#86868b] text-xs">{t('requiredForAdmission')}</p>
                   </div>
                   <div className="ml-auto text-3xl font-semibold text-[#4a7fb5]">{compliance.percentage}%</div>
                 </div>
                 
                 <Progress value={compliance.percentage} className="h-2 bg-[#f5f5f7]" />
                 <p className="text-[#86868b] text-xs mt-2">
-                  {compliance.totalCompleted} of {compliance.totalRequired} required doses completed
+                  {compliance.totalCompleted} of {compliance.totalRequired} {t('dosesCompleted')}
                 </p>
               </div>
 
@@ -162,15 +164,15 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
                   <AlertCircle className="w-5 h-5 text-amber-600" />
                 </div>
                 <div>
-                  <h3 className="text-amber-900 font-semibold mb-1">Complete Your Profile</h3>
+                  <h3 className="text-amber-900 font-semibold mb-1">{t('completeProfileAlert')}</h3>
                   <p className="text-amber-700/70 text-sm mb-4">
-                    Add your personal information to get personalized vaccine tracking and compliance recommendations.
+                    {t('personalizeCompliance')}
                   </p>
                   <button
                     onClick={() => onNavigate('profile')}
                     className="inline-flex items-center gap-2 bg-[#4a7fb5] hover:bg-[#3d6d9e] text-white px-5 py-2.5 rounded-full font-medium transition-colors text-sm"
                   >
-                    Set Up Profile
+                    {t('setUpProfile')}
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -180,14 +182,14 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-[#1d1d1f] mb-3">Quick Actions</h2>
+          <h2 className="text-lg font-semibold text-[#1d1d1f] mb-3">{t('quickActions')}</h2>
           <div className="flex flex-wrap gap-2">
             {[
-              { id: 'upload' as const, icon: Upload, title: 'Upload Document' },
-              { id: 'compliance' as const, icon: Shield, title: 'Check Compliance' },
-              { id: 'share' as const, icon: Share2, title: 'Share Records' },
-              { id: 'alerts' as const, icon: Bell, title: 'View Alerts' },
-              { id: 'countries' as const, icon: Globe, title: 'Country History' },
+              { id: 'upload' as const, icon: Upload, title: t('uploadNewDocument') },
+              { id: 'compliance' as const, icon: Shield, title: t('checkCompliance') },
+              { id: 'share' as const, icon: Share2, title: t('shareRecords') },
+              { id: 'alerts' as const, icon: Bell, title: t('viewAlerts') },
+              { id: 'countries' as const, icon: Globe, title: t('countryHistory') },
             ].map(({ id, icon: Icon, title }) => (
               <button
                 key={id}
@@ -205,13 +207,13 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
       {vaccinations.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-[#1d1d1f]">Recent Vaccinations</h2>
+            <h2 className="text-lg font-semibold text-[#1d1d1f]">{t('recentVaccinations')}</h2>
             {vaccinations.length > 6 && (
               <button
                 onClick={() => onNavigate('timeline')}
                 className="text-[#4a7fb5] hover:text-[#3d6d9e] text-sm font-medium flex items-center gap-1"
               >
-                View all ({vaccinations.length})
+                {t('viewAll')} ({vaccinations.length})
                 <ArrowRight className="w-4 h-4" />
               </button>
             )}
@@ -231,12 +233,12 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
                 {vax.verified ? (
                   <div className="flex items-center gap-1.5 text-[#4d9068] bg-[#4d9068]/10 px-3 py-1 rounded-full text-xs font-medium">
                     <CheckCircle className="w-3 h-3" />
-                    Verified
+                    {t('verifiedRecords')}
                   </div>
                 ) : (
                   <div className="flex items-center gap-1.5 text-[#86868b] bg-[#f5f5f7] px-3 py-1 rounded-full text-xs font-medium">
                     <AlertCircle className="w-3 h-3" />
-                    Pending
+                    {t('pendingVerification')}
                   </div>
                 )}
               </div>

@@ -4,6 +4,7 @@ import { Clock, CheckCircle, AlertCircle, Trash2, Filter, Globe, Syringe, FileTe
 import { CustomSelect } from '@/components/CustomSelect';
 import { ImmunizationGlobe } from '@/components/ImmunizationGlobe';
 import { normalizeCountryName } from '@/lib/country-utils';
+import { useI18n } from '@/lib/i18n';
 
 interface VaccinationTimelineProps {
   vaccinations: VaccinationRecord[];
@@ -14,6 +15,7 @@ interface VaccinationTimelineProps {
 }
 
 export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDelete, onUpdate }: VaccinationTimelineProps) {
+  const { t } = useI18n();
   const [filterCountry, setFilterCountry] = useState<string>('all');
   const [filterVerified, setFilterVerified] = useState<string>('all');
   const [filterVaccine, setFilterVaccine] = useState<string>('all');
@@ -102,8 +104,8 @@ export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDel
           <div className="flex items-center gap-3">
             <Clock className="w-8 h-8 text-[#1d1d1f]/30" />
             <div>
-              <h1 className="text-[#1d1d1f] font-semibold text-xl">Vaccine Timeline</h1>
-              <p className="text-[#86868b] text-sm">All your vaccinations in chronological order</p>
+              <h1 className="text-[#1d1d1f] font-semibold text-xl">{t('vaccinationTimeline')}</h1>
+              <p className="text-[#86868b] text-sm">{t('timelineDescription')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -122,15 +124,15 @@ export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDel
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-[#f5f5f7] p-4 rounded-2xl text-center">
             <div className="text-2xl font-semibold text-[#4a7fb5]">{vaccinations.length}</div>
-            <p className="text-[#86868b] text-xs mt-1">Total Vaccines</p>
+            <p className="text-[#86868b] text-xs mt-1">{t('allVaccines')}</p>
           </div>
           <div className="bg-[#f5f5f7] p-4 rounded-2xl text-center">
             <div className="text-2xl font-semibold text-[#4d9068]">{vaccinations.filter(v => v.verified).length}</div>
-            <p className="text-[#86868b] text-xs mt-1">Verified</p>
+            <p className="text-[#86868b] text-xs mt-1">{t('verified')}</p>
           </div>
           <div className="bg-[#f5f5f7] p-4 rounded-2xl text-center">
             <div className="text-2xl font-semibold text-[#8aab45]">{countries.length}</div>
-            <p className="text-[#86868b] text-xs mt-1">Countries</p>
+            <p className="text-[#86868b] text-xs mt-1">{t('allCountries')}</p>
           </div>
         </div>
 
@@ -260,7 +262,7 @@ export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDel
                                     <p className="text-sm font-medium text-[#1d1d1f]">{vax.vaccine_name}</p>
                                     <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-[#86868b]">
                                       {vax.date && <span>{vax.date}</span>}
-                                      {vax.dose_number && <span>Dose {vax.dose_number}</span>}
+                                      {vax.dose_number && <span>{t('doseNumber')} {vax.dose_number}</span>}
                                       {vax.provider && <span>{vax.provider}</span>}
                                       {vax.country_given && <span>{vax.country_given}</span>}
                                     </div>
@@ -298,31 +300,31 @@ export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDel
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <CustomSelect
               id="filterCountry"
-              label="Country"
+              label={t('countryGiven')}
               value={selectedCountry ? 'all' : filterCountry}
               onChange={(val) => { setFilterCountry(val); setSelectedCountry(null); }}
               options={[
-                { value: 'all', label: 'All Countries' },
+                { value: 'all', label: t('allCountries') },
                 ...countries.map(c => ({ value: c, label: c })),
               ]}
             />
             <CustomSelect
               id="filterVaccine"
-              label="Vaccine"
+              label={t('vaccineName')}
               value={filterVaccine}
               onChange={setFilterVaccine}
               options={[
-                { value: 'all', label: 'All Vaccines' },
+                { value: 'all', label: t('allVaccines') },
                 ...vaccineTypes.map(v => ({ value: v, label: v })),
               ]}
             />
             <CustomSelect
               id="filterYear"
-              label="Year"
+              label={t('dateGiven')}
               value={filterYear}
               onChange={setFilterYear}
               options={[
-                { value: 'all', label: 'All Years' },
+                { value: 'all', label: t('allYears') },
                 ...years.map(y => ({ value: y, label: y })),
               ]}
             />
@@ -332,9 +334,9 @@ export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDel
               value={filterVerified}
               onChange={setFilterVerified}
               options={[
-                { value: 'all', label: 'All Statuses' },
-                { value: 'verified', label: 'Verified Only' },
-                { value: 'unverified', label: 'Unverified Only' },
+                { value: 'all', label: t('allStatuses') },
+                { value: 'verified', label: t('verified') },
+                { value: 'unverified', label: t('pending') },
               ]}
             />
           </div>
@@ -343,11 +345,11 @@ export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDel
         {filteredVaccinations.length === 0 ? (
           <div className="text-center py-12 text-[#86868b]">
             <Clock className="w-16 h-16 mx-auto mb-4 text-[#1d1d1f]/10" />
-            <p className="font-medium">No vaccination records found</p>
+            <p className="font-medium">{hasActiveFilters ? t('noMatchingRecords') : t('noVaccinationsYet')}</p>
             <p className="text-sm mt-2">
               {hasActiveFilters
-                ? 'Try adjusting your filters'
-                : 'Add your first vaccination record to get started'}
+                ? t('noMatchingRecords')
+                : t('addFirstVaccination')}
             </p>
             {hasActiveFilters && (
               <button
@@ -392,7 +394,7 @@ export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDel
                                   title="Click to mark as unverified"
                                 >
                                   <CheckCircle className="w-3 h-3" />
-                                  Verified
+                                  {t('verified')}
                                 </button>
                               ) : (
                                 <button
@@ -401,7 +403,7 @@ export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDel
                                   title="Click to mark as verified"
                                 >
                                   <AlertCircle className="w-3 h-3" />
-                                  Unverified
+                                  {t('pending')}
                                 </button>
                               )}
                               {vax.documentId && (
@@ -411,7 +413,7 @@ export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDel
                                 </span>
                               )}
                               <span className="bg-[#4a7fb5]/10 text-[#4a7fb5] px-2.5 py-0.5 rounded-full text-xs font-medium">
-                                Dose {vax.doseNumber}
+                                {t('doseNumber')} {vax.doseNumber}
                               </span>
                             </div>
                           </div>

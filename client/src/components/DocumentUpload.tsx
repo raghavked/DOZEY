@@ -5,6 +5,7 @@ import { getSupabase } from '@/lib/supabase';
 import { CustomSelect } from '@/components/CustomSelect';
 import { AutocompleteInput } from '@/components/AutocompleteInput';
 import { VACCINES, COUNTRIES, HEALTHCARE_PROVIDERS } from '@/lib/autocomplete-data';
+import { useI18n } from '@/lib/i18n';
 
 interface DocumentUploadProps {
   documents: UploadedDocument[];
@@ -18,11 +19,12 @@ interface DocumentUploadProps {
 }
 
 function ProcessingStatusBadge({ status }: { status: string | null | undefined }) {
+  const { t } = useI18n();
   if (!status || status === 'pending') return null;
 
   const config: Record<string, { bg: string; text: string; icon: React.ReactNode; label: string }> = {
-    processing: { bg: 'bg-blue-100', text: 'text-blue-700', icon: <Loader2 className="w-3 h-3 animate-spin" />, label: 'Processing...' },
-    completed: { bg: 'bg-green-100', text: 'text-green-700', icon: <CheckCircle2 className="w-3 h-3" />, label: 'Processed' },
+    processing: { bg: 'bg-blue-100', text: 'text-blue-700', icon: <Loader2 className="w-3 h-3 animate-spin" />, label: t('processing') },
+    completed: { bg: 'bg-green-100', text: 'text-green-700', icon: <CheckCircle2 className="w-3 h-3" />, label: t('processed') },
     error: { bg: 'bg-red-100', text: 'text-red-700', icon: <AlertCircle className="w-3 h-3" />, label: 'Error' },
   };
 
@@ -35,6 +37,7 @@ function ProcessingStatusBadge({ status }: { status: string | null | undefined }
 }
 
 export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddVaccination, onRefresh, exemptions = [], vaccinations = [] }: DocumentUploadProps) {
+  const { t } = useI18n();
   const [dragActive, setDragActive] = useState(false);
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -358,8 +361,8 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
         <div className="flex items-center gap-3 mb-6">
           <Upload className="w-8 h-8 text-[#1d1d1f]/30" />
           <div>
-            <h1 className="text-[#1d1d1f] font-semibold">Upload Documents</h1>
-            <p className="text-[#86868b]">Import vaccine records from PDFs, photos, or scans. Our AI can extract and translate the data automatically.</p>
+            <h1 className="text-[#1d1d1f] font-semibold">{t('uploadDocuments')}</h1>
+            <p className="text-[#86868b]">{t('documentDescription')}</p>
           </div>
         </div>
 
@@ -389,10 +392,10 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
               ) : (
                 <>
                   <p className="text-[#86868b] mb-2">
-                    Drag and drop files here, or click to select
+                    {t('dropFilesHere')}
                   </p>
                   <p className="text-[#86868b] text-sm">
-                    Supports: PDFs, JPG, PNG, Word docs (max 10MB)
+                    {t('maxFileSize')}
                   </p>
                 </>
               )}
@@ -413,7 +416,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
 
       {showManualEntry && (
         <div className="bg-[#f5f5f7] rounded-2xl border-0 p-8">
-          <h2 className="text-sm font-semibold text-[#1d1d1f] mb-6">Manual Entry</h2>
+          <h2 className="text-sm font-semibold text-[#1d1d1f] mb-6">{t('manualEntry')}</h2>
           <form onSubmit={handleManualSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <AutocompleteInput
@@ -489,7 +492,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                 Add Vaccine Record
               </button>
               <button type="button" onClick={() => setShowManualEntry(false)} className="flex-1 bg-[#f5f5f7] text-[#86868b] hover:bg-[#e8e8ed] py-3 rounded-full transition-colors">
-                Cancel
+                {t('cancel')}
               </button>
             </div>
           </form>
@@ -508,7 +511,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
 
       {documents.length > 0 && (
         <div className="bg-white rounded-2xl border-0 p-8">
-          <h2 className="font-semibold text-[#1d1d1f] mb-6">Uploaded Documents</h2>
+          <h2 className="font-semibold text-[#1d1d1f] mb-6">{t('documentManagement')}</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {documents.map(doc => {
               const parsed = getParsedData(doc);
@@ -594,7 +597,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                               ) : (
                                 <Sparkles className="w-3.5 h-3.5" />
                               )}
-                              {isProcessing ? 'Processing...' : 'AI Extract'}
+                              {isProcessing ? t('processing') : 'AI Extract'}
                             </button>
                             <button
                               onClick={() => handleProcessDoctorNotes(doc.id)}
@@ -607,7 +610,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                               ) : (
                                 <Stethoscope className="w-3.5 h-3.5" />
                               )}
-                              {isProcessing ? 'Analyzing...' : 'Doctor Notes'}
+                              {isProcessing ? t('processing') : t('doctorNotes')}
                             </button>
                           </>
                         )}
@@ -615,7 +618,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                           <button
                             onClick={() => { setEditingId(doc.id); setEditName(doc.name); }}
                             className="text-[#86868b] hover:text-[#4a7fb5] transition-colors p-1"
-                            title="Rename"
+                            title={t('rename')}
                           >
                             <Pencil className="w-4 h-4" />
                           </button>
@@ -624,7 +627,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                           <button
                             onClick={() => handleDownload(doc.id, doc.fileName || doc.name)}
                             className="text-[#86868b] hover:text-blue-500 transition-colors p-1"
-                            title="Download"
+                            title={t('download')}
                           >
                             <Download className="w-5 h-5" />
                           </button>
@@ -632,7 +635,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                         <button
                           onClick={() => onDelete(doc.id)}
                           className="text-[#86868b] hover:text-red-500 transition-colors p-1"
-                          title="Delete"
+                          title={t('delete')}
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
@@ -682,7 +685,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                         return (
                         <div>
                           <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-                            <h5 className="text-xs font-semibold text-[#1d1d1f] uppercase">Extracted Vaccinations</h5>
+                            <h5 className="text-xs font-semibold text-[#1d1d1f] uppercase">{t('parsedVaccinations')}</h5>
                             {alreadyImported ? (
                               <span className="flex items-center gap-1 px-3 py-1.5 bg-[#4d9068]/10 text-[#4d9068] text-xs font-medium rounded-full">
                                 <CheckCircle2 className="w-3.5 h-3.5" />
@@ -711,7 +714,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                             ) : (
                               <span className="flex items-center gap-1 px-3 py-1.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
                                 <AlertCircle className="w-3.5 h-3.5" />
-                                All records need your review
+                                {t('reviewRequired')}
                               </span>
                             )}
                           </div>
@@ -757,7 +760,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                                       </div>
                                     </div>
                                     <div className="flex justify-end gap-2">
-                                      <button onClick={() => setEditingVaccIdx(null)} className="px-3 py-1.5 text-xs text-[#86868b] hover:text-[#1d1d1f] rounded-full">Cancel</button>
+                                      <button onClick={() => setEditingVaccIdx(null)} className="px-3 py-1.5 text-xs text-[#86868b] hover:text-[#1d1d1f] rounded-full">{t('cancel')}</button>
                                       <button
                                         onClick={() => handleImportSingleVacc(doc.id)}
                                         disabled={importingSingle || !editVaccForm.vaccine_name || !editVaccForm.date}
@@ -823,7 +826,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                           <div className="flex items-center justify-between mb-3">
                             <h5 className="text-xs font-semibold text-[#1d1d1f] uppercase flex items-center gap-1">
                               <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
-                              Medical Exemptions / Immunity Evidence
+                              {t('medicalExemptions')}
                             </h5>
                             <button
                               onClick={() => handleImportExemptions(doc.id)}
@@ -835,7 +838,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                               ) : (
                                 <ShieldCheck className="w-3.5 h-3.5" />
                               )}
-                              {isImporting ? 'Importing...' : 'Import Exemptions'}
+                              {isImporting ? t('processing') : t('importAll')}
                             </button>
                           </div>
                           <div className="space-y-2">
@@ -871,7 +874,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
 
                       {parsed.vaccinations?.length === 0 && !(parsed as any).exemptions?.length && (
                         <div className="text-sm text-[#86868b] text-center py-2">
-                          No vaccination records or exemptions found in this document.
+                          {t('noDocuments')}
                         </div>
                       )}
                     </div>
@@ -887,7 +890,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
         <div className="bg-white rounded-2xl border-0 p-6">
           <h3 className="text-lg font-semibold text-[#1d1d1f] mb-4 flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-[#1d1d1f]/30" />
-            Saved Medical Exemptions ({exemptions.length})
+            {t('medicalExemptions')} ({exemptions.length})
           </h3>
           <div className="space-y-2">
             {exemptions.map((ex) => {

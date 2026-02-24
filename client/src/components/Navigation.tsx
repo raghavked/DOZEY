@@ -1,5 +1,6 @@
 import { User, Globe, Upload, Clock, Share2, Bell, LayoutDashboard, LogOut, Target } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
+import { useI18n } from '@/lib/i18n';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { DozeyLogo } from '@/components/DozeyLogo';
 
@@ -11,16 +12,17 @@ interface NavigationProps {
 
 export function Navigation({ currentPage, onNavigate, userName }: NavigationProps) {
   const { signOut } = useAuth();
+  const { t } = useI18n();
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'profile', label: 'Profile', icon: User },
-    { id: 'countries', label: 'Countries', icon: Globe },
-    { id: 'upload', label: 'Documents', icon: Upload },
-    { id: 'timeline', label: 'Timeline', icon: Clock },
-    { id: 'compliance', label: 'Compliance', icon: Target },
-    { id: 'share', label: 'Share', icon: Share2 },
-    { id: 'alerts', label: 'Alerts', icon: Bell },
+    { id: 'dashboard', label: t('navDashboard'), icon: LayoutDashboard },
+    { id: 'profile', label: t('navProfile'), icon: User },
+    { id: 'countries', label: t('navCountries'), icon: Globe },
+    { id: 'upload', label: t('navDocuments'), icon: Upload },
+    { id: 'timeline', label: t('navTimeline'), icon: Clock },
+    { id: 'compliance', label: t('navCompliance'), icon: Target },
+    { id: 'share', label: t('navShare'), icon: Share2 },
+    { id: 'alerts', label: t('navAlerts'), icon: Bell },
   ] as const;
 
   const handleSignOut = async () => {
@@ -52,7 +54,7 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
               className="flex items-center gap-1.5 px-3 py-2 text-sm text-[#86868b] hover:text-red-500 rounded-lg transition-colors"
             >
               <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Sign Out</span>
+              <span className="hidden sm:inline">{t('signOut')}</span>
             </button>
           </div>
         </div>

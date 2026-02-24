@@ -3,6 +3,7 @@ import { VaccinationRecord, UserProfile, CountryPeriod } from '@/types';
 import { Share2, Download, Link as LinkIcon, Mail, Copy, CheckCircle, CreditCard, Shield } from 'lucide-react';
 import { CustomSelect } from '@/components/CustomSelect';
 import jsPDF from 'jspdf';
+import { useI18n } from '@/lib/i18n';
 
 interface ShareRecordsProps {
   vaccinations: VaccinationRecord[];
@@ -26,6 +27,7 @@ function formatDate(dateStr: string | undefined | null, options?: Intl.DateTimeF
 }
 
 export function ShareRecords({ vaccinations, profile, countryHistory, userEmail }: ShareRecordsProps) {
+  const { t } = useI18n();
   const [shareMethod, setShareMethod] = useState<'link' | 'email' | 'pdf' | 'card' | null>(null);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -456,8 +458,8 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
         <div className="flex items-center gap-3 mb-6">
           <Share2 className="w-8 h-8 text-[#1d1d1f]/30" />
           <div>
-            <h1 className="text-[#1d1d1f] font-semibold">Share Records</h1>
-            <p className="text-[#86868b]">Securely share your vaccination records with healthcare providers</p>
+            <h1 className="text-[#1d1d1f] font-semibold">{t('shareYourRecords')}</h1>
+            <p className="text-[#86868b]">{t('shareDescription')}</p>
           </div>
         </div>
 
@@ -471,8 +473,8 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
             }`}
           >
             <CreditCard className={`w-8 h-8 mx-auto mb-3 ${shareMethod === 'card' ? 'text-[#4a7fb5]' : 'text-[#1d1d1f]/30'}`} />
-            <h3 className="text-[#1d1d1f] font-semibold mb-1">Vaccine Card</h3>
-            <p className="text-[#86868b] text-sm">COVID-19 style card format</p>
+            <h3 className="text-[#1d1d1f] font-semibold mb-1">{t('vaccineCard')}</h3>
+            <p className="text-[#86868b] text-sm">{t('vaccineCardDesc')}</p>
           </button>
 
           <button
@@ -484,8 +486,8 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
             }`}
           >
             <LinkIcon className={`w-8 h-8 mx-auto mb-3 ${shareMethod === 'link' ? 'text-[#4a7fb5]' : 'text-[#1d1d1f]/30'}`} />
-            <h3 className="text-[#1d1d1f] font-semibold mb-1">Share Link</h3>
-            <p className="text-[#86868b] text-sm">Generate a secure link</p>
+            <h3 className="text-[#1d1d1f] font-semibold mb-1">{t('shareLink')}</h3>
+            <p className="text-[#86868b] text-sm">{t('shareLinkDesc')}</p>
           </button>
 
           <button
@@ -497,8 +499,8 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
             }`}
           >
             <Mail className={`w-8 h-8 mx-auto mb-3 ${shareMethod === 'email' ? 'text-[#4a7fb5]' : 'text-[#1d1d1f]/30'}`} />
-            <h3 className="text-[#1d1d1f] font-semibold mb-1">Send Email</h3>
-            <p className="text-[#86868b] text-sm">Email directly to provider</p>
+            <h3 className="text-[#1d1d1f] font-semibold mb-1">{t('sendEmail')}</h3>
+            <p className="text-[#86868b] text-sm">{t('sendEmailDesc')}</p>
           </button>
 
           <button
@@ -510,8 +512,8 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
             }`}
           >
             <Download className={`w-8 h-8 mx-auto mb-3 ${shareMethod === 'pdf' ? 'text-[#4a7fb5]' : 'text-[#1d1d1f]/30'}`} />
-            <h3 className="text-[#1d1d1f] font-semibold mb-1">Full Summary</h3>
-            <p className="text-[#86868b] text-sm">Download detailed summary</p>
+            <h3 className="text-[#1d1d1f] font-semibold mb-1">{t('fullSummary')}</h3>
+            <p className="text-[#86868b] text-sm">{t('fullSummaryDesc')}</p>
           </button>
         </div>
 
@@ -557,19 +559,19 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
               className="w-full bg-[#4a7fb5] hover:bg-[#3a6a9a] text-white py-3 rounded-full transition-colors flex items-center justify-center gap-2 font-semibold"
             >
               <CreditCard className="w-5 h-5" />
-              Download Vaccine Card (PDF)
+              {t('downloadVaccineCard')}
             </button>
           </div>
         )}
 
         {shareMethod === 'link' && (
           <div className="bg-[#f5f5f7] p-6 rounded-2xl">
-            <h3 className="text-[#1d1d1f] font-semibold mb-4">Generate Secure Link</h3>
+            <h3 className="text-[#1d1d1f] font-semibold mb-4">{t('generateSecureLink')}</h3>
             
             <div className="space-y-4 mb-6">
               <CustomSelect
                 id="expiration"
-                label="Link Expiration"
+                label={t('linkExpiration')}
                 value={String(expirationDays)}
                 onChange={(val) => setExpirationDays(parseInt(val))}
                 options={[
@@ -589,7 +591,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
                   className="w-4 h-4 text-[#8aab45]"
                 />
                 <label htmlFor="allowDownload" className="text-[#1d1d1f]">
-                  Allow recipient to download records
+                  {t('allowDownloads')}
                 </label>
               </div>
             </div>
@@ -603,12 +605,12 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
                 {copied ? (
                   <>
                     <CheckCircle className="w-4 h-4" />
-                    Copied!
+                    {t('linkCopied')}
                   </>
                 ) : (
                   <>
                     <Copy className="w-4 h-4" />
-                    Copy
+                    {t('copyLink')}
                   </>
                 )}
               </button>
@@ -622,7 +624,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
 
         {shareMethod === 'email' && (
           <div className="bg-[#f5f5f7] p-6 rounded-2xl">
-            <h3 className="text-[#1d1d1f] font-semibold mb-4">Send via Email</h3>
+            <h3 className="text-[#1d1d1f] font-semibold mb-4">{t('sendViaEmail')}</h3>
 
             {userEmail && (
               <div className="bg-white rounded-xl p-3 mb-4 flex items-center gap-2">
@@ -635,7 +637,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
             <div className="space-y-4">
               <div>
                 <label htmlFor="recipientEmail" className="block text-[#1d1d1f] mb-2">
-                  Recipient Email *
+                  {t('recipientEmail')} *
                 </label>
                 <input
                   type="email"
@@ -664,7 +666,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
               {emailSent && (
                 <div className="bg-[#4d9068]/10 text-[#4d9068] p-3 rounded-xl text-sm flex items-center gap-2">
                   <CheckCircle className="w-4 h-4" />
-                  Your email client has been opened with the vaccination summary. Send it from your email to complete sharing.
+                  {t('emailSent')}
                 </div>
               )}
 
@@ -686,26 +688,26 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
 
         {shareMethod === 'pdf' && (
           <div className="bg-[#f5f5f7] p-6 rounded-2xl">
-            <h3 className="text-[#1d1d1f] font-semibold mb-4">Download Full Summary</h3>
+            <h3 className="text-[#1d1d1f] font-semibold mb-4">{t('downloadSummary')}</h3>
             
             <div className="bg-white p-6 rounded-2xl border-0 mb-4">
-              <h4 className="text-[#1d1d1f] font-semibold mb-3">What's included:</h4>
+              <h4 className="text-[#1d1d1f] font-semibold mb-3">{t('whatsIncluded')}</h4>
               <ul className="space-y-2 text-[#86868b]">
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-500" />
-                  Complete patient profile
+                  {t('completePatientProfile')}
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-500" />
-                  Full vaccination history ({vaccinations.length} records)
+                  {t('fullVaccinationHistory')} ({vaccinations.length} records)
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-500" />
-                  Country residence timeline
+                  {t('countryResidenceTimeline')}
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-500" />
-                  Verification status for each vaccine
+                  {t('verificationStatus')}
                 </li>
               </ul>
             </div>
@@ -715,7 +717,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
               className="w-full bg-[#8aab45] hover:bg-[#6d8a35] text-white py-3 rounded-full transition-colors flex items-center justify-center gap-2"
             >
               <Download className="w-5 h-5" />
-              Download Summary (PDF)
+              {t('downloadSummary')}
             </button>
           </div>
         )}
@@ -723,14 +725,11 @@ export function ShareRecords({ vaccinations, profile, countryHistory, userEmail 
         <div className="mt-8 bg-[#f5f5f7] rounded-2xl border-0 p-5">
           <div className="flex items-center gap-2 mb-2">
             <Shield className="w-5 h-5 text-[#1d1d1f]/30" />
-            <h4 className="text-[#1d1d1f] font-semibold">Privacy & Security</h4>
+            <h4 className="text-[#1d1d1f] font-semibold">{t('securityNotice')}</h4>
           </div>
-          <ul className="text-[#86868b] text-sm space-y-1">
-            <li>All shared links are encrypted and expire automatically</li>
-            <li>You can revoke access at any time from your dashboard</li>
-            <li>Recipients cannot modify your records</li>
-            <li>You'll be notified when someone accesses your records</li>
-          </ul>
+          <p className="text-[#86868b] text-sm">
+            {t('hipaaNotice')}
+          </p>
         </div>
       </div>
     </div>

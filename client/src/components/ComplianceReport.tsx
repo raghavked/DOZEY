@@ -4,6 +4,7 @@ import { Search, Target, CheckCircle2, AlertCircle, XCircle, Download, Loader2, 
 import { getSupabase } from '@/lib/supabase';
 import { Progress } from './ui/progress';
 import { INSTITUTIONS, EMPLOYERS, COUNTRIES } from '@/lib/autocomplete-data';
+import { useI18n } from '@/lib/i18n';
 
 type LookupType = 'institution' | 'employer' | 'country';
 
@@ -64,32 +65,35 @@ interface ComplianceReportProps {
   profile: UserProfile | null;
 }
 
-const lookupTabs: { type: LookupType; label: string; icon: typeof GraduationCap; description: string; placeholder: string; defaultQuery: (p: UserProfile | null) => string }[] = [
-  {
-    type: 'institution',
-    label: 'School / Institution',
-    icon: GraduationCap,
-    description: 'Check vaccination requirements for universities, colleges, and schools',
-    placeholder: 'Search for a university, college, or school...',
-    defaultQuery: (p) => p?.targetInstitution || '',
-  },
-  {
-    type: 'employer',
-    label: 'Employer',
-    icon: Briefcase,
-    description: 'Check health requirements for employers and organizations',
-    placeholder: 'Search for an employer or organization...',
-    defaultQuery: (p) => p?.targetEmployment || '',
-  },
-  {
-    type: 'country',
-    label: 'Country / Visa',
-    icon: Globe,
-    description: 'Check vaccination requirements for immigration and visa applications',
-    placeholder: 'Search for a country...',
-    defaultQuery: (p) => p?.targetCountry || '',
-  },
-];
+function useLookupTabs() {
+  const { t } = useI18n();
+  return [
+    {
+      type: 'institution' as LookupType,
+      label: t('institution'),
+      icon: GraduationCap,
+      description: t('complianceDescription'),
+      placeholder: t('search') + '...',
+      defaultQuery: (p: UserProfile | null) => p?.targetInstitution || '',
+    },
+    {
+      type: 'employer' as LookupType,
+      label: t('employer'),
+      icon: Briefcase,
+      description: t('complianceDescription'),
+      placeholder: t('search') + '...',
+      defaultQuery: (p: UserProfile | null) => p?.targetEmployment || '',
+    },
+    {
+      type: 'country' as LookupType,
+      label: t('countryVisa'),
+      icon: Globe,
+      description: t('complianceDescription'),
+      placeholder: t('search') + '...',
+      defaultQuery: (p: UserProfile | null) => p?.targetCountry || '',
+    },
+  ];
+}
 
 const popularSuggestions: Record<LookupType, string[]> = {
   institution: [
@@ -131,6 +135,8 @@ const popularSuggestions: Record<LookupType, string[]> = {
 };
 
 export function ComplianceReport({ vaccinations, profile }: ComplianceReportProps) {
+  const { t } = useI18n();
+  const lookupTabs = useLookupTabs();
   const [lookupType, setLookupType] = useState<LookupType>('institution');
   const [searchQuery, setSearchQuery] = useState(profile?.targetInstitution || '');
   const [loading, setLoading] = useState(false);
@@ -141,7 +147,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
 
   const handleTabChange = (type: LookupType) => {
     setLookupType(type);
-    const tab = lookupTabs.find(t => t.type === type);
+    const tab = lookupTabs.find(tb => tb.type === type);
     setSearchQuery(tab?.defaultQuery(profile) || '');
     setResult(null);
     setError(null);
@@ -223,7 +229,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
     }
   };
 
-  const activeTab = lookupTabs.find(t => t.type === lookupType)!;
+  const activeTab = lookupTabs.find(tb => tb.type === lookupType)!;
 
   const statusIcon = (status: string) => {
     switch (status) {
@@ -265,8 +271,8 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
         <div className="flex items-center gap-3 mb-2">
           <Target className="w-8 h-8 text-[#1d1d1f]/30" />
           <div>
-            <h1 className="text-[#1d1d1f] font-semibold">Compliance Check</h1>
-            <p className="text-[#86868b]">Check vaccination and health requirements for schools, employers, or countries</p>
+            <h1 className="text-[#1d1d1f] font-semibold">{t('complianceCheck')}</h1>
+            <p className="text-[#86868b]">{t('complianceDescription')}</p>
           </div>
         </div>
 
@@ -284,7 +290,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                 }`}
               >
                 <Icon className="w-4 h-4" />
-                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="hidden sm:inline">{tab.type === 'institution' ? t('institution') : tab.type === 'employer' ? t('employer') : t('countryVisa')}</span>
               </button>
             );
           })}
@@ -308,12 +314,12 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
               {loading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Looking up...
+                  {t('checking')}
                 </>
               ) : (
                 <>
                   <Search className="w-5 h-5" />
-                  Check
+                  {t('lookupRequirements')}
                 </>
               )}
             </button>
@@ -382,7 +388,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                 className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors disabled:opacity-50"
               >
                 {downloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                {downloading ? 'Generating...' : 'Download Report'}
+                {downloading ? t('checking') : t('downloadReport')}
               </button>
             </div>
 
@@ -422,7 +428,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                       item.status === 'partial' ? 'bg-yellow-200 text-yellow-800' :
                       'bg-red-200 text-red-800'
                     }`}>
-                      {item.status === 'complete' ? 'Complete' : item.status === 'partial' ? 'Partial' : 'Missing'}
+                      {item.status === 'complete' ? t('requirementsMet') : item.status === 'partial' ? t('partial') : t('requirementsGap')}
                     </span>
                   </div>
                   {item.matching_records.length > 0 && (
@@ -509,7 +515,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-yellow-900 font-semibold mb-1">No Vaccination Records Yet</h3>
+                  <h3 className="text-yellow-900 font-semibold mb-1">{t('noRequirementsChecked')}</h3>
                   <p className="text-yellow-700 text-sm">
                     You haven't added any vaccination records yet. Upload your vaccine documents or add records manually to see how your records match against these requirements.
                   </p>
