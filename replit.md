@@ -130,16 +130,26 @@ docs/                      # Documentation
 - ComplianceReport component: 3-tab selector, popular suggestions per type, requirement-by-requirement status, gap analysis, export
 - Profile includes `targetInstitution`, `targetEmployment`, and `targetCountry` fields
 
+## Design System (Episense-Inspired)
+- Bold minimal aesthetic: oversized typography (text-5xl to text-8xl), font-extrabold
+- Transparent navbar overlaying gradient hero sections, scroll-triggered solid background
+- Scroll animations: fadeInUp, fadeIn, scaleIn, slideInLeft, slideInRight via IntersectionObserver
+- Rounded-full CTAs, muted secondary text (white/30-40, gray-400), uppercase tracking-widest labels
+- Dark off-black (#22283a) panels for auth pages, minimal bullet-point trust signals
+- Dashboard: spacious layout, outline-style buttons, pill-tab navigation, no gradient banners
+
 ## Recent Changes
-- 2026-02-24: Complete website redesign: Episense/Equitle-inspired bold design with full-width sections, gradient heroes, trust signals, and bolder typography across all public pages
-- 2026-02-24: HomePage: Added mission section (moved from TeamPage), bold stats (5 countries, 60+ interviews, 86% validation, 10+ experts), active development banner, security section, how-it-works pipeline
-- 2026-02-24: ProgressPage: Added 22 interactive impact stories with carousel/slideshow and category filtering (Employment/Education/Refugee/Immigration), EIR at UC Davis + Hult Prize Regionals Winner achievements
-- 2026-02-24: TeamPage: Updated roles (Isaac → Co-Founder & CRO, Raghav → Co-Founder & CTO), removed mission section, added UC Davis + awards cards
-- 2026-02-24: FeaturesPage: Fuller design with AI pipeline steps, feature grid, security section
-- 2026-02-24: ContactPage: Professional layout with contact form, info cards, waitlist section
-- 2026-02-24: PublicNavbar: Sticky with backdrop blur, updated nav links; PublicFooter: Fuller design with active development badge, navigation + legal columns
-- 2026-02-24: ShareRecords: Added COVID-19 vaccine card format export option with card preview and download
-- 2026-02-24: Removed Europe/Mexico/India region references, replaced with "5 countries validated, expanding to more"
+- 2026-02-24: Login/Register: Dark off-black panels, minimal trust signals, rounded-full buttons, clean form layout
+- 2026-02-24: Episense-style redesign across all pages: oversized hero text, transparent navbar, scroll animations, flowing sections, minimal card usage
+- 2026-02-24: HomePage: Mission section, bold stats, active development banner, security section, how-it-works pipeline
+- 2026-02-24: ProgressPage: 22 impact stories with carousel and category filtering, achievements section
+- 2026-02-24: TeamPage: Updated roles (Isaac → Co-Founder & CRO, Raghav → Co-Founder & CTO), awards cards
+- 2026-02-24: FeaturesPage: AI pipeline steps with alternating layout, feature grid, security section
+- 2026-02-24: ContactPage: Contact form, info cards, waitlist section
+- 2026-02-24: PublicNavbar: Transparent with scroll transition; PublicFooter: Minimal with lower opacity
+- 2026-02-24: Dashboard/Navigation: Cleaner stat cards, pill-tab nav, outline action buttons
+- 2026-02-24: ShareRecords: COVID-19 vaccine card format export option
+- 2026-02-24: Removed region references, replaced with "5 countries validated, expanding to more"
 - 2026-02-23: New user onboarding: redirects to profile page on first sign-up with welcome banner
 - 2026-02-23: Made healthcare provider required in profile; added smart autocomplete to all text inputs (countries, vaccines, providers, languages, institutions, employers, states)
 - 2026-02-23: Replaced all native select dropdowns with styled CustomSelect component matching app design
