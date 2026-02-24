@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/use-auth';
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react';
 import { DozeyLogo } from '@/components/DozeyLogo';
 
 export function LoginPage() {
@@ -61,6 +61,14 @@ export function LoginPage() {
               <DozeyLogo className="h-10 mx-auto mb-4" />
             </Link>
           </div>
+
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-[#22283a] transition-colors mb-6"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Back to Home
+          </Link>
 
           <h1 className="text-3xl font-extrabold text-[#22283a] mb-2">Welcome back</h1>
           <p className="text-gray-400 mb-8 text-sm">Sign in to access your health records</p>
