@@ -284,7 +284,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
             <div className="flex-1">
               <h3 className="font-semibold text-[#4d9068] mb-1">{t('suggestionsFromDocs')}</h3>
               <p className="text-sm text-[#86868b]">
-                We extracted the following from your uploaded records. Click to apply.
+                We found the following in your uploaded records. Click to apply.
               </p>
             </div>
             {suggestions.length > 1 && (

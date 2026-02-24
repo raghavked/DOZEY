@@ -221,7 +221,7 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
               <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">{t('immigrationWorkVisa')}</h4>
               <ul className="text-[#86868b] text-sm space-y-1">
                 <li>• Varies by country</li>
-                <li>• Usually includes MMR, Varicella</li>
+                <li>• Usually includes MMR and Varicella</li>
                 <li>• TB test often required</li>
                 <li>• Check embassy requirements</li>
               </ul>
@@ -241,7 +241,7 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
               <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">{t('healthcareWorkers')}</h4>
               <ul className="text-[#86868b] text-sm space-y-1">
                 <li>• Hepatitis B</li>
-                <li>• Annual Flu vaccine</li>
+                <li>• Annual Flu Vaccine</li>
                 <li>• MMR</li>
                 <li>• Varicella (Chickenpox)</li>
               </ul>

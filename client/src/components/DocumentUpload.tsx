@@ -25,7 +25,7 @@ function ProcessingStatusBadge({ status }: { status: string | null | undefined }
   const config: Record<string, { bg: string; text: string; icon: React.ReactNode; label: string }> = {
     processing: { bg: 'bg-blue-100', text: 'text-blue-700', icon: <Loader2 className="w-3 h-3 animate-spin" />, label: t('processing') },
     completed: { bg: 'bg-green-100', text: 'text-green-700', icon: <CheckCircle2 className="w-3 h-3" />, label: t('processed') },
-    error: { bg: 'bg-red-100', text: 'text-red-700', icon: <AlertCircle className="w-3 h-3" />, label: 'Error' },
+    error: { bg: 'bg-red-100', text: 'text-red-700', icon: <AlertCircle className="w-3 h-3" />, label: t('error') },
   };
 
   const c = config[status] || config.error;
@@ -409,7 +409,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
             className="w-full bg-[#4a7fb5] hover:bg-[#3a6a9a] text-white py-3 rounded-full flex items-center justify-center gap-2 transition-colors"
           >
             <Plus className="w-5 h-5" />
-            Or Enter Vaccine Details Manually
+            {t('manualEntry')}
           </button>
         </div>
       </div>
@@ -421,7 +421,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <AutocompleteInput
                 id="vaccineName"
-                label="Vaccine Name"
+                label={t('vaccineName')}
                 value={manualForm.vaccineName}
                 onChange={(val) => setManualForm(prev => ({ ...prev, vaccineName: val }))}
                 suggestions={VACCINES}
@@ -429,7 +429,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                 placeholder="e.g., COVID-19, Measles, Hepatitis B"
               />
               <div>
-                <label htmlFor="date" className="block text-[#86868b] mb-2">Date Administered *</label>
+                <label htmlFor="date" className="block text-[#86868b] mb-2">{t('dateAdministered')} *</label>
                 <input
                   type="date"
                   id="date"
@@ -441,7 +441,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
               </div>
               <AutocompleteInput
                 id="countryGiven"
-                label="Country Given"
+                label={t('countryGiven')}
                 value={manualForm.countryGiven}
                 onChange={(val) => setManualForm(prev => ({ ...prev, countryGiven: val }))}
                 suggestions={COUNTRIES}
@@ -450,7 +450,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
               />
               <CustomSelect
                 id="doseNumber"
-                label="Dose Number"
+                label={t('doseNumber')}
                 value={String(manualForm.doseNumber)}
                 onChange={(val) => setManualForm(prev => ({ ...prev, doseNumber: parseInt(val) }))}
                 options={[1, 2, 3, 4, 5].map(n => ({ value: String(n), label: `Dose ${n}` }))}
@@ -458,7 +458,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
               />
               <AutocompleteInput
                 id="location"
-                label="Location / Country"
+                label={t('location')}
                 value={manualForm.location}
                 onChange={(val) => setManualForm(prev => ({ ...prev, location: val }))}
                 suggestions={COUNTRIES}
@@ -467,7 +467,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
               />
               <AutocompleteInput
                 id="provider"
-                label="Healthcare Provider"
+                label={t('provider')}
                 value={manualForm.provider}
                 onChange={(val) => setManualForm(prev => ({ ...prev, provider: val }))}
                 suggestions={HEALTHCARE_PROVIDERS}
@@ -475,7 +475,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                 placeholder="e.g., Dr. Smith"
               />
               <div className="md:col-span-2">
-                <label htmlFor="notes" className="block text-[#86868b] mb-2">Notes (Optional)</label>
+                <label htmlFor="notes" className="block text-[#86868b] mb-2">{t('notes')} ({t('monthOptional')})</label>
                 <textarea
                   id="notes"
                   value={manualForm.notes}
@@ -489,7 +489,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
 
             <div className="flex gap-3">
               <button type="submit" className="flex-1 bg-[#4a7fb5] hover:bg-[#3a6a9a] text-white py-3 rounded-full transition-colors">
-                Add Vaccine Record
+                {t('addVaccination')}
               </button>
               <button type="button" onClick={() => setShowManualEntry(false)} className="flex-1 bg-[#f5f5f7] text-[#86868b] hover:bg-[#e8e8ed] py-3 rounded-full transition-colors">
                 {t('cancel')}

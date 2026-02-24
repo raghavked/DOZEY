@@ -70,7 +70,7 @@ export function LoginPage() {
             Back to Home
           </Link>
 
-          <h1 className="text-3xl font-extrabold text-[#1d1d1f] mb-2">Welcome back</h1>
+          <h1 className="text-3xl font-extrabold text-[#1d1d1f] mb-2">Welcome Back</h1>
           <p className="text-[#86868b] mb-8 text-sm">Sign in to access your health records</p>
 
           {error && (

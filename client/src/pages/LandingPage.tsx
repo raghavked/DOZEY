@@ -247,7 +247,7 @@ export function LandingPage() {
               {[
                 { icon: CheckCircle, text: 'Free to use' },
                 { icon: Lock, text: 'Secure & Private' },
-                { icon: Shield, text: 'HIPAA Aware' },
+                { icon: Shield, text: 'HIPAA Compliant' },
               ].map(({ icon: Icon, text }) => (
                 <div key={text} className="flex items-center gap-2 text-white/70">
                   <Icon className="w-5 h-5 text-[#8aab45]" />
