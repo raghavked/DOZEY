@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Users, CheckCircle2, Globe, Award, GraduationCap, Trophy, ChevronLeft, ChevronRight, Quote, Syringe, Shield, Stethoscope, MapPin } from 'lucide-react';
+import { SavingsTicker } from '../components/SavingsTicker';
 
 const impactStories = [
   { name: 'Alfredo C.', location: 'Mexico to USA', quote: 'My new hire from Mexico had all her paperwork ready, but her vaccine records were in Spanish with different names. She couldn\'t start for two months, lost $30,000 in salary, and spent $150 on revaccinations she didn\'t need.', impact: 'Lost $30,000 in salary and 2 months of work', category: 'Employment' },
@@ -127,6 +128,8 @@ export function ProgressPage() {
           </div>
         </div>
       </section>
+
+      <SavingsTicker />
 
       <section className="py-24 lg:py-32 bg-[#f5f5f7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

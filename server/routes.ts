@@ -4,7 +4,7 @@ import multer from "multer";
 import { isAuthenticated, type AuthRequest } from "./auth";
 import { db } from "./db";
 import { users, profiles, vaccinations, documents, countryHistory, medicalExemptions } from "../shared/schema";
-import { eq, and } from "drizzle-orm";
+import { eq, and, count, sql } from "drizzle-orm";
 import { processDocument, processDoctorNotesDocument } from "./ai-pipeline";
 import { lookupInstitutionRequirements, lookupEmployerRequirements, lookupCountryRequirements, checkCompliance, generateFormattedReport, type ComplianceLookupType } from "./compliance-engine";
 import { sanitizeString, sanitizeLongString, validateDate, validateId, validateDoseNumber, sanitizeProfileData } from "./validation";
@@ -45,6 +45,82 @@ const upload = multer({
 });
 
 export function registerRoutes(app: Express) {
+  let cachedStats: any = null;
+  let cacheTimestamp = 0;
+  const CACHE_TTL = 60000;
+
+  app.get("/api/platform-stats", async (_req, res) => {
+    try {
+      const now = Date.now();
+      if (cachedStats && now - cacheTimestamp < CACHE_TTL) {
+        return res.json(cachedStats);
+      }
+
+      const [userCount] = await db.select({ count: count() }).from(users);
+      const [docCount] = await db.select({ count: count() }).from(documents);
+      const [vacCount] = await db.select({ count: count() }).from(vaccinations);
+      const [countryCount] = await db.select({ count: count() }).from(countryHistory);
+
+      const totalUsers = Number(userCount.count) || 0;
+      const totalDocs = Number(docCount.count) || 0;
+      const totalVaccinations = Number(vacCount.count) || 0;
+      const totalCountries = Number(countryCount.count) || 0;
+
+      const HOURS_PER_DOC_TRADITIONAL = 4.5;
+      const HOURS_PER_DOC_DOZEY = 0.25;
+      const HOURS_PER_VACCINATION_TRADITIONAL = 1.5;
+      const HOURS_PER_VACCINATION_DOZEY = 0.08;
+      const HOURS_PER_COUNTRY_TRADITIONAL = 3;
+      const HOURS_PER_COUNTRY_DOZEY = 0.17;
+      const HOURS_PER_USER_SETUP_TRADITIONAL = 2;
+      const HOURS_PER_USER_SETUP_DOZEY = 0.17;
+
+      const traditionalHours =
+        (totalDocs * HOURS_PER_DOC_TRADITIONAL) +
+        (totalVaccinations * HOURS_PER_VACCINATION_TRADITIONAL) +
+        (totalCountries * HOURS_PER_COUNTRY_TRADITIONAL) +
+        (totalUsers * HOURS_PER_USER_SETUP_TRADITIONAL);
+
+      const dozeyHours =
+        (totalDocs * HOURS_PER_DOC_DOZEY) +
+        (totalVaccinations * HOURS_PER_VACCINATION_DOZEY) +
+        (totalCountries * HOURS_PER_COUNTRY_DOZEY) +
+        (totalUsers * HOURS_PER_USER_SETUP_DOZEY);
+
+      const hoursSaved = Math.round((traditionalHours - dozeyHours) * 10) / 10;
+
+      const AVG_HOURLY_COST = 45;
+      const AVG_REVACCINATION_COST = 150;
+      const AVG_TRANSLATION_FEE = 75;
+      const revaccinationsAvoided = Math.floor(totalVaccinations * 0.35);
+      const translationsAvoided = Math.floor(totalDocs * 0.8);
+
+      const dollarsSaved = Math.round(
+        (hoursSaved * AVG_HOURLY_COST) +
+        (revaccinationsAvoided * AVG_REVACCINATION_COST) +
+        (translationsAvoided * AVG_TRANSLATION_FEE)
+      );
+
+      cachedStats = {
+        totalUsers,
+        totalDocuments: totalDocs,
+        totalVaccinations,
+        totalCountries,
+        hoursSaved,
+        dollarsSaved,
+        revaccinationsAvoided,
+        translationsAvoided,
+        timestamp: now,
+      };
+      cacheTimestamp = now;
+
+      res.json(cachedStats);
+    } catch (error) {
+      console.error("Error fetching platform stats:", error);
+      res.status(500).json({ message: "Failed to fetch platform stats" });
+    }
+  });
+
   app.get("/api/auth/user", isAuthenticated, async (req, res) => {
     try {
       const authReq = req as AuthRequest;
