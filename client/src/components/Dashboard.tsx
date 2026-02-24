@@ -203,7 +203,7 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
                   </div>
                   <div>
                     <p className="text-[#22283a] font-medium text-sm">{vax.vaccineName}</p>
-                    <p className="text-gray-400 text-xs">{vax.location} · {new Date(vax.date).toLocaleDateString()}</p>
+                    <p className="text-gray-400 text-xs">{vax.location} · {(() => { const [y,m,d] = vax.date.split('-').map(Number); return new Date(y, m-1, d).toLocaleDateString(); })()}</p>
                   </div>
                 </div>
                 {vax.verified ? (

@@ -9,6 +9,20 @@ interface ShareRecordsProps {
   countryHistory: CountryPeriod[];
 }
 
+function parseLocalDate(dateStr: string): Date {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function formatDate(dateStr: string | undefined | null, options?: Intl.DateTimeFormatOptions): string {
+  if (!dateStr) return 'N/A';
+  const parts = dateStr.split('-');
+  if (parts.length !== 3) return dateStr;
+  const [year, month, day] = parts.map(Number);
+  if (!year || !month || !day) return dateStr;
+  return new Date(year, month - 1, day).toLocaleDateString('en-US', options);
+}
+
 export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRecordsProps) {
   const [shareMethod, setShareMethod] = useState<'link' | 'email' | 'pdf' | 'card' | null>(null);
   const [email, setEmail] = useState('');
@@ -47,7 +61,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
 
     if (profile) {
       card += `║  Name: ${(profile.fullName || '').padEnd(48)}║\n`;
-      card += `║  Date of Birth: ${(profile.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString() : 'N/A').padEnd(39)}║\n`;
+      card += `║  Date of Birth: ${formatDate(profile.dateOfBirth).padEnd(39)}║\n`;
       card += `║  Country of Origin: ${(profile.countryOfOrigin || 'N/A').padEnd(36)}║\n`;
       if (profile.primaryProvider) {
         card += `║  Primary Provider: ${(profile.primaryProvider).padEnd(37)}║\n`;
@@ -66,7 +80,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
 
       doses.forEach(dose => {
         const doseNum = `  ${dose.doseNumber}`.padEnd(6);
-        const date = `  ${new Date(dose.date).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })}`.padEnd(16);
+        const date = `  ${formatDate(dose.date, { year: 'numeric', month: '2-digit', day: '2-digit' })}`.padEnd(16);
         const prov = `  ${(dose.provider || 'N/A').substring(0, 17)}`.padEnd(19);
         const loc = `  ${(dose.location || dose.countryGiven || 'N/A').substring(0, 8)}`;
         card += `║  ${doseNum}│${date}│${prov}│${loc}║\n`;
@@ -103,7 +117,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
       summary += 'PATIENT INFORMATION\n';
       summary += '───────────────────────────────────────\n';
       summary += `Name: ${profile.fullName}\n`;
-      summary += `Date of Birth: ${new Date(profile.dateOfBirth).toLocaleDateString()}\n`;
+      summary += `Date of Birth: ${formatDate(profile.dateOfBirth)}\n`;
       summary += `Country of Origin: ${profile.countryOfOrigin}\n`;
       summary += `Current Location: ${profile.currentState}, ${profile.currentCountry}\n`;
       if (profile.citizenships.length > 0) {
@@ -137,12 +151,12 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
     summary += `Pending Verification: ${vaccinations.filter(v => !v.verified).length}\n\n`;
 
     const sortedVaccinations = [...vaccinations].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      (a, b) => parseLocalDate(b.date).getTime() - parseLocalDate(a.date).getTime()
     );
 
     sortedVaccinations.forEach((vax, index) => {
       summary += `${index + 1}. ${vax.vaccineName} - Dose ${vax.doseNumber}\n`;
-      summary += `   Date: ${new Date(vax.date).toLocaleDateString()}\n`;
+      summary += `   Date: ${formatDate(vax.date)}\n`;
       summary += `   Country: ${vax.countryGiven}\n`;
       summary += `   Location: ${vax.location}\n`;
       summary += `   Provider: ${vax.provider}\n`;
@@ -260,7 +274,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
                 </div>
                 <div className="flex">
                   <span className="text-gray-400 w-28 shrink-0">Date of Birth:</span>
-                  <span className="text-[#22283a] font-medium">{profile?.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString() : 'N/A'}</span>
+                  <span className="text-[#22283a] font-medium">{formatDate(profile?.dateOfBirth)}</span>
                 </div>
               </div>
               <div className="border-t border-gray-200 pt-3">
@@ -268,7 +282,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
                 {vaccinations.slice(0, 3).map((v, i) => (
                   <div key={i} className="flex justify-between text-xs py-1 border-b border-gray-100">
                     <span className="font-medium text-[#22283a]">{v.vaccineName} (Dose {v.doseNumber})</span>
-                    <span className="text-gray-400">{new Date(v.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })}</span>
+                    <span className="text-gray-400">{formatDate(v.date, { month: 'short', day: 'numeric', year: '2-digit' })}</span>
                   </div>
                 ))}
                 {vaccinations.length > 3 && (

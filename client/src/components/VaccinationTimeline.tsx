@@ -18,11 +18,15 @@ export function VaccinationTimeline({ vaccinations, onAdd, onDelete }: Vaccinati
   const filteredVaccinations = vaccinations
     .filter(v => filterCountry === 'all' || v.countryGiven === filterCountry)
     .filter(v => filterVerified === 'all' || (filterVerified === 'verified' ? v.verified : !v.verified))
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    .sort((a, b) => {
+      const [ay, am, ad] = a.date.split('-').map(Number);
+      const [by, bm, bd] = b.date.split('-').map(Number);
+      return new Date(by, bm - 1, bd).getTime() - new Date(ay, am - 1, ad).getTime();
+    });
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
+    const [y, m, d] = dateString.split('-').map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString('en-US', { 
       year: 'numeric', 
       month: 'long', 
       day: 'numeric' 
