@@ -207,7 +207,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="space-y-5">
       <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-2">
           <Target className="w-8 h-8 text-[#22283a]/30" />
@@ -355,7 +355,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
               <h2 className="text-[#22283a] font-semibold">Requirement Details</h2>
             </div>
 
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
               {result.compliance.map((item, idx) => (
                 <div key={idx} className={`border rounded-xl p-4 ${statusColor(item.status)}`}>
                   <div className="flex items-center justify-between">

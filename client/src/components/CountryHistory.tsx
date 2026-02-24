@@ -34,7 +34,7 @@ export function CountryHistory({ periods, onAdd, onDelete }: CountryHistoryProps
   const sortedPeriods = [...periods].sort((a, b) => a.startYear - b.startYear);
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div>
       <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-6">
           <Globe className="w-8 h-8 text-[#22283a]/30" />

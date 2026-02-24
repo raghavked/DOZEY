@@ -237,7 +237,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-4xl mx-auto">
       {isNewUser && (
         <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-6 flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-[#1051a5] flex-shrink-0 mt-0.5" />

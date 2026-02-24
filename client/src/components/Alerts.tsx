@@ -151,7 +151,7 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
   const alerts = generateAlerts();
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div>
       <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-6">
           <Bell className="w-8 h-8 text-[#22283a]/30" />
@@ -170,7 +170,7 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {alerts.map((alert, index) => {
               const Icon = alert.icon;
               const colorClasses = {
@@ -204,7 +204,7 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
 
         <div className="mt-8 pt-8 border-t border-gray-200">
           <h2 className="text-sm font-semibold text-[#22283a] mb-4">Common Vaccination Requirements</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div className="bg-[#fafafa] p-4 rounded-2xl border border-gray-100">
               <h4 className="text-sm font-semibold text-[#22283a] mb-2">University Students</h4>
               <ul className="text-gray-400 text-sm space-y-1">

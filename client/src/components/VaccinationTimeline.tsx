@@ -30,7 +30,7 @@ export function VaccinationTimeline({ vaccinations, onAdd, onDelete }: Vaccinati
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="space-y-5">
       <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-6">
           <Clock className="w-8 h-8 text-[#22283a]/30" />
@@ -100,7 +100,7 @@ export function VaccinationTimeline({ vaccinations, onAdd, onDelete }: Vaccinati
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {filteredVaccinations.map((vax) => (
               <div
                 key={vax.id}

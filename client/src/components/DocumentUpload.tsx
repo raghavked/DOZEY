@@ -266,7 +266,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="space-y-5">
       <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-6">
           <Upload className="w-8 h-8 text-[#22283a]/30" />
@@ -422,7 +422,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
       {documents.length > 0 && (
         <div className="bg-white rounded-2xl border border-gray-100 p-8">
           <h2 className="font-semibold text-[#22283a] mb-6">Uploaded Documents</h2>
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {documents.map(doc => {
               const parsed = getParsedData(doc);
               const isExpanded = expandedDoc === doc.id;
