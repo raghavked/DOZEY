@@ -34,7 +34,7 @@ export function ContactPage() {
 
   return (
     <div ref={scrollRef} className="min-h-screen">
-      <section className="relative min-h-[70vh] flex items-center bg-gradient-to-b from-[#1d1d1f] to-[#2d2d30] text-white overflow-hidden">
+      <section className="relative min-h-[70vh] flex items-center bg-gradient-to-b from-[#f5f5f7] to-[#fbfbfd] text-[#1d1d1f] overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] bg-[#8aab45]/5 rounded-full blur-[150px]" />
         </div>
@@ -46,7 +46,7 @@ export function ContactPage() {
             <h1 className="animate-fade-in-up text-5xl lg:text-6xl xl:text-7xl font-semibold leading-[1.05] tracking-tight mb-6">
               Get in <span className="text-[#8aab45]">touch</span>
             </h1>
-            <p className="animate-fade-in-up delay-200 text-base text-white/40 max-w-lg mx-auto font-light">
+            <p className="animate-fade-in-up delay-200 text-base text-[#86868b] max-w-lg mx-auto font-light">
               Questions, feedback, or partnership inquiries — we'd love to hear from you.
             </p>
           </div>
@@ -104,7 +104,7 @@ export function ContactPage() {
 
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center gap-2 bg-[#1d1d1f] hover:bg-[#3d3d3f] text-white px-8 py-3.5 rounded-full transition-all font-semibold text-sm active:scale-[0.98]"
+                  className="inline-flex items-center justify-center gap-2 bg-[#4a7fb5] hover:bg-[#3d6a9e] text-white px-8 py-3.5 rounded-full transition-all font-semibold text-sm active:scale-[0.98]"
                 >
                   <Send className="w-4 h-4" />
                   Send Message
@@ -134,17 +134,17 @@ export function ContactPage() {
                 </div>
               ))}
 
-              <div className="bg-[#1d1d1f] rounded-2xl p-8 text-white mt-6">
+              <div className="bg-[#f5f5f7] rounded-2xl p-8 text-[#1d1d1f] mt-6">
                 <Syringe className="w-5 h-5 text-[#8aab45] mb-4" />
                 <h3 className="text-base font-semibold mb-2">Join the Waitlist</h3>
-                <p className="text-white/30 mb-6 text-sm leading-relaxed font-light">
+                <p className="text-[#86868b] mb-6 text-sm leading-relaxed font-light">
                   Be among the first to experience DOZEY's secure vaccination record management platform.
                 </p>
                 <a
                   href="https://forms.gle/Tr7WLVfQR6W3PeXb6"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-white text-[#1d1d1f] font-semibold px-6 py-3 rounded-full hover:bg-white/90 transition-all text-sm"
+                  className="inline-flex items-center gap-2 bg-[#4a7fb5] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#3d6a9e] transition-all text-sm"
                 >
                   Join Now
                   <ArrowRight className="w-4 h-4" />

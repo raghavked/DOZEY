@@ -84,7 +84,7 @@ export function RegisterPage() {
           </p>
           <Link
             to="/login"
-            className="inline-flex items-center gap-2 bg-[#1d1d1f] hover:bg-[#1d1d1f]/90 text-[#fbfbfd] px-8 py-3.5 rounded-full font-bold transition-all text-sm"
+            className="inline-flex items-center gap-2 bg-[#4a7fb5] hover:bg-[#3d6a9e] text-white px-8 py-3.5 rounded-full font-bold transition-all text-sm"
           >
             Go to Sign In
           </Link>
@@ -95,10 +95,10 @@ export function RegisterPage() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-1/2 bg-[#1d1d1f] text-white relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#4a7fb5] to-[#4d9068] text-white relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-[#4d9068]/15 rounded-full blur-[100px]" />
-          <div className="absolute bottom-1/4 left-1/4 w-[300px] h-[300px] bg-[#4a7fb5]/10 rounded-full blur-[80px]" />
+          <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-white/10 rounded-full blur-[100px]" />
+          <div className="absolute bottom-1/4 left-1/4 w-[300px] h-[300px] bg-white/5 rounded-full blur-[80px]" />
         </div>
         <div className="relative flex flex-col justify-center px-16 max-w-lg">
           <DozeyLogo className="h-14 mb-12" theme="dark" />
@@ -106,14 +106,14 @@ export function RegisterPage() {
             Your health records,
             <br />unified
           </h2>
-          <p className="text-white/30 text-lg leading-relaxed mb-10">
+          <p className="text-white/70 text-lg leading-relaxed mb-10">
             Join the platform that helps immigrants, students, and global workers manage vaccination records.
           </p>
           <div className="space-y-3">
             {['Free to create an account', 'Upload records in any language', 'AI-powered processing'].map((feature) => (
               <div key={feature} className="flex items-center gap-3">
                 <div className="w-1.5 h-1.5 bg-[#8aab45] rounded-full" />
-                <span className="text-white/30 text-sm font-medium">{feature}</span>
+                <span className="text-white/70 text-sm font-medium">{feature}</span>
               </div>
             ))}
           </div>
@@ -210,7 +210,7 @@ export function RegisterPage() {
             <button
               type="submit"
               disabled={loading || !tosAccepted}
-              className="w-full bg-[#1d1d1f] hover:bg-[#1d1d1f]/90 text-[#fbfbfd] py-3.5 rounded-full font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm active:scale-[0.98]"
+              className="w-full bg-[#4a7fb5] hover:bg-[#3d6a9e] text-white py-3.5 rounded-full font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm active:scale-[0.98]"
             >
               {loading ? 'Creating account...' : 'Create Account'}
               {!loading && <UserPlus className="w-4 h-4" />}

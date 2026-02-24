@@ -24,9 +24,9 @@ export function FeaturesPage() {
 
   return (
     <div ref={scrollRef} className="min-h-screen">
-      <section className="relative min-h-[70vh] flex items-center bg-gradient-to-b from-[#1d1d1f] to-[#2d2d30] text-white overflow-hidden">
+      <section className="relative min-h-[70vh] flex items-center bg-gradient-to-b from-[#f5f5f7] to-[#fbfbfd] text-[#1d1d1f] overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-[#8aab45]/5 rounded-full blur-[150px]" />
+          <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-[#8aab45]/10 rounded-full blur-[150px]" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 pt-40 w-full">
           <div className="max-w-3xl mx-auto text-center">
@@ -36,7 +36,7 @@ export function FeaturesPage() {
             <h1 className="animate-fade-in-up text-6xl lg:text-7xl xl:text-8xl font-semibold leading-[1.05] tracking-tight mb-6">
               How DOZEY <span className="text-[#8aab45]">works</span>
             </h1>
-            <p className="animate-fade-in-up delay-200 text-base text-white/40 max-w-lg mx-auto font-light">
+            <p className="animate-fade-in-up delay-200 text-base text-[#86868b] max-w-lg mx-auto font-light">
               A complete platform for managing, translating, and sharing your vaccination
               records across borders — powered by AI.
             </p>
@@ -140,11 +140,11 @@ export function FeaturesPage() {
         </div>
       </section>
 
-      <section className="py-24 lg:py-32 bg-[#1d1d1f] text-white">
+      <section className="py-24 lg:py-32 bg-[#f5f5f7] text-[#1d1d1f]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="animate-on-scroll">
             <h2 className="text-5xl lg:text-6xl font-semibold mb-6 leading-[1.05] tracking-tight">Ready to get started?</h2>
-            <p className="text-white/40 text-lg mb-10 max-w-xl mx-auto font-light">
+            <p className="text-[#86868b] text-lg mb-10 max-w-xl mx-auto font-light">
               Create your free account and start managing your health records the smart way.
             </p>
             <Link

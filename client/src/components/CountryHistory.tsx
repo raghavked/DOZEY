@@ -146,7 +146,7 @@ export function CountryHistory({ periods, onAdd, onDelete }: CountryHistoryProps
               {sortedPeriods.map((period, index) => (
                 <div key={period.id} className="relative flex items-start gap-4 pb-8">
                   <div className="w-16 flex-shrink-0 flex flex-col items-center">
-                    <div className="w-4 h-4 rounded-full bg-[#1d1d1f] border-4 border-white shadow-sm z-10" />
+                    <div className="w-4 h-4 rounded-full bg-[#4a7fb5] border-4 border-white shadow-sm z-10" />
                     {index === sortedPeriods.length - 1 && period.endYear === 'Present' && (
                       <div className="mt-2 px-2 py-1 bg-[#4d9068]/10 text-[#4d9068] text-xs rounded-full">
                         Now

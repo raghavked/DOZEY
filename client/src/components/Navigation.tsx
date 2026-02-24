@@ -41,7 +41,7 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
             <LanguageSelector />
             {userName && (
               <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-full bg-[#1d1d1f] text-white flex items-center justify-center text-xs font-medium">
+                <div className="w-7 h-7 rounded-full bg-[#4a7fb5] text-white flex items-center justify-center text-xs font-medium">
                   {userName.charAt(0).toUpperCase()}
                 </div>
                 <span className="text-sm font-medium text-[#1d1d1f] hidden sm:inline">{userName}</span>
@@ -67,7 +67,7 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
                 onClick={() => onNavigate(item.id as any)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-all text-sm ${
                   isActive
-                    ? 'bg-[#1d1d1f] text-white font-medium'
+                    ? 'bg-[#4a7fb5] text-white font-medium'
                     : 'text-[#86868b] hover:bg-[#f5f5f7] hover:text-[#1d1d1f] font-medium'
                 }`}
               >

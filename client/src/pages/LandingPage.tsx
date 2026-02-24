@@ -199,7 +199,7 @@ export function LandingPage() {
         id="home"
         className="relative min-h-screen flex items-center pt-16 overflow-hidden"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-[#4a7fb5] via-[#3a6a9a] to-[#1d1d1f]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#4a7fb5] via-[#3a6a9a] to-[#2d5a8a]" />
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-10 w-72 h-72 bg-[#8aab45] rounded-full blur-3xl" />
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#4d9068] rounded-full blur-3xl" />
@@ -388,7 +388,7 @@ export function LandingPage() {
                   <button className="w-8 h-8 rounded-full bg-[#1d1d1f]/5 flex items-center justify-center text-[#1d1d1f]/40 hover:bg-[#4a7fb5] hover:text-white transition-colors">
                     <Linkedin className="w-4 h-4" />
                   </button>
-                  <button className="w-8 h-8 rounded-full bg-[#1d1d1f]/5 flex items-center justify-center text-[#1d1d1f]/40 hover:bg-[#1d1d1f] hover:text-white transition-colors">
+                  <button className="w-8 h-8 rounded-full bg-[#1d1d1f]/5 flex items-center justify-center text-[#1d1d1f]/40 hover:bg-[#4a7fb5] hover:text-white transition-colors">
                     <Github className="w-4 h-4" />
                   </button>
                 </div>
@@ -464,7 +464,7 @@ export function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#1d1d1f] text-white/70 py-12">
+      <footer className="bg-[#f5f5f7] text-[#86868b] py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
@@ -472,7 +472,7 @@ export function LandingPage() {
                 <div className="w-8 h-8 bg-[#8aab45] rounded-lg flex items-center justify-center font-bold text-[#1d1d1f] text-sm">
                   D
                 </div>
-                <span className="text-white font-bold text-lg">DOZEY</span>
+                <span className="text-[#1d1d1f] font-bold text-lg">DOZEY</span>
               </div>
               <p className="text-sm leading-relaxed">
                 Healthcare that moves with you. Managing medical records across borders for
@@ -481,13 +481,13 @@ export function LandingPage() {
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-3">Quick Links</h4>
+              <h4 className="text-[#1d1d1f] font-semibold mb-3">Quick Links</h4>
               <div className="space-y-2">
                 {navLinks.map((link) => (
                   <button
                     key={link.id}
                     onClick={() => scrollToSection(link.id)}
-                    className="block text-sm hover:text-[#8aab45] transition-colors"
+                    className="block text-sm hover:text-[#4a7fb5] transition-colors"
                   >
                     {link.label}
                   </button>
@@ -496,16 +496,16 @@ export function LandingPage() {
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-3">Legal</h4>
+              <h4 className="text-[#1d1d1f] font-semibold mb-3">Legal</h4>
               <div className="space-y-2 text-sm">
-                <p className="hover:text-[#8aab45] cursor-pointer transition-colors">Privacy Policy</p>
-                <p className="hover:text-[#8aab45] cursor-pointer transition-colors">Terms of Service</p>
-                <p className="hover:text-[#8aab45] cursor-pointer transition-colors">HIPAA Compliance</p>
+                <p className="hover:text-[#4a7fb5] cursor-pointer transition-colors">Privacy Policy</p>
+                <p className="hover:text-[#4a7fb5] cursor-pointer transition-colors">Terms of Service</p>
+                <p className="hover:text-[#4a7fb5] cursor-pointer transition-colors">HIPAA Compliance</p>
               </div>
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="border-t border-[#1d1d1f]/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm">
               &copy; {new Date().getFullYear()} DOZEY. All rights reserved.
             </p>

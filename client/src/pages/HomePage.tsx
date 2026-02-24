@@ -27,10 +27,10 @@ export function HomePage() {
 
   return (
     <div ref={scrollRef} className="min-h-screen">
-      <section className="relative min-h-[100vh] flex items-center bg-gradient-to-b from-[#1d1d1f] to-[#2d2d30] text-white overflow-hidden">
+      <section className="relative min-h-[100vh] flex items-center bg-gradient-to-b from-[#f5f5f7] to-[#fbfbfd] text-[#1d1d1f] overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-1/3 left-1/3 w-[800px] h-[800px] bg-[#8aab45]/5 rounded-full blur-[200px]" />
-          <div className="absolute bottom-1/3 right-1/4 w-[600px] h-[600px] bg-[#4d9068]/5 rounded-full blur-[160px]" />
+          <div className="absolute top-1/3 left-1/3 w-[800px] h-[800px] bg-[#8aab45]/10 rounded-full blur-[200px]" />
+          <div className="absolute bottom-1/3 right-1/4 w-[600px] h-[600px] bg-[#4d9068]/10 rounded-full blur-[160px]" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -41,7 +41,7 @@ export function HomePage() {
               moves <span className="text-[#8aab45]">with you</span>
             </h1>
 
-            <p className="animate-fade-in-up delay-100 text-lg sm:text-xl text-white/40 mb-12 max-w-2xl mx-auto leading-relaxed font-light">
+            <p className="animate-fade-in-up delay-100 text-lg sm:text-xl text-[#86868b] mb-12 max-w-2xl mx-auto leading-relaxed font-light">
               Upload and convert your vaccine records into a format accepted worldwide. No delays, no repeat vaccinations, no money lost.
             </p>
 
@@ -55,7 +55,7 @@ export function HomePage() {
               </Link>
               <Link
                 to="/features"
-                className="inline-flex items-center gap-2 text-white/40 hover:text-white font-medium px-6 py-4 text-base transition-colors"
+                className="inline-flex items-center gap-2 text-[#86868b] hover:text-[#1d1d1f] font-medium px-6 py-4 text-base transition-colors"
               >
                 How It Works
                 <ChevronRight className="w-4 h-4" />
@@ -176,7 +176,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="relative py-24 lg:py-32 bg-[#1d1d1f] text-white overflow-hidden">
+      <section className="relative py-24 lg:py-32 bg-[#f5f5f7] text-[#1d1d1f] overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#4a7fb5]/10 rounded-full blur-[150px]" />
         </div>
@@ -189,7 +189,7 @@ export function HomePage() {
             <h2 className="text-5xl lg:text-6xl font-semibold mb-6 leading-[1.05] tracking-tight">
               Built with privacy at the core
             </h2>
-            <p className="text-lg text-white/40 max-w-2xl mx-auto font-light">
+            <p className="text-lg text-[#86868b] max-w-2xl mx-auto font-light">
               Your health data deserves the highest level of protection.
             </p>
           </div>
@@ -201,11 +201,11 @@ export function HomePage() {
               { icon: Languages, title: 'Multi-Language', desc: '7+ languages supported including Hindi, Chinese, Spanish, and Arabic.' },
             ].map(({ icon: Icon, title, desc }, i) => (
               <div key={title} className={`animate-on-scroll delay-${(i + 1) * 100} text-center`}>
-                <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                  <Icon className="w-6 h-6 text-white/60" />
+                <div className="w-12 h-12 bg-[#fbfbfd] rounded-2xl flex items-center justify-center mx-auto mb-5">
+                  <Icon className="w-6 h-6 text-[#86868b]" />
                 </div>
                 <h3 className="text-sm font-semibold mb-2">{title}</h3>
-                <p className="text-white/40 text-sm leading-relaxed">{desc}</p>
+                <p className="text-[#86868b] text-sm leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>

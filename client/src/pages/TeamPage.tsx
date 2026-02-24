@@ -51,7 +51,7 @@ export function TeamPage() {
 
   return (
     <div ref={scrollRef} className="min-h-screen">
-      <section className="relative min-h-[70vh] flex items-center bg-gradient-to-b from-[#1d1d1f] to-[#2d2d30] text-white overflow-hidden">
+      <section className="relative min-h-[70vh] flex items-center bg-gradient-to-b from-[#f5f5f7] to-[#fbfbfd] text-[#1d1d1f] overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-1/2 left-1/3 w-[500px] h-[500px] bg-[#4d9068]/5 rounded-full blur-[150px]" />
         </div>
@@ -65,7 +65,7 @@ export function TeamPage() {
               <br />
               behind <span className="text-[#8aab45]">DOZEY</span>
             </h1>
-            <p className="animate-fade-in-up delay-200 text-base text-white/40 max-w-lg mx-auto font-light">
+            <p className="animate-fade-in-up delay-200 text-base text-[#86868b] max-w-lg mx-auto font-light">
               Founded by UC Davis students who experienced the challenges of managing
               vaccination records across borders firsthand.
             </p>

@@ -226,7 +226,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                 onClick={() => handleTabChange(tab.type)}
                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
                   lookupType === tab.type
-                    ? 'bg-[#1d1d1f] text-white'
+                    ? 'bg-[#4a7fb5] text-white'
                     : 'bg-[#f5f5f7] text-[#86868b]'
                 }`}
               >

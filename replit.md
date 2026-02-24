@@ -134,8 +134,9 @@ docs/                      # Documentation
 
 ## Design System (Apple iPhone 17 Pro-Inspired)
 - Muted color palette: #4a7fb5 blue, #8aab45 green, #4d9068 dark green, #1d1d1f black, #fbfbfd white
-- Hero sections: dark gradient bg (from-[#1d1d1f] to-[#2d2d30]), massive centered typography (text-6xl to text-8xl)
-- Navbar: slim h-14, transparent with frosted glass on scroll (bg-white/80 backdrop-blur-xl border-b border-black/5)
+- NO dark/black backgrounds anywhere - all light theme
+- Hero sections: light gradient bg (from-[#f5f5f7] to-[#fbfbfd]), massive centered typography (text-6xl to text-8xl)
+- Navbar: slim h-14, frosted glass (bg-white/80 backdrop-blur-xl border-b border-black/5)
 - Footer: bg-[#f5f5f7], Apple-style horizontal links with | dividers, text-xs text-[#86868b]
 - Scroll animations: fadeInUp, fadeIn, scaleIn, slideInLeft, slideInRight via IntersectionObserver
 - Cards: bg-white rounded-2xl, NO visible borders, clean backgrounds
@@ -143,15 +144,16 @@ docs/                      # Documentation
 - Icons: text-[#86868b] or text-[#1d1d1f]/30 (very subtle)
 - Section labels: text-xs text-[#4a7fb5] font-medium uppercase tracking-widest
 - Secondary text: text-[#86868b] (Apple gray)
-- CTAs: rounded-full, bg-[#4a7fb5] text-white (primary), bg-[#1d1d1f] text-white (dark)
-- Section backgrounds alternate: #fbfbfd (white), #f5f5f7 (light gray), #1d1d1f (dark)
+- CTAs: rounded-full, bg-[#4a7fb5] text-white (primary)
+- Section backgrounds alternate: #fbfbfd (white), #f5f5f7 (light gray) - NO dark sections
 - Section spacing: py-24 lg:py-32 for generous whitespace
-- Dashboard: bg-[#f5f5f7] main, bg-white cards with no borders, pill-tab navigation
+- Dashboard: bg-[#f5f5f7] main, bg-white cards with no borders, pill-tab navigation (bg-[#4a7fb5] active)
 - Status badges: Verified bg-[#4d9068]/10, Pending bg-[#f5f5f7]
-- Auth pages: split layout, left dark panel (#1d1d1f), right clean form (#fbfbfd)
+- Auth pages: split layout, left brand gradient panel (from-[#4a7fb5] to-[#4d9068]), right clean form (#fbfbfd)
 
 ## Recent Changes
-- 2026-02-24: Complete Apple iPhone 17 Pro redesign: muted color palette (#4a7fb5, #8aab45, #4d9068, #1d1d1f), dark hero sections, borderless cards, bg-[#f5f5f7] inputs, massive typography, generous spacing (py-24 to py-32), applied to ALL public pages, auth pages, and dashboard components
+- 2026-02-24: Removed all dark/black backgrounds - fully light theme with light gradient heroes, brand gradient auth panels, bg-[#4a7fb5] active states
+- 2026-02-24: Complete Apple iPhone 17 Pro redesign: muted color palette (#4a7fb5, #8aab45, #4d9068, #1d1d1f), borderless cards, bg-[#f5f5f7] inputs, massive typography, generous spacing (py-24 to py-32), applied to ALL public pages, auth pages, and dashboard components
 - 2026-02-24: Fuller layout: removed max-w-4xl constraints, 3-column dashboard grid (2-col main + sidebar), 2-column grids for vaccinations/documents/compliance/alerts
 - 2026-02-24: ShareRecords: COVID-19 vaccine card format export option
 - 2026-02-23: New user onboarding: redirects to profile page on first sign-up with welcome banner

@@ -289,7 +289,7 @@ export function DozeChat() {
         onClick={isOpen ? handleClose : handleOpen}
         className={`ml-auto w-14 h-14 rounded-full shadow-sm flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md ${
           isOpen
-            ? 'bg-[#1d1d1f] text-white'
+            ? 'bg-[#4a7fb5] text-white'
             : 'bg-[#4a7fb5] text-white'
         }`}
       >
