@@ -58,8 +58,8 @@ export function FeaturesPage() {
           <div className="space-y-24">
             {[
               { step: '01', icon: Upload, title: 'Upload Records', desc: 'Upload vaccination cards, medical documents, or doctor\'s notes. We accept PDFs, images, and scanned documents in any language. Simply drag and drop or browse your files.', align: 'left' },
-              { step: '02', icon: Brain, title: 'AI Extracts & Translates', desc: 'Our Mistral OCR reads handwritten and printed records with high accuracy. DeepL detects the language and translates everything to English automatically, preserving medical terminology.', align: 'right' },
-              { step: '03', icon: Syringe, title: 'Records Organized', desc: 'OpenAI parses the translated text into structured data — vaccine names, dates, doses, and providers are added to your personal timeline. No manual entry required.', align: 'left' },
+              { step: '02', icon: Brain, title: 'Smart Extraction & Translation', desc: 'Our systems read handwritten and printed records with high accuracy. Language is detected automatically and everything is translated to English, preserving medical terminology.', align: 'right' },
+              { step: '03', icon: Syringe, title: 'Records Organized', desc: 'Our systems parse the translated text into structured data — vaccine names, dates, doses, and providers are added to your personal timeline. No manual entry required.', align: 'left' },
               { step: '04', icon: ClipboardCheck, title: 'Check Compliance', desc: 'Compare your records against requirements for any institution, employer, or country. Generate downloadable compliance reports with gap analysis.', align: 'right' },
             ].map(({ step, icon: Icon, title, desc, align }, i) => (
               <div key={step} className={`animate-on-scroll delay-${(i + 1) * 100} grid lg:grid-cols-2 gap-16 items-center`}>
