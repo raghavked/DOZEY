@@ -316,8 +316,10 @@ export function registerRoutes(app: Express) {
         .set({ processingStatus: "processing" })
         .where(eq(documents.id, id));
 
+      const residenceHistory = await db.select().from(countryHistory).where(eq(countryHistory.userId, userId));
+
       try {
-        const result = await processDocument(doc.filePath, doc.mimeType || "application/pdf");
+        const result = await processDocument(doc.filePath, doc.mimeType || "application/pdf", residenceHistory);
 
         const detectedCountry = result.parsedData?.document_origin?.country || null;
         const updateData: Record<string, any> = {
@@ -517,7 +519,8 @@ export function registerRoutes(app: Express) {
 
       await db.update(documents).set({ processingStatus: "processing" }).where(eq(documents.id, id));
 
-      const result = await processDoctorNotesDocument(doc.filePath, doc.mimeType || "application/pdf");
+      const dnResidenceHistory = await db.select().from(countryHistory).where(eq(countryHistory.userId, userId));
+      const result = await processDoctorNotesDocument(doc.filePath, doc.mimeType || "application/pdf", dnResidenceHistory);
 
       const detectedCountryDN = result.parsedData?.document_origin?.country || null;
       const dnUpdateData: Record<string, any> = {

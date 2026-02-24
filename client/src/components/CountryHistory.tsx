@@ -22,8 +22,17 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
     country: '',
     state: '',
     startYear: new Date().getFullYear(),
+    startMonth: null as number | null,
     endYear: 'Present' as number | 'Present',
+    endMonth: null as number | null,
   });
+
+  const monthOptions = [
+    { value: 1, label: t('jan') }, { value: 2, label: t('feb') }, { value: 3, label: t('mar') },
+    { value: 4, label: t('apr') }, { value: 5, label: t('may') }, { value: 6, label: t('jun') },
+    { value: 7, label: t('jul') }, { value: 8, label: t('aug') }, { value: 9, label: t('sep') },
+    { value: 10, label: t('oct') }, { value: 11, label: t('nov') }, { value: 12, label: t('dec') },
+  ];
 
   const countrySuggestions = extractCountrySuggestions(vaccinations, documents, periods)
     .filter(s => !dismissedCountries.has(s.country.toLowerCase()));
@@ -49,12 +58,26 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
       country: '',
       state: '',
       startYear: new Date().getFullYear(),
+      startMonth: null,
       endYear: 'Present',
+      endMonth: null,
     });
     setShowForm(false);
   };
 
-  const sortedPeriods = [...periods].sort((a, b) => a.startYear - b.startYear);
+  const formatMonthYear = (month: number | null | undefined, year: number | string) => {
+    if (year === 'Present') return t('present');
+    if (month) {
+      const labels = [t('jan'), t('feb'), t('mar'), t('apr'), t('may'), t('jun'), t('jul'), t('aug'), t('sep'), t('oct'), t('nov'), t('dec')];
+      return `${labels[month - 1]} ${year}`;
+    }
+    return `${year}`;
+  };
+
+  const sortedPeriods = [...periods].sort((a, b) => {
+    if (a.startYear !== b.startYear) return a.startYear - b.startYear;
+    return (a.startMonth || 0) - (b.startMonth || 0);
+  });
 
   return (
     <div>
@@ -144,35 +167,59 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
                 <label htmlFor="startYear" className="block text-xs text-[#86868b] font-medium mb-2">
                   {t('startYear')} *
                 </label>
-                <input
-                  type="number"
-                  id="startYear"
-                  value={formData.startYear}
-                  onChange={(e) => setFormData(prev => ({ ...prev, startYear: parseInt(e.target.value) }))}
-                  required
-                  min="1900"
-                  max={new Date().getFullYear()}
-                  className="w-full px-4 py-2 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#4a7fb5] focus:border-transparent outline-none"
-                />
+                <div className="flex gap-2">
+                  <select
+                    value={formData.startMonth ?? ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, startMonth: e.target.value ? parseInt(e.target.value) : null }))}
+                    className="w-24 px-3 py-2 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#4a7fb5] focus:border-transparent outline-none text-sm"
+                  >
+                    <option value="">{t('monthOptional')}</option>
+                    {monthOptions.map(m => (
+                      <option key={m.value} value={m.value}>{m.label}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="number"
+                    id="startYear"
+                    value={formData.startYear}
+                    onChange={(e) => setFormData(prev => ({ ...prev, startYear: parseInt(e.target.value) }))}
+                    required
+                    min="1900"
+                    max={new Date().getFullYear()}
+                    className="flex-1 px-4 py-2 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#4a7fb5] focus:border-transparent outline-none"
+                  />
+                </div>
               </div>
 
               <div>
                 <label htmlFor="endYear" className="block text-xs text-[#86868b] font-medium mb-2">
                   {t('endYear')} *
                 </label>
-                <input
-                  type="number"
-                  id="endYear"
-                  value={formData.endYear === 'Present' ? '' : formData.endYear}
-                  onChange={(e) => setFormData(prev => ({ 
-                    ...prev, 
-                    endYear: e.target.value ? parseInt(e.target.value) : 'Present' 
-                  }))}
-                  placeholder="Leave empty for Present"
-                  min="1900"
-                  max={new Date().getFullYear()}
-                  className="w-full px-4 py-2 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#4a7fb5] focus:border-transparent outline-none"
-                />
+                <div className="flex gap-2">
+                  <select
+                    value={formData.endMonth ?? ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, endMonth: e.target.value ? parseInt(e.target.value) : null }))}
+                    className="w-24 px-3 py-2 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#4a7fb5] focus:border-transparent outline-none text-sm"
+                  >
+                    <option value="">{t('monthOptional')}</option>
+                    {monthOptions.map(m => (
+                      <option key={m.value} value={m.value}>{m.label}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="number"
+                    id="endYear"
+                    value={formData.endYear === 'Present' ? '' : formData.endYear}
+                    onChange={(e) => setFormData(prev => ({ 
+                      ...prev, 
+                      endYear: e.target.value ? parseInt(e.target.value) : 'Present' 
+                    }))}
+                    placeholder="Leave empty for Present"
+                    min="1900"
+                    max={new Date().getFullYear()}
+                    className="flex-1 px-4 py-2 bg-white border-0 rounded-xl focus:ring-2 focus:ring-[#4a7fb5] focus:border-transparent outline-none"
+                  />
+                </div>
               </div>
             </div>
 
@@ -224,7 +271,7 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
                           {period.country}{period.state ? `, ${period.state}` : ''}
                         </h4>
                         <p className="text-[#86868b]">
-                          {period.startYear} - {period.endYear === 'Present' ? t('present') : period.endYear}
+                          {formatMonthYear(period.startMonth, period.startYear)} - {formatMonthYear(period.endMonth, period.endYear === 'Present' ? 'Present' : period.endYear)}
                           {period.endYear !== 'Present' && (
                             <span className="text-[#86868b] ml-2">
                               ({(typeof period.endYear === 'number' ? period.endYear : 0) - period.startYear} years)

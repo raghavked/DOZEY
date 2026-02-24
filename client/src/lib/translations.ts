@@ -104,7 +104,22 @@ export type TranslationKeys = {
   country: string;
   state: string;
   startYear: string;
+  startMonth: string;
   endYear: string;
+  endMonth: string;
+  monthOptional: string;
+  jan: string;
+  feb: string;
+  mar: string;
+  apr: string;
+  may: string;
+  jun: string;
+  jul: string;
+  aug: string;
+  sep: string;
+  oct: string;
+  nov: string;
+  dec: string;
   present: string;
   noCountries: string;
   addCountriesToTrack: string;
@@ -343,7 +358,12 @@ export const translations: Translations = {
     country: "Country",
     state: "State/Province",
     startYear: "Start Year",
+    startMonth: "Start Month",
     endYear: "End Year",
+    endMonth: "End Month",
+    monthOptional: "Optional",
+    jan: "Jan", feb: "Feb", mar: "Mar", apr: "Apr", may: "May", jun: "Jun",
+    jul: "Jul", aug: "Aug", sep: "Sep", oct: "Oct", nov: "Nov", dec: "Dec",
     present: "Present",
     noCountries: "No country history yet",
     addCountriesToTrack: "Add countries where you've lived to track regional vaccination requirements.",
@@ -578,7 +598,12 @@ export const translations: Translations = {
     country: "País",
     state: "Estado/Provincia",
     startYear: "Año de Inicio",
+    startMonth: "Mes de Inicio",
     endYear: "Año de Fin",
+    endMonth: "Mes de Fin",
+    monthOptional: "Opcional",
+    jan: "Ene", feb: "Feb", mar: "Mar", apr: "Abr", may: "May", jun: "Jun",
+    jul: "Jul", aug: "Ago", sep: "Sep", oct: "Oct", nov: "Nov", dec: "Dic",
     present: "Presente",
     noCountries: "Aún no hay historial de países",
     addCountriesToTrack: "Agrega los países donde has vivido para rastrear los requisitos regionales de vacunación.",
@@ -813,7 +838,12 @@ export const translations: Translations = {
     country: "Pays",
     state: "État/Province",
     startYear: "Année de Début",
+    startMonth: "Mois de Début",
     endYear: "Année de Fin",
+    endMonth: "Mois de Fin",
+    monthOptional: "Facultatif",
+    jan: "Jan", feb: "Fév", mar: "Mar", apr: "Avr", may: "Mai", jun: "Juin",
+    jul: "Juil", aug: "Août", sep: "Sep", oct: "Oct", nov: "Nov", dec: "Déc",
     present: "Présent",
     noCountries: "Aucun historique de pays",
     addCountriesToTrack: "Ajoutez les pays où vous avez vécu pour suivre les exigences vaccinales régionales.",
@@ -1048,7 +1078,12 @@ export const translations: Translations = {
     country: "देश",
     state: "राज्य/प्रांत",
     startYear: "आरंभ वर्ष",
+    startMonth: "आरंभ माह",
     endYear: "अंतिम वर्ष",
+    endMonth: "अंतिम माह",
+    monthOptional: "वैकल्पिक",
+    jan: "जन", feb: "फर", mar: "मार्च", apr: "अप्रै", may: "मई", jun: "जून",
+    jul: "जुल", aug: "अग", sep: "सित", oct: "अक्टू", nov: "नव", dec: "दिस",
     present: "वर्तमान",
     noCountries: "अभी तक कोई देश इतिहास नहीं",
     addCountriesToTrack: "क्षेत्रीय टीकाकरण आवश्यकताओं को ट्रैक करने के लिए अपने निवास देश जोड़ें।",
@@ -1283,7 +1318,12 @@ export const translations: Translations = {
     country: "国家",
     state: "州/省",
     startYear: "开始年份",
+    startMonth: "开始月份",
     endYear: "结束年份",
+    endMonth: "结束月份",
+    monthOptional: "可选",
+    jan: "1月", feb: "2月", mar: "3月", apr: "4月", may: "5月", jun: "6月",
+    jul: "7月", aug: "8月", sep: "9月", oct: "10月", nov: "11月", dec: "12月",
     present: "至今",
     noCountries: "暂无国家记录",
     addCountriesToTrack: "添加您居住过的国家以追踪区域疫苗接种要求。",
@@ -1518,7 +1558,12 @@ export const translations: Translations = {
     country: "País",
     state: "Estado/Província",
     startYear: "Ano de Início",
+    startMonth: "Mês de Início",
     endYear: "Ano de Término",
+    endMonth: "Mês de Término",
+    monthOptional: "Opcional",
+    jan: "Jan", feb: "Fev", mar: "Mar", apr: "Abr", may: "Mai", jun: "Jun",
+    jul: "Jul", aug: "Ago", sep: "Set", oct: "Out", nov: "Nov", dec: "Dez",
     present: "Presente",
     noCountries: "Nenhum histórico de países ainda",
     addCountriesToTrack: "Adicione os países onde você morou para rastrear os requisitos regionais de vacinação.",
@@ -1753,7 +1798,12 @@ export const translations: Translations = {
     country: "الدولة",
     state: "الولاية/المقاطعة",
     startYear: "سنة البداية",
+    startMonth: "شهر البداية",
     endYear: "سنة الانتهاء",
+    endMonth: "شهر الانتهاء",
+    monthOptional: "اختياري",
+    jan: "يناير", feb: "فبراير", mar: "مارس", apr: "أبريل", may: "مايو", jun: "يونيو",
+    jul: "يوليو", aug: "أغسطس", sep: "سبتمبر", oct: "أكتوبر", nov: "نوفمبر", dec: "ديسمبر",
     present: "حتى الآن",
     noCountries: "لا يوجد سجل دول بعد",
     addCountriesToTrack: "أضف الدول التي عشت فيها لتتبع متطلبات التطعيم الإقليمية.",

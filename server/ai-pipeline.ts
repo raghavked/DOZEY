@@ -98,8 +98,39 @@ function safeParseJSON(content: string): any {
   }
 }
 
-export async function parseVaccinationData(text: string): Promise<any> {
+export interface ResidenceHistoryEntry {
+  country: string;
+  state?: string | null;
+  startYear: number;
+  startMonth?: number | null;
+  endYear: string;
+  endMonth?: number | null;
+}
+
+function buildResidenceContext(residenceHistory?: ResidenceHistoryEntry[]): string {
+  if (!residenceHistory || residenceHistory.length === 0) return '';
+
+  const formatted = residenceHistory.map(r => {
+    const startStr = r.startMonth ? `${r.startMonth}/${r.startYear}` : `${r.startYear}`;
+    const endStr = r.endYear === 'Present' ? 'Present' : (r.endMonth ? `${r.endMonth}/${r.endYear}` : `${r.endYear}`);
+    const location = r.state ? `${r.state}, ${r.country}` : r.country;
+    return `- ${location}: ${startStr} to ${endStr}`;
+  }).join('\n');
+
+  return `\n\nUSER'S RESIDENCE HISTORY (use this to help determine where vaccinations were likely given when no explicit location is in the document):
+${formatted}
+
+When a vaccination record does not explicitly state a country or location, cross-reference the vaccination date against the user's residence history above. If the vaccination date falls within a residence period, you may SUGGEST the country_given from that residence period but you MUST:
+1. Append " (inferred from residence history)" to the country_given value
+2. Set confidence to "medium" at most for that record
+3. Add "location inferred from residence history, not explicitly stated in document" to the notes field
+4. Still list "country_given" in the missing_fields array since it was not explicitly found
+This is a soft suggestion — the user will verify. Only do this when the document itself provides no explicit location.`;
+}
+
+export async function parseVaccinationData(text: string, residenceHistory?: ResidenceHistoryEntry[]): Promise<any> {
   const openai = getOpenAIClient();
+  const residenceContext = buildResidenceContext(residenceHistory);
 
   const systemPrompt = `You are a strict medical document parser for the DOZEY vaccination records system. Your job is to extract ONLY data that is explicitly written in the document. NEVER guess, assume, or generate data that is not clearly present in the text.
 
@@ -137,14 +168,14 @@ CRITICAL RULES:
 - If a vaccination field value is not clearly present, you MUST set it to null — NEVER fabricate, guess, or assume
 - Do NOT invent dates, providers, dose numbers, or any other vaccination field
 - For dose_number: only include if explicitly stated (e.g., "Dose 2", "2nd dose"). Use null if not mentioned.
-- For country_given: include if the country is explicitly mentioned per vaccination record. If not explicitly stated per record but the document_origin country is determined, you may use that as the country_given for individual vaccination entries.
+- For country_given: include if the country is explicitly mentioned per vaccination record. If not explicitly stated per record but the document_origin country is determined, you may use that as the country_given for individual vaccination entries. If neither is available but a residence history is provided, cross-reference the vaccination date to infer the country.
 - For provider: only include if the healthcare provider name is explicitly written.
 - For date: only include if a specific date is written. Do NOT use today's date or approximate.
-- Set confidence to "high" if the vaccine name and date are both clear, "medium" if one is unclear, "low" if the record is very uncertain
+- Set confidence to "high" if the vaccine name and date are both clear, "medium" if one is unclear or location was inferred from residence history, "low" if the record is very uncertain
 - Include "missing_fields" array listing which important fields (date, dose_number, provider, country_given) were NOT found
 - If no vaccination data is found at all, return empty vaccinations array with a summary of what the document actually contains
 - Include lot/batch numbers in notes if present
-- For document_origin: USE ALL available clues (language, addresses, provider names, vaccine brands, government identifiers, formatting) to determine the country. This is an inference — you ARE allowed to reason about where the document is from.`;
+- For document_origin: USE ALL available clues (language, addresses, provider names, vaccine brands, government identifiers, formatting) to determine the country. This is an inference — you ARE allowed to reason about where the document is from.${residenceContext}`;
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
@@ -165,8 +196,9 @@ CRITICAL RULES:
   return safeParseJSON(content);
 }
 
-export async function parseDoctorNotes(text: string): Promise<any> {
+export async function parseDoctorNotes(text: string, residenceHistory?: ResidenceHistoryEntry[]): Promise<any> {
   const openai = getOpenAIClient();
+  const residenceContext = buildResidenceContext(residenceHistory);
 
   const systemPrompt = `You are a medical document parser specializing in handwritten doctor's notes, medical letters, and clinical records for the DOZEY vaccination records system. Your task is to extract BOTH vaccination records AND medical exemptions/immunity evidence from the text.
 
@@ -239,7 +271,7 @@ CRITICAL RULES:
 - For dates: only include if explicitly written. Use null otherwise. Do NOT use today's date.
 - For dose_number: only include if explicitly stated. Use null otherwise.
 - Include "confidence" field ("high", "medium", "low") and "missing_fields" array for each vaccination entry
-- Include enough detail in the "reason" field to support the exemption claim, but ONLY using information from the document`;
+- Include enough detail in the "reason" field to support the exemption claim, but ONLY using information from the document${residenceContext}`;
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
@@ -257,7 +289,7 @@ CRITICAL RULES:
   return safeParseJSON(content);
 }
 
-export async function processDoctorNotesDocument(filePath: string, mimeType: string): Promise<{
+export async function processDoctorNotesDocument(filePath: string, mimeType: string, residenceHistory?: ResidenceHistoryEntry[]): Promise<{
   extractedText: string;
   translatedText: string;
   originalLanguage: string;
@@ -281,7 +313,7 @@ export async function processDoctorNotesDocument(filePath: string, mimeType: str
   }
 
   const textForParsing = translatedText || text;
-  const parsedData = await parseDoctorNotes(textForParsing);
+  const parsedData = await parseDoctorNotes(textForParsing, residenceHistory);
 
   return {
     extractedText: text,
@@ -291,7 +323,7 @@ export async function processDoctorNotesDocument(filePath: string, mimeType: str
   };
 }
 
-export async function processDocument(filePath: string, mimeType: string): Promise<{
+export async function processDocument(filePath: string, mimeType: string, residenceHistory?: ResidenceHistoryEntry[]): Promise<{
   extractedText: string;
   translatedText: string;
   originalLanguage: string;
@@ -315,7 +347,7 @@ export async function processDocument(filePath: string, mimeType: string): Promi
   }
 
   const textForParsing = translatedText || text;
-  const parsedData = await parseVaccinationData(textForParsing);
+  const parsedData = await parseVaccinationData(textForParsing, residenceHistory);
 
   return {
     extractedText: text,
