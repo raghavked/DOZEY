@@ -18,7 +18,7 @@ export function DashboardLayout() {
   const [isNewUser, setIsNewUser] = useState(false);
   
   const { profile, isLoading: profileLoading, saveProfile } = useProfile();
-  const { vaccinations, isLoading: vaccLoading, addVaccination, deleteVaccination } = useVaccinations();
+  const { vaccinations, isLoading: vaccLoading, addVaccination, updateVaccination, deleteVaccination } = useVaccinations();
   const { documents, isLoading: docsLoading, addDocument, updateDocument, deleteDocument, refreshAll } = useDocuments();
   const { countryHistory, isLoading: historyLoading, addCountryPeriod, deleteCountryPeriod } = useCountryHistory();
   const { exemptions, isLoading: exemptionsLoading, refreshExemptions } = useExemptions();
@@ -112,6 +112,7 @@ export function DashboardLayout() {
             documents={documents}
             onAdd={(v) => addVaccination(v)}
             onDelete={(id) => deleteVaccination(String(id))}
+            onUpdate={(id, data) => updateVaccination({ id, data })}
           />
         );
       case 'compliance':
@@ -127,6 +128,7 @@ export function DashboardLayout() {
             vaccinations={vaccinations}
             profile={defaultProfile}
             countryHistory={countryHistory}
+            userEmail={user?.email || ''}
           />
         );
       case 'alerts':

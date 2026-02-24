@@ -7,6 +7,7 @@ import {
   ZoomableGroup,
 } from 'react-simple-maps';
 import { VaccinationRecord } from '@/types';
+import { normalizeCountryName, COUNTRY_NAME_TO_GEO } from '@/lib/country-utils';
 
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
@@ -44,6 +45,9 @@ const COUNTRY_COORDS: Record<string, [number, number]> = {
   "United Kingdom": [-3.44, 55.38], "United States": [-95.71, 37.09], "Uruguay": [-55.77, -32.52],
   "Uzbekistan": [64.59, 41.38], "Venezuela": [-66.59, 6.42], "Vietnam": [108.28, 14.06],
   "Yemen": [48.52, 15.55], "Zambia": [27.85, -13.13], "Zimbabwe": [29.15, -19.02],
+  "Ivory Coast": [-5.55, 7.54], "Eswatini": [31.47, -26.52], "South Sudan": [31.31, 6.88],
+  "Democratic Republic of the Congo": [21.76, -4.04], "Central African Republic": [20.94, 6.61],
+  "Equatorial Guinea": [10.27, 1.65],
 };
 
 interface ImmunizationGlobeProps {
@@ -59,13 +63,24 @@ export const ImmunizationGlobe = memo(function ImmunizationGlobe({ vaccinations,
     const map = new Map<string, VaccinationRecord[]>();
     vaccinations.forEach(v => {
       if (v.countryGiven) {
-        const existing = map.get(v.countryGiven) || [];
+        const normalized = normalizeCountryName(v.countryGiven);
+        const existing = map.get(normalized) || [];
         existing.push(v);
-        map.set(v.countryGiven, existing);
+        map.set(normalized, existing);
       }
     });
     return map;
   }, [vaccinations]);
+
+  const highlightedGeoNames = useMemo(() => {
+    const names = new Set<string>();
+    countryData.forEach((_, country) => {
+      names.add(country);
+      const geoName = COUNTRY_NAME_TO_GEO[country];
+      if (geoName) names.add(geoName);
+    });
+    return names;
+  }, [countryData]);
 
   const markers = useMemo(() => {
     return Array.from(countryData.entries())
@@ -89,20 +104,34 @@ export const ImmunizationGlobe = memo(function ImmunizationGlobe({ vaccinations,
         <ZoomableGroup zoom={1} minZoom={1} maxZoom={4}>
           <Geographies geography={GEO_URL}>
             {({ geographies }: { geographies: any[] }) =>
-              geographies.map((geo: any) => (
-                <Geography
-                  key={geo.rpiKey}
-                  geography={geo}
-                  fill="#e8e8ed"
-                  stroke="#fbfbfd"
-                  strokeWidth={0.5}
-                  style={{
-                    default: { outline: 'none' },
-                    hover: { fill: '#d1d1d6', outline: 'none' },
-                    pressed: { outline: 'none' },
-                  }}
-                />
-              ))
+              geographies.map((geo: any) => {
+                const geoName = geo.properties?.name || '';
+                const isHighlighted = highlightedGeoNames.has(geoName);
+                const isSelected = selectedCountry && (geoName === selectedCountry || geoName === COUNTRY_NAME_TO_GEO[selectedCountry]);
+                return (
+                  <Geography
+                    key={geo.rpiKey}
+                    geography={geo}
+                    fill={isSelected ? '#4a7fb5' : isHighlighted ? '#4d9068' : '#e8e8ed'}
+                    fillOpacity={isSelected ? 0.5 : isHighlighted ? 0.35 : 1}
+                    stroke={isHighlighted ? '#3d7a58' : '#fbfbfd'}
+                    strokeWidth={isHighlighted ? 0.8 : 0.5}
+                    onClick={() => {
+                      if (isHighlighted) {
+                        const matchedCountry = Array.from(countryData.keys()).find(
+                          c => c === geoName || COUNTRY_NAME_TO_GEO[c] === geoName
+                        );
+                        if (matchedCountry) onCountryClick(matchedCountry);
+                      }
+                    }}
+                    style={{
+                      default: { outline: 'none', cursor: isHighlighted ? 'pointer' : 'default' },
+                      hover: { fill: isSelected ? '#3a6a9a' : isHighlighted ? '#4d9068' : '#d1d1d6', fillOpacity: isSelected ? 0.6 : isHighlighted ? 0.55 : 1, outline: 'none', cursor: isHighlighted ? 'pointer' : 'default' },
+                      pressed: { outline: 'none' },
+                    }}
+                  />
+                );
+              })
             }
           </Geographies>
           {markers.map(({ country, coordinates, count }) => (

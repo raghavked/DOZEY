@@ -3,15 +3,17 @@ import { VaccinationRecord, UploadedDocument } from '@/types';
 import { Clock, CheckCircle, AlertCircle, Trash2, Filter, Globe, Syringe, FileText, ChevronDown, ChevronUp, MapPin, Calendar, User, X } from 'lucide-react';
 import { CustomSelect } from '@/components/CustomSelect';
 import { ImmunizationGlobe } from '@/components/ImmunizationGlobe';
+import { normalizeCountryName } from '@/lib/country-utils';
 
 interface VaccinationTimelineProps {
   vaccinations: VaccinationRecord[];
   documents?: UploadedDocument[];
   onAdd: (vaccination: Omit<VaccinationRecord, 'id'>) => void;
   onDelete: (id: string) => void;
+  onUpdate?: (id: string, data: Partial<VaccinationRecord>) => void;
 }
 
-export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDelete }: VaccinationTimelineProps) {
+export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDelete, onUpdate }: VaccinationTimelineProps) {
   const [filterCountry, setFilterCountry] = useState<string>('all');
   const [filterVerified, setFilterVerified] = useState<string>('all');
   const [filterVaccine, setFilterVaccine] = useState<string>('all');
@@ -20,7 +22,7 @@ export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDel
   const [showGlobe, setShowGlobe] = useState(true);
   const [expandedDocId, setExpandedDocId] = useState<string | null>(null);
 
-  const countries = useMemo(() => Array.from(new Set(vaccinations.map(v => v.countryGiven).filter(Boolean))), [vaccinations]);
+  const countries = useMemo(() => Array.from(new Set(vaccinations.map(v => normalizeCountryName(v.countryGiven)).filter(Boolean))), [vaccinations]);
   const vaccineTypes = useMemo(() => Array.from(new Set(vaccinations.map(v => v.vaccineName).filter(Boolean))).sort(), [vaccinations]);
   const years = useMemo(() => {
     const yrs = Array.from(new Set(vaccinations.map(v => v.date?.split('-')[0]).filter(Boolean)));
@@ -36,7 +38,7 @@ export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDel
 
   const filteredVaccinations = useMemo(() => {
     return vaccinations
-      .filter(v => !activeCountryFilter || v.countryGiven === activeCountryFilter)
+      .filter(v => !activeCountryFilter || normalizeCountryName(v.countryGiven) === activeCountryFilter)
       .filter(v => filterVerified === 'all' || (filterVerified === 'verified' ? v.verified : !v.verified))
       .filter(v => filterVaccine === 'all' || v.vaccineName === filterVaccine)
       .filter(v => filterYear === 'all' || v.date?.startsWith(filterYear))
@@ -161,12 +163,12 @@ export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDel
                   <MapPin className="w-4 h-4 text-[#4a7fb5]" />
                   <h4 className="font-semibold text-[#1d1d1f] text-sm">{selectedCountry}</h4>
                   <span className="ml-auto bg-[#4a7fb5]/10 text-[#4a7fb5] px-2 py-0.5 rounded-full text-xs font-medium">
-                    {vaccinations.filter(v => v.countryGiven === selectedCountry).length} vaccine{vaccinations.filter(v => v.countryGiven === selectedCountry).length !== 1 ? 's' : ''}
+                    {vaccinations.filter(v => normalizeCountryName(v.countryGiven) === selectedCountry).length} vaccine{vaccinations.filter(v => normalizeCountryName(v.countryGiven) === selectedCountry).length !== 1 ? 's' : ''}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {vaccinations
-                    .filter(v => v.countryGiven === selectedCountry)
+                    .filter(v => normalizeCountryName(v.countryGiven) === selectedCountry)
                     .map(v => (
                       <span key={v.id} className="inline-flex items-center gap-1.5 bg-[#f5f5f7] px-3 py-1.5 rounded-full text-xs">
                         <Syringe className="w-3 h-3 text-[#86868b]" />
@@ -384,14 +386,28 @@ export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDel
                             <div className="flex items-center gap-2 flex-wrap mb-1.5">
                               <h3 className="font-semibold text-[#1d1d1f]">{vax.vaccineName}</h3>
                               {vax.verified ? (
-                                <span className="flex items-center gap-1 bg-[#4d9068]/10 text-[#4d9068] px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                <button
+                                  onClick={() => onUpdate?.(vax.id, { verified: false })}
+                                  className="flex items-center gap-1 bg-[#4d9068]/10 text-[#4d9068] px-2.5 py-0.5 rounded-full text-xs font-medium hover:bg-[#4d9068]/20 transition-colors"
+                                  title="Click to mark as unverified"
+                                >
                                   <CheckCircle className="w-3 h-3" />
                                   Verified
-                                </span>
+                                </button>
                               ) : (
-                                <span className="flex items-center gap-1 bg-[#8aab45]/10 text-[#8aab45] px-2.5 py-0.5 rounded-full text-xs font-medium">
+                                <button
+                                  onClick={() => onUpdate?.(vax.id, { verified: true })}
+                                  className="flex items-center gap-1 bg-amber-50 text-amber-600 px-2.5 py-0.5 rounded-full text-xs font-medium hover:bg-amber-100 transition-colors"
+                                  title="Click to mark as verified"
+                                >
                                   <AlertCircle className="w-3 h-3" />
-                                  Pending
+                                  Unverified
+                                </button>
+                              )}
+                              {vax.documentId && (
+                                <span className="flex items-center gap-1 bg-[#4a7fb5]/10 text-[#4a7fb5] px-2 py-0.5 rounded-full text-xs font-medium">
+                                  <FileText className="w-3 h-3" />
+                                  Document
                                 </span>
                               )}
                               <span className="bg-[#4a7fb5]/10 text-[#4a7fb5] px-2.5 py-0.5 rounded-full text-xs font-medium">

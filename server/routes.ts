@@ -134,6 +134,22 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  app.patch("/api/vaccinations/:id", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const id = parseInt(req.params.id as string);
+      const { verified } = req.body;
+      const [updated] = await db.update(vaccinations)
+        .set({ verified: !!verified })
+        .where(and(eq(vaccinations.id, id), eq(vaccinations.userId, userId)))
+        .returning();
+      res.json(updated);
+    } catch (error) {
+      console.error("Error updating vaccination:", error);
+      res.status(500).json({ message: "Failed to update vaccination" });
+    }
+  });
+
   app.delete("/api/vaccinations/:id", isAuthenticated, async (req, res) => {
     try {
       const userId = (req as AuthRequest).userId;
@@ -334,7 +350,7 @@ export function registerRoutes(app: Express) {
                 countryGiven: v.country_given || doc.country || null,
                 provider: v.provider || null,
                 notes: v.notes || null,
-                verified: false,
+                verified: true,
                 documentId: String(id),
               });
               autoImported++;
@@ -474,7 +490,7 @@ export function registerRoutes(app: Express) {
               countryGiven: v.country_given || doc.country || null,
               provider: v.provider || null,
               notes: v.notes || null,
-              verified: false,
+              verified: true,
               documentId: String(id),
             });
             autoImportedVacc++;
@@ -503,7 +519,7 @@ export function registerRoutes(app: Express) {
               documentDate: ex.document_date || null,
               documentId: id,
               notes: ex.notes || null,
-              verified: false,
+              verified: true,
             });
             autoImportedExempt++;
           } catch (insertErr) {
@@ -555,7 +571,7 @@ export function registerRoutes(app: Express) {
             documentDate: ex.document_date || null,
             documentId: doc.id,
             notes: ex.notes || null,
-            verified: false,
+            verified: true,
           })
           .returning();
         inserted.push(record);

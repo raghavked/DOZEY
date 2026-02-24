@@ -131,6 +131,12 @@ export function useVaccinations() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vaccinations'] }),
   });
 
+  const update = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<VaccinationRecord> }) =>
+      patchJson(`/api/vaccinations/${id}`, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vaccinations'] }),
+  });
+
   const remove = useMutation({
     mutationFn: (id: string) => deleteJson(`/api/vaccinations/${id}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vaccinations'] }),
@@ -140,6 +146,7 @@ export function useVaccinations() {
     vaccinations: query.data || [],
     isLoading: query.isLoading,
     addVaccination: add.mutate,
+    updateVaccination: update.mutate,
     deleteVaccination: remove.mutate,
   };
 }
