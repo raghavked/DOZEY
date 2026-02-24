@@ -351,6 +351,49 @@ export function registerRoutes(app: Express) {
           const userProfile = await db.select().from(profiles).where(eq(profiles.userId, userId));
           const profile = userProfile[0] || null;
 
+          const existingUserVaccs = await db.select().from(vaccinations).where(eq(vaccinations.userId, userId));
+
+          const doseCounters: Record<string, number> = {};
+          for (const ev of existingUserVaccs) {
+            const key = (ev.vaccineName || '').toLowerCase().trim();
+            const dose = ev.doseNumber ? parseInt(String(ev.doseNumber)) : 0;
+            doseCounters[key] = Math.max(doseCounters[key] || 0, dose);
+          }
+
+          const docVaccIndexByName: Record<string, number[]> = {};
+          const datedVaccs: { idx: number; key: string; date: string }[] = [];
+          for (let idx = 0; idx < parsedVaccs.length; idx++) {
+            const v = parsedVaccs[idx];
+            if (!v.vaccine_name) continue;
+            const key = v.vaccine_name.toLowerCase().trim();
+            if (!docVaccIndexByName[key]) docVaccIndexByName[key] = [];
+            if (v.date) {
+              datedVaccs.push({ idx, key, date: v.date });
+            }
+            docVaccIndexByName[key].push(idx);
+          }
+
+          const doseAssignment: Record<number, number> = {};
+          for (const key of Object.keys(docVaccIndexByName)) {
+            const indices = docVaccIndexByName[key];
+            const withDates = indices.filter(i => parsedVaccs[i].date).sort((a, b) =>
+              new Date(parsedVaccs[a].date).getTime() - new Date(parsedVaccs[b].date).getTime()
+            );
+            const withoutDates = indices.filter(i => !parsedVaccs[i].date);
+            const ordered = [...withDates, ...withoutDates];
+            const existingMax = doseCounters[key] || 0;
+            ordered.forEach((vaccIdx, seqIdx) => {
+              const v = parsedVaccs[vaccIdx];
+              if (v.dose_number) {
+                doseAssignment[vaccIdx] = v.dose_number;
+              } else {
+                doseAssignment[vaccIdx] = existingMax + seqIdx + 1;
+              }
+            });
+          }
+
+          const docOriginCountry = detectedCountry;
+
           for (const v of parsedVaccs) {
             const hasRequiredFields = v.vaccine_name && v.date;
             if (!hasRequiredFields) {
@@ -361,7 +404,9 @@ export function registerRoutes(app: Express) {
             let enrichedCountry = v.country_given || null;
             let enrichedLocation = v.location || null;
             let enrichedProvider = v.provider || null;
-            const enrichedNotes: string[] = v.notes ? [v.notes] : [];
+            const vaccIdx = parsedVaccs.indexOf(v);
+            let enrichedDose = v.dose_number || doseAssignment[vaccIdx] || 1;
+            v.dose_number = enrichedDose;
 
             if (!enrichedCountry && v.date && residenceHistory.length > 0) {
               const vaccDate = new Date(v.date);
@@ -373,21 +418,22 @@ export function registerRoutes(app: Express) {
                 const endMatch = rh.endMonth ? (vaccYear < endYearNum || (vaccYear === endYearNum && vaccMonth <= rh.endMonth)) : vaccYear <= endYearNum;
                 if (startMatch && endMatch) {
                   enrichedCountry = rh.country;
-                  if (rh.state) enrichedLocation = rh.state;
-                  enrichedNotes.push('Country inferred from residence history');
+                  if (rh.state) enrichedLocation = `${rh.state}, ${rh.country}`;
                   break;
                 }
               }
             }
 
-            if (!enrichedCountry && detectedCountry) {
-              enrichedCountry = detectedCountry;
-              enrichedNotes.push('Country from document origin');
+            if (!enrichedCountry && docOriginCountry) {
+              enrichedCountry = docOriginCountry;
+            }
+
+            if (!enrichedLocation && enrichedCountry) {
+              enrichedLocation = enrichedCountry;
             }
 
             if (!enrichedProvider && profile?.primaryProvider) {
               enrichedProvider = profile.primaryProvider;
-              enrichedNotes.push('Provider from user profile');
             }
 
             if (v.missing_fields) {
@@ -395,6 +441,7 @@ export function registerRoutes(app: Express) {
                 if (f === 'country_given' && enrichedCountry) return false;
                 if (f === 'location' && enrichedLocation) return false;
                 if (f === 'provider' && enrichedProvider) return false;
+                if (f === 'dose_number' && enrichedDose) return false;
                 return true;
               });
             }
@@ -402,18 +449,17 @@ export function registerRoutes(app: Express) {
             v.country_given = enrichedCountry || v.country_given;
             v.location = enrichedLocation || v.location;
             v.provider = enrichedProvider || v.provider;
-            v.notes = enrichedNotes.length > 0 ? enrichedNotes.join('; ') : null;
 
             try {
               await db.insert(vaccinations).values({
                 userId,
                 vaccineName: v.vaccine_name,
                 date: v.date,
-                doseNumber: v.dose_number || null,
+                doseNumber: enrichedDose,
                 location: enrichedLocation,
                 countryGiven: enrichedCountry,
                 provider: enrichedProvider,
-                notes: enrichedNotes.length > 0 ? enrichedNotes.join('; ') : null,
+                notes: v.notes || null,
                 verified: true,
                 documentId: String(id),
               });

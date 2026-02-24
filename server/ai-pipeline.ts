@@ -117,15 +117,10 @@ function buildResidenceContext(residenceHistory?: ResidenceHistoryEntry[]): stri
     return `- ${location}: ${startStr} to ${endStr}`;
   }).join('\n');
 
-  return `\n\nUSER'S RESIDENCE HISTORY (use this to help determine where vaccinations were likely given when no explicit location is in the document):
+  return `\n\nUSER'S RESIDENCE HISTORY (context only — do NOT use this to fill in vaccination fields):
 ${formatted}
 
-When a vaccination record does not explicitly state a country or location, cross-reference the vaccination date against the user's residence history above. If the vaccination date falls within a residence period, you may SUGGEST the country_given from that residence period but you MUST:
-1. Append " (inferred from residence history)" to the country_given value
-2. Set confidence to "medium" at most for that record
-3. Add "location inferred from residence history, not explicitly stated in document" to the notes field
-4. Still list "country_given" in the missing_fields array since it was not explicitly found
-This is a soft suggestion — the user will verify. Only do this when the document itself provides no explicit location.`;
+This residence history is provided as background context. Do NOT use it to fill in country_given or location fields — leave those null if not explicitly stated in the document. The system handles location enrichment separately after extraction. However, you MAY use it to help determine the document_origin country if no other clues exist.`;
 }
 
 export async function parseVaccinationData(text: string, residenceHistory?: ResidenceHistoryEntry[]): Promise<any> {

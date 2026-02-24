@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { CountryPeriod, VaccinationRecord, UploadedDocument } from '@/types';
 import { Globe, Plus, Trash2, MapPin, Sparkles, X, Check } from 'lucide-react';
 import { AutocompleteInput } from '@/components/AutocompleteInput';
-import { COUNTRIES, US_STATES } from '@/lib/autocomplete-data';
+import { COUNTRIES, GLOBAL_PROVINCES } from '@/lib/autocomplete-data';
 import { extractCountrySuggestions } from '@/lib/document-suggestions';
 import { useI18n } from '@/lib/i18n';
 
@@ -159,7 +159,7 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
                 label={t('state')}
                 value={formData.state}
                 onChange={(val) => setFormData(prev => ({ ...prev, state: val }))}
-                suggestions={US_STATES}
+                suggestions={GLOBAL_PROVINCES}
                 placeholder="e.g., Ontario, California"
               />
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { UserProfile, UploadedDocument } from '@/types';
 import { User, Save, AlertCircle, Sparkles, X } from 'lucide-react';
 import { AutocompleteInput } from '@/components/AutocompleteInput';
-import { COUNTRIES, LANGUAGES_LIST, HEALTHCARE_PROVIDERS, US_STATES, INSTITUTIONS, EMPLOYERS } from '@/lib/autocomplete-data';
+import { COUNTRIES, LANGUAGES_LIST, HEALTHCARE_PROVIDERS, GLOBAL_PROVINCES, INSTITUTIONS, EMPLOYERS } from '@/lib/autocomplete-data';
 import { extractProfileSuggestions, type ProfileSuggestion } from '@/lib/document-suggestions';
 import { useI18n } from '@/lib/i18n';
 
@@ -391,7 +391,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
                 label={t('currentState')}
                 value={formData.currentState}
                 onChange={handleFieldChange('currentState')}
-                suggestions={US_STATES}
+                suggestions={GLOBAL_PROVINCES}
                 required
                 placeholder="e.g., California, Ontario, London"
               />

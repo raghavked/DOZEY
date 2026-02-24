@@ -65,6 +65,47 @@ export const US_STATES = [
   "Puerto Rico","Guam","U.S. Virgin Islands","American Samoa","Northern Mariana Islands"
 ];
 
+export const GLOBAL_PROVINCES = [
+  ...US_STATES,
+  "Ontario","Quebec","British Columbia","Alberta","Manitoba","Saskatchewan","Nova Scotia","New Brunswick","Newfoundland and Labrador","Prince Edward Island","Northwest Territories","Yukon","Nunavut",
+  "England","Scotland","Wales","Northern Ireland","Greater London","Manchester","Birmingham","Leeds","Liverpool",
+  "New South Wales","Victoria","Queensland","Western Australia","South Australia","Tasmania","Australian Capital Territory","Northern Territory",
+  "Maharashtra","Karnataka","Tamil Nadu","Delhi","Uttar Pradesh","West Bengal","Gujarat","Rajasthan","Madhya Pradesh","Kerala","Telangana","Andhra Pradesh","Punjab","Haryana","Bihar","Odisha","Jharkhand","Assam","Goa","Himachal Pradesh","Uttarakhand","Chhattisgarh","Jammu and Kashmir",
+  "São Paulo","Rio de Janeiro","Minas Gerais","Bahia","Paraná","Rio Grande do Sul","Pernambuco","Ceará","Santa Catarina","Goiás","Distrito Federal",
+  "Île-de-France","Provence-Alpes-Côte d'Azur","Auvergne-Rhône-Alpes","Occitanie","Nouvelle-Aquitaine","Hauts-de-France","Grand Est","Bretagne","Normandie",
+  "Bavaria","Baden-Württemberg","North Rhine-Westphalia","Hesse","Saxony","Lower Saxony","Berlin","Hamburg","Thuringia","Brandenburg",
+  "Lazio","Lombardy","Campania","Sicily","Veneto","Piedmont","Emilia-Romagna","Tuscany","Puglia","Sardinia",
+  "Tokyo","Osaka","Kanagawa","Aichi","Hokkaido","Fukuoka","Saitama","Chiba","Hyogo","Kyoto",
+  "Beijing","Shanghai","Guangdong","Zhejiang","Jiangsu","Shandong","Sichuan","Hubei","Henan","Fujian","Hunan","Anhui","Hebei","Liaoning",
+  "Seoul","Busan","Incheon","Daegu","Daejeon","Gwangju","Gyeonggi","Gangwon","Jeju",
+  "Mexico City","Jalisco","Nuevo León","Estado de México","Puebla","Guanajuato","Veracruz","Chihuahua","Baja California",
+  "Gauteng","Western Cape","KwaZulu-Natal","Eastern Cape","Free State","Limpopo","Mpumalanga","North West",
+  "Nairobi","Mombasa","Kisumu","Nakuru","Eldoret",
+  "Lagos","Abuja","Kano","Ibadan","Port Harcourt",
+  "Dubai","Abu Dhabi","Sharjah","Riyadh","Jeddah","Mecca","Medina",
+  "Central","Eastern","Western","Northern","Ashanti","Greater Accra","Volta",
+  "Istanbul","Ankara","Izmir","Antalya","Bursa",
+  "Catalonia","Madrid","Andalusia","Valencia","Basque Country","Galicia",
+  "North Holland","South Holland","Utrecht","Gelderland","North Brabant",
+  "Zurich","Geneva","Bern","Basel","Vaud","Lucerne",
+  "Stockholm","Gothenburg","Malmö","Uppsala","Västra Götaland",
+  "Auckland","Wellington","Canterbury","Otago","Waikato",
+  "Metro Manila","Cebu","Davao","Calabarzon","Central Luzon",
+  "Bangkok","Chiang Mai","Phuket","Pattaya","Nonthaburi",
+  "Hanoi","Ho Chi Minh City","Da Nang","Hai Phong","Can Tho",
+  "Jakarta","Bali","East Java","West Java","Central Java","North Sumatra",
+  "Kuala Lumpur","Selangor","Penang","Johor","Sabah","Sarawak",
+  "Singapore",
+  "Dhaka","Chittagong","Sylhet","Khulna","Rajshahi",
+  "Islamabad","Karachi","Lahore","Faisalabad","Rawalpindi","Punjab","Sindh","Khyber Pakhtunkhwa","Balochistan",
+  "Cairo","Alexandria","Giza","Luxor","Aswan",
+  "Casablanca","Rabat","Marrakech","Fes","Tangier",
+  "Lima","Cusco","Arequipa","Trujillo","Callao",
+  "Santiago","Valparaíso","Concepción","Antofagasta","Temuco",
+  "Buenos Aires","Córdoba","Rosario","Mendoza","Tucumán","Santa Fe",
+  "Bogotá","Medellín","Cali","Barranquilla","Cartagena"
+];
+
 export const INSTITUTIONS = [
   "Harvard University","Stanford University","MIT","Yale University","Princeton University",
   "Columbia University","University of Pennsylvania","University of Chicago","Duke University",
