@@ -810,7 +810,19 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                                     {v.location && <span>Location: {v.location}</span>}
                                   </div>
                                   {missingFields.length > 0 && !missingRequired && (
-                                    <p className="text-xs text-amber-600 mt-1">Missing: {missingFields.join(', ')}</p>
+                                    <p className="text-xs text-[#86868b] mt-1">
+                                      {missingFields.map((f: string) => {
+                                        const labels: Record<string, string> = {
+                                          dose_number: 'Dose Number',
+                                          provider: 'Provider',
+                                          country_given: 'Country',
+                                          location: 'Location',
+                                          date: 'Date',
+                                          vaccine_name: 'Vaccine Name',
+                                        };
+                                        return labels[f] || f.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                                      }).join(', ')} not found in document
+                                    </p>
                                   )}
                                   {v.notes && <p className="text-xs text-[#86868b] mt-1">{v.notes}</p>}
                                 </div>

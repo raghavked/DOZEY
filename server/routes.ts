@@ -348,22 +348,72 @@ export function registerRoutes(app: Express) {
 
         if (existingFromDoc.length === 0) {
           const parsedVaccs = result.parsedData?.vaccinations || [];
+          const userProfile = await db.select().from(profiles).where(eq(profiles.userId, userId));
+          const profile = userProfile[0] || null;
+
           for (const v of parsedVaccs) {
             const hasRequiredFields = v.vaccine_name && v.date;
             if (!hasRequiredFields) {
               needsReview++;
               continue;
             }
+
+            let enrichedCountry = v.country_given || null;
+            let enrichedLocation = v.location || null;
+            let enrichedProvider = v.provider || null;
+            const enrichedNotes: string[] = v.notes ? [v.notes] : [];
+
+            if (!enrichedCountry && v.date && residenceHistory.length > 0) {
+              const vaccDate = new Date(v.date);
+              const vaccYear = vaccDate.getFullYear();
+              const vaccMonth = vaccDate.getMonth() + 1;
+              for (const rh of residenceHistory) {
+                const startMatch = rh.startMonth ? (vaccYear > rh.startYear || (vaccYear === rh.startYear && vaccMonth >= rh.startMonth)) : vaccYear >= rh.startYear;
+                const endYearNum = rh.endYear === 'Present' ? new Date().getFullYear() + 1 : parseInt(String(rh.endYear));
+                const endMatch = rh.endMonth ? (vaccYear < endYearNum || (vaccYear === endYearNum && vaccMonth <= rh.endMonth)) : vaccYear <= endYearNum;
+                if (startMatch && endMatch) {
+                  enrichedCountry = rh.country;
+                  if (rh.state) enrichedLocation = rh.state;
+                  enrichedNotes.push('Country inferred from residence history');
+                  break;
+                }
+              }
+            }
+
+            if (!enrichedCountry && detectedCountry) {
+              enrichedCountry = detectedCountry;
+              enrichedNotes.push('Country from document origin');
+            }
+
+            if (!enrichedProvider && profile?.primaryProvider) {
+              enrichedProvider = profile.primaryProvider;
+              enrichedNotes.push('Provider from user profile');
+            }
+
+            if (v.missing_fields) {
+              v.missing_fields = v.missing_fields.filter((f: string) => {
+                if (f === 'country_given' && enrichedCountry) return false;
+                if (f === 'location' && enrichedLocation) return false;
+                if (f === 'provider' && enrichedProvider) return false;
+                return true;
+              });
+            }
+
+            v.country_given = enrichedCountry || v.country_given;
+            v.location = enrichedLocation || v.location;
+            v.provider = enrichedProvider || v.provider;
+            v.notes = enrichedNotes.length > 0 ? enrichedNotes.join('; ') : null;
+
             try {
               await db.insert(vaccinations).values({
                 userId,
                 vaccineName: v.vaccine_name,
                 date: v.date,
                 doseNumber: v.dose_number || null,
-                location: v.location || null,
-                countryGiven: v.country_given || null,
-                provider: v.provider || null,
-                notes: v.notes || null,
+                location: enrichedLocation,
+                countryGiven: enrichedCountry,
+                provider: enrichedProvider,
+                notes: enrichedNotes.length > 0 ? enrichedNotes.join('; ') : null,
                 verified: true,
                 documentId: String(id),
               });
@@ -371,6 +421,11 @@ export function registerRoutes(app: Express) {
             } catch (insertErr) {
               console.error("Failed to auto-import vaccination:", insertErr);
             }
+          }
+
+          if (result.parsedData?.vaccinations) {
+            const updateParsed = { ...result.parsedData };
+            await db.update(documents).set({ parsedData: JSON.stringify(updateParsed) }).where(eq(documents.id, id));
           }
         }
 
