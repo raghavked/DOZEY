@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Mail, Send, MessageCircle, Clock, MapPin, Syringe, ArrowRight } from 'lucide-react';
+import { Mail, Send, MessageCircle, Clock, MapPin, Syringe, ArrowRight, Linkedin } from 'lucide-react';
 
 function useScrollAnimation() {
   const ref = useRef<HTMLDivElement>(null);
@@ -115,6 +115,7 @@ export function ContactPage() {
             <div className="lg:col-span-2 space-y-4 animate-on-scroll delay-200">
               {[
                 { icon: Mail, title: 'Email Us', desc: 'dozeyvaccines@gmail.com', href: 'mailto:dozeyvaccines@gmail.com' },
+                { icon: Linkedin, title: 'LinkedIn', desc: 'Follow us on LinkedIn', href: 'https://www.linkedin.com/company/dozey-vaccines' },
                 { icon: Clock, title: 'Response Time', desc: 'Within 24-48 hours' },
                 { icon: MapPin, title: 'Office Hours', desc: 'Mon-Fri, 9am-5pm PST' },
               ].map(({ icon: Icon, title, desc, href }) => (
@@ -125,7 +126,7 @@ export function ContactPage() {
                   <div>
                     <h3 className="font-semibold text-[#22283a] text-sm">{title}</h3>
                     {href ? (
-                      <a href={href} className="text-[#1051a5] text-sm">{desc}</a>
+                      <a href={href} className="text-[#1051a5] text-sm" {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{desc}</a>
                     ) : (
                       <p className="text-gray-400 text-sm">{desc}</p>
                     )}
