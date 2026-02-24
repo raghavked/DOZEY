@@ -32,7 +32,7 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
   };
 
   return (
-    <nav className="bg-white border-b border-gray-100">
+    <nav className="bg-white/80 backdrop-blur-2xl border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <DozeyLogo className="h-9" />
@@ -41,7 +41,7 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
             <LanguageSelector />
             {userName && (
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-[#22283a] text-white flex items-center justify-center text-xs font-bold">
+                <div className="w-7 h-7 rounded-full bg-[#22283a] text-white flex items-center justify-center text-xs font-medium">
                   {userName.charAt(0).toUpperCase()}
                 </div>
                 <span className="text-sm font-medium text-[#22283a] hidden sm:inline">{userName}</span>
@@ -49,7 +49,7 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
             )}
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-400 hover:text-red-500 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-300 hover:text-red-500 rounded-lg transition-colors"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Sign Out</span>

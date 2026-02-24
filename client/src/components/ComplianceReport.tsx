@@ -208,23 +208,23 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-2">
-          <Target className="w-8 h-8 text-[#1051a5]" />
+          <Target className="w-8 h-8 text-[#22283a]/30" />
           <div>
-            <h1 className="text-[#22283a]">Compliance Check</h1>
-            <p className="text-gray-600">Check vaccination and health requirements for schools, employers, or countries</p>
+            <h1 className="text-[#22283a] font-semibold">Compliance Check</h1>
+            <p className="text-gray-400">Check vaccination and health requirements for schools, employers, or countries</p>
           </div>
         </div>
 
-        <div className="flex gap-2 mt-6 mb-4 bg-gray-100 p-1 rounded-lg">
+        <div className="flex gap-2 mt-6 mb-4 bg-gray-100 p-1 rounded-xl">
           {lookupTabs.map(tab => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.type}
                 onClick={() => handleTabChange(tab.type)}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-md text-sm font-medium transition-all ${
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
                   lookupType === tab.type
                     ? 'bg-white text-[#1051a5] shadow-sm'
                     : 'text-gray-600 hover:text-gray-800'
@@ -237,7 +237,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
           })}
         </div>
 
-        <p className="text-sm text-gray-500 mb-4">{activeTab.description}</p>
+        <p className="text-sm text-gray-400 mb-4">{activeTab.description}</p>
 
         <form onSubmit={handleSearch}>
           <div className="flex gap-3">
@@ -248,13 +248,13 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={activeTab.placeholder}
-                className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
+                className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
               />
             </div>
             <button
               type="submit"
               disabled={loading || !searchQuery.trim()}
-              className="bg-[#1051a5] hover:bg-[#0d4185] text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              className="bg-[#1051a5] hover:bg-[#0d4185] text-white px-6 py-3 rounded-full font-medium transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
               {loading ? (
                 <>
@@ -273,7 +273,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
 
         {!result && !loading && !error && (
           <div className="mt-6">
-            <p className="text-gray-500 text-sm mb-3">
+            <p className="text-gray-400 text-sm mb-3">
               {lookupType === 'institution' ? 'Popular institutions:' : lookupType === 'employer' ? 'Popular employers:' : 'Popular destinations:'}
             </p>
             <div className="flex flex-wrap gap-2">
@@ -281,7 +281,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                 <button
                   key={item}
                   onClick={() => setSearchQuery(item)}
-                  className="px-3 py-1.5 bg-gray-100 hover:bg-[#1051a5] hover:text-white text-gray-700 text-sm rounded-full transition-colors"
+                  className="px-3 py-1.5 bg-[#fafafa] hover:bg-[#1051a5] hover:text-white text-gray-700 text-sm rounded-full transition-colors"
                 >
                   {item}
                 </button>
@@ -292,17 +292,17 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
           <p className="text-red-700 text-sm">{error}</p>
         </div>
       )}
 
       {loading && (
-        <div className="bg-white rounded-xl shadow-lg p-12 text-center">
+        <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
           <Loader2 className="w-12 h-12 text-[#1051a5] animate-spin mx-auto mb-4" />
-          <h3 className="text-[#22283a] text-lg mb-2">Looking up requirements...</h3>
-          <p className="text-gray-500">
+          <h3 className="text-[#22283a] font-semibold text-lg mb-2">Looking up requirements...</h3>
+          <p className="text-gray-400">
             {lookupType === 'employer' 
               ? `Searching for health requirements at ${searchQuery}` 
               : lookupType === 'country'
@@ -314,13 +314,13 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
 
       {result && (
         <>
-          <div className="bg-gradient-to-br from-[#1051a5] to-[#26844f] rounded-xl shadow-lg p-6 text-white">
+          <div className="bg-gradient-to-br from-[#1051a5] to-[#26844f] rounded-2xl border border-gray-100 p-6 text-white">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
                 {resultIcon()}
                 <div>
                   <p className="text-white/60 text-xs font-semibold uppercase tracking-wider">{resultLabel()}</p>
-                  <h2 className="text-white text-xl">{result.institution.institutionName}</h2>
+                  <h2 className="text-white text-xl font-semibold">{result.institution.institutionName}</h2>
                   <div className="flex items-center gap-1 text-white/80 text-sm">
                     <MapPin className="w-4 h-4" />
                     {result.institution.location}
@@ -337,10 +337,10 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
               </button>
             </div>
 
-            <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+            <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-lg">Compliance Progress</span>
-                <span className="text-3xl font-bold">{result.overallPercentage}%</span>
+                <span className="text-lg font-semibold">Compliance Progress</span>
+                <span className="text-3xl font-semibold">{result.overallPercentage}%</span>
               </div>
               <Progress value={result.overallPercentage} className="h-3 bg-white/30" />
               <p className="text-white/80 text-sm mt-2">
@@ -349,21 +349,21 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg p-8">
+          <div className="bg-white rounded-2xl border border-gray-100 p-8">
             <div className="flex items-center gap-3 mb-6">
-              <ClipboardList className="w-6 h-6 text-[#1051a5]" />
-              <h2 className="text-[#22283a]">Requirement Details</h2>
+              <ClipboardList className="w-6 h-6 text-[#22283a]/30" />
+              <h2 className="text-[#22283a] font-semibold">Requirement Details</h2>
             </div>
 
             <div className="space-y-3">
               {result.compliance.map((item, idx) => (
-                <div key={idx} className={`border rounded-lg p-4 ${statusColor(item.status)}`}>
+                <div key={idx} className={`border rounded-xl p-4 ${statusColor(item.status)}`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {statusIcon(item.status)}
                       <div>
                         <h4 className="text-gray-900 font-medium">{item.vaccine_name}</h4>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-400">
                           {item.completed_doses} of {item.required_doses} dose{item.required_doses !== 1 ? 's' : ''} completed
                         </p>
                       </div>
@@ -378,11 +378,11 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                   </div>
                   {item.matching_records.length > 0 && (
                     <div className="mt-2 ml-8">
-                      <p className="text-xs text-gray-500 mb-1">Your records:</p>
+                      <p className="text-xs text-gray-400 mb-1">Your records:</p>
                       {item.matching_records.map((rec, i) => {
                         const isExemption = rec.startsWith('Natural Immunity:') || rec.startsWith('Medical Exemption:') || rec.startsWith('Titer:');
                         return (
-                          <p key={i} className={`text-xs ${isExemption ? 'text-purple-700 font-medium' : 'text-gray-600'}`}>
+                          <p key={i} className={`text-xs ${isExemption ? 'text-purple-700 font-medium' : 'text-gray-400'}`}>
                             - {isExemption ? '🛡️ ' : ''}{rec}
                           </p>
                         );
@@ -390,7 +390,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                     </div>
                   )}
                   {item.notes && (
-                    <p className="mt-2 ml-8 text-xs text-gray-500 italic">{item.notes}</p>
+                    <p className="mt-2 ml-8 text-xs text-gray-400 italic">{item.notes}</p>
                   )}
                 </div>
               ))}
@@ -398,10 +398,10 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
           </div>
 
           {result.institution.additional_requirements.length > 0 && (
-            <div className="bg-white rounded-xl shadow-lg p-8">
+            <div className="bg-white rounded-2xl border border-gray-100 p-8">
               <div className="flex items-center gap-3 mb-4">
-                <Info className="w-6 h-6 text-[#97bf2d]" />
-                <h2 className="text-[#22283a]">Additional Requirements</h2>
+                <Info className="w-6 h-6 text-[#22283a]/30" />
+                <h2 className="text-[#22283a] font-semibold">Additional Requirements</h2>
               </div>
               <ul className="space-y-2">
                 {result.institution.additional_requirements.map((req, idx) => (
@@ -414,22 +414,22 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
             </div>
           )}
 
-          <div className="bg-white rounded-xl shadow-lg p-8">
+          <div className="bg-white rounded-2xl border border-gray-100 p-8">
             <div className="flex items-center gap-3 mb-4">
-              <FileText className="w-6 h-6 text-[#1051a5]" />
-              <h2 className="text-[#22283a]">Submission Information</h2>
+              <FileText className="w-6 h-6 text-[#22283a]/30" />
+              <h2 className="text-[#22283a] font-semibold">Submission Information</h2>
             </div>
 
             {result.institution.submission_instructions && (
               <div className="mb-4">
-                <h4 className="text-sm font-semibold text-gray-500 uppercase mb-2">How to Submit</h4>
+                <h4 className="text-xs text-gray-400 font-medium uppercase mb-2">How to Submit</h4>
                 <p className="text-gray-700">{result.institution.submission_instructions}</p>
               </div>
             )}
 
             {result.institution.forms_needed.length > 0 && (
               <div className="mb-4">
-                <h4 className="text-sm font-semibold text-gray-500 uppercase mb-2">Forms Needed</h4>
+                <h4 className="text-xs text-gray-400 font-medium uppercase mb-2">Forms Needed</h4>
                 <ul className="space-y-1">
                   {result.institution.forms_needed.map((form, idx) => (
                     <li key={idx} className="text-gray-700 flex items-center gap-2">
@@ -443,24 +443,24 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
 
             {result.institution.contact_info && (
               <div className="mb-4">
-                <h4 className="text-sm font-semibold text-gray-500 uppercase mb-2">Contact</h4>
+                <h4 className="text-xs text-gray-400 font-medium uppercase mb-2">Contact</h4>
                 <p className="text-gray-700">{result.institution.contact_info}</p>
               </div>
             )}
 
             {result.institution.source_notes && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
-                <p className="text-sm text-blue-800">{result.institution.source_notes}</p>
+              <div className="bg-[#fafafa] border border-gray-100 rounded-2xl p-3 mt-4">
+                <p className="text-sm text-gray-600">{result.institution.source_notes}</p>
               </div>
             )}
           </div>
 
           {vaccinations.length === 0 && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6">
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-yellow-900 font-medium mb-1">No Vaccination Records Yet</h3>
+                  <h3 className="text-yellow-900 font-semibold mb-1">No Vaccination Records Yet</h3>
                   <p className="text-yellow-700 text-sm">
                     You haven't added any vaccination records yet. Upload your vaccine documents or add records manually to see how your records match against these requirements.
                   </p>

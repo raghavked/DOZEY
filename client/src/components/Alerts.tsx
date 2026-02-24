@@ -8,7 +8,6 @@ interface AlertsProps {
 }
 
 export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
-  // Generate smart alerts based on user data
   const generateAlerts = () => {
     const alerts: Array<{
       type: 'warning' | 'info' | 'success';
@@ -17,7 +16,6 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
       icon: any;
     }> = [];
 
-    // Check for unverified vaccines
     const unverifiedCount = vaccinations.filter(v => !v.verified).length;
     if (unverifiedCount > 0) {
       alerts.push({
@@ -28,7 +26,6 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
       });
     }
 
-    // Check if profile is incomplete
     if (!profile) {
       alerts.push({
         type: 'warning',
@@ -38,7 +35,6 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
       });
     }
 
-    // Common vaccines recommendations
     const hasMMR = vaccinations.some(v => 
       v.vaccineName.toLowerCase().includes('mmr') || 
       v.vaccineName.toLowerCase().includes('measles')
@@ -79,7 +75,6 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
       }
     }
 
-    // Country-specific alerts based on history
     const livedInTropicalCountry = countryHistory.some(p => 
       ['Brazil', 'India', 'Thailand', 'Kenya', 'Nigeria', 'Indonesia'].includes(p.country)
     );
@@ -97,7 +92,6 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
       }
     }
 
-    // Immigration & travel alerts
     if (profile && profile.currentCountry !== profile.countryOfOrigin) {
       alerts.push({
         type: 'info',
@@ -107,7 +101,6 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
       });
     }
 
-    // U.S. specific compliance alerts
     if (profile?.targetCountry === 'United States') {
       const hasMeningococcal = vaccinations.some(v => 
         v.vaccineName.toLowerCase().includes('meningococcal') || 
@@ -143,7 +136,6 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
       }
     }
 
-    // Success messages
     if (vaccinations.length >= 5 && vaccinations.filter(v => v.verified).length === vaccinations.length) {
       alerts.push({
         type: 'success',
@@ -160,20 +152,20 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-6">
-          <Bell className="w-8 h-8 text-orange-600" />
+          <Bell className="w-8 h-8 text-[#22283a]/30" />
           <div>
-            <h1 className="text-gray-900">Alerts & Recommendations</h1>
-            <p className="text-gray-600">Important notifications about your vaccination records</p>
+            <h1 className="text-[#22283a] font-semibold">Alerts & Recommendations</h1>
+            <p className="text-gray-400">Important notifications about your vaccination records</p>
           </div>
         </div>
 
         {alerts.length === 0 ? (
           <div className="text-center py-12">
-            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h3 className="text-gray-900 mb-2">All Clear!</h3>
-            <p className="text-gray-600">
+            <CheckCircle className="w-16 h-16 text-gray-200 mx-auto mb-4" />
+            <h3 className="text-[#22283a] font-semibold mb-2">All Clear!</h3>
+            <p className="text-gray-400">
               No alerts at this time. Your records look good.
             </p>
           </div>
@@ -195,12 +187,12 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
               return (
                 <div
                   key={index}
-                  className={`border-l-4 p-6 rounded-lg ${colorClasses[alert.type]}`}
+                  className={`border-l-4 border border-gray-100 p-6 rounded-2xl ${colorClasses[alert.type]}`}
                 >
                   <div className="flex gap-3">
                     <Icon className={`w-6 h-6 flex-shrink-0 ${iconColors[alert.type]}`} />
                     <div>
-                      <h3 className="mb-2">{alert.title}</h3>
+                      <h3 className="font-semibold mb-2">{alert.title}</h3>
                       <p className="text-sm opacity-90">{alert.message}</p>
                     </div>
                   </div>
@@ -210,13 +202,12 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
           </div>
         )}
 
-        {/* Common Requirements Section */}
         <div className="mt-8 pt-8 border-t border-gray-200">
-          <h2 className="text-gray-900 mb-4">Common Vaccination Requirements</h2>
+          <h2 className="text-sm font-semibold text-[#22283a] mb-4">Common Vaccination Requirements</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="text-gray-900 mb-2">University Students</h4>
-              <ul className="text-gray-600 text-sm space-y-1">
+            <div className="bg-[#fafafa] p-4 rounded-2xl border border-gray-100">
+              <h4 className="text-sm font-semibold text-[#22283a] mb-2">University Students</h4>
+              <ul className="text-gray-400 text-sm space-y-1">
                 <li>• MMR (Measles, Mumps, Rubella)</li>
                 <li>• Meningococcal (Meningitis)</li>
                 <li>• Hepatitis B</li>
@@ -224,9 +215,9 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
               </ul>
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="text-gray-900 mb-2">Immigration/Work Visa</h4>
-              <ul className="text-gray-600 text-sm space-y-1">
+            <div className="bg-[#fafafa] p-4 rounded-2xl border border-gray-100">
+              <h4 className="text-sm font-semibold text-[#22283a] mb-2">Immigration/Work Visa</h4>
+              <ul className="text-gray-400 text-sm space-y-1">
                 <li>• Varies by country</li>
                 <li>• Usually includes MMR, Varicella</li>
                 <li>• TB test often required</li>
@@ -234,9 +225,9 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
               </ul>
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="text-gray-900 mb-2">International Travel</h4>
-              <ul className="text-gray-600 text-sm space-y-1">
+            <div className="bg-[#fafafa] p-4 rounded-2xl border border-gray-100">
+              <h4 className="text-sm font-semibold text-[#22283a] mb-2">International Travel</h4>
+              <ul className="text-gray-400 text-sm space-y-1">
                 <li>• Yellow Fever (Africa, South America)</li>
                 <li>• Typhoid</li>
                 <li>• Hepatitis A</li>
@@ -244,9 +235,9 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
               </ul>
             </div>
 
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="text-gray-900 mb-2">Healthcare Workers</h4>
-              <ul className="text-gray-600 text-sm space-y-1">
+            <div className="bg-[#fafafa] p-4 rounded-2xl border border-gray-100">
+              <h4 className="text-sm font-semibold text-[#22283a] mb-2">Healthcare Workers</h4>
+              <ul className="text-gray-400 text-sm space-y-1">
                 <li>• Hepatitis B</li>
                 <li>• Annual Flu vaccine</li>
                 <li>• MMR</li>

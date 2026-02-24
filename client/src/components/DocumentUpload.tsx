@@ -267,12 +267,12 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-6">
-          <Upload className="w-8 h-8 text-[#1051a5]" />
+          <Upload className="w-8 h-8 text-[#22283a]/30" />
           <div>
-            <h1 className="text-[#22283a]">Upload Documents</h1>
-            <p className="text-gray-600">Import vaccine records from PDFs, photos, or scans. Our AI can extract and translate the data automatically.</p>
+            <h1 className="text-[#22283a] font-semibold">Upload Documents</h1>
+            <p className="text-gray-400">Import vaccine records from PDFs, photos, or scans. Our AI can extract and translate the data automatically.</p>
           </div>
         </div>
 
@@ -281,8 +281,8 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
-          className={`border-2 border-dashed rounded-xl p-12 text-center transition-colors ${
-            dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-gray-50'
+          className={`border-2 border-dashed rounded-2xl p-12 text-center transition-colors ${
+            dragActive ? 'border-[#1051a5] bg-blue-50/50' : 'border-gray-200 bg-[#fafafa]'
           }`}
         >
           <input
@@ -296,15 +296,15 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
           />
           <label htmlFor="file-upload" className="cursor-pointer">
             <div className="flex flex-col items-center">
-              <Upload className="w-16 h-16 text-gray-400 mb-4" />
+              <Upload className="w-16 h-16 text-gray-300 mb-4" />
               {uploading ? (
                 <p className="text-[#1051a5] mb-2 font-medium">Uploading...</p>
               ) : (
                 <>
-                  <p className="text-gray-700 mb-2">
+                  <p className="text-gray-400 mb-2">
                     Drag and drop files here, or click to select
                   </p>
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-gray-400 text-sm">
                     Supports: PDFs, JPG, PNG, Word docs (max 10MB)
                   </p>
                 </>
@@ -316,7 +316,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
         <div className="mt-6">
           <button
             onClick={() => setShowManualEntry(!showManualEntry)}
-            className="w-full bg-[#1051a5] hover:bg-[#0d4185] text-white py-3 rounded-lg flex items-center justify-center gap-2 transition-colors"
+            className="w-full bg-[#1051a5] hover:bg-[#0d4185] text-white py-3 rounded-full flex items-center justify-center gap-2 transition-colors"
           >
             <Plus className="w-5 h-5" />
             Or Enter Vaccine Details Manually
@@ -325,8 +325,8 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
       </div>
 
       {showManualEntry && (
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <h2 className="text-gray-900 mb-6">Manual Entry</h2>
+        <div className="bg-[#fafafa] rounded-2xl border border-gray-100 p-8">
+          <h2 className="text-sm font-semibold text-[#22283a] mb-6">Manual Entry</h2>
           <form onSubmit={handleManualSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <AutocompleteInput
@@ -339,14 +339,14 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                 placeholder="e.g., COVID-19, Measles, Hepatitis B"
               />
               <div>
-                <label htmlFor="date" className="block text-gray-700 mb-2">Date Administered *</label>
+                <label htmlFor="date" className="block text-gray-400 mb-2">Date Administered *</label>
                 <input
                   type="date"
                   id="date"
                   value={manualForm.date}
                   onChange={(e) => setManualForm(prev => ({ ...prev, date: e.target.value }))}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
                 />
               </div>
               <AutocompleteInput
@@ -385,23 +385,23 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                 placeholder="e.g., Dr. Smith"
               />
               <div className="md:col-span-2">
-                <label htmlFor="notes" className="block text-gray-700 mb-2">Notes (Optional)</label>
+                <label htmlFor="notes" className="block text-gray-400 mb-2">Notes (Optional)</label>
                 <textarea
                   id="notes"
                   value={manualForm.notes}
                   onChange={(e) => setManualForm(prev => ({ ...prev, notes: e.target.value }))}
                   rows={3}
                   placeholder="Any additional information"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none resize-none"
                 />
               </div>
             </div>
 
             <div className="flex gap-3">
-              <button type="submit" className="flex-1 bg-[#1051a5] hover:bg-[#0d4185] text-white py-3 rounded-lg transition-colors">
+              <button type="submit" className="flex-1 bg-[#1051a5] hover:bg-[#0d4185] text-white py-3 rounded-full transition-colors">
                 Add Vaccine Record
               </button>
-              <button type="button" onClick={() => setShowManualEntry(false)} className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg transition-colors">
+              <button type="button" onClick={() => setShowManualEntry(false)} className="flex-1 bg-[#fafafa] text-gray-500 hover:bg-gray-100 py-3 rounded-full transition-colors">
                 Cancel
               </button>
             </div>
@@ -410,7 +410,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
       )}
 
       {processError && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
           <p className="text-red-700 text-sm">{processError}</p>
           <button onClick={() => setProcessError(null)} className="ml-auto text-red-400 hover:text-red-600">
@@ -420,8 +420,8 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
       )}
 
       {documents.length > 0 && (
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <h2 className="text-gray-900 mb-6">Uploaded Documents</h2>
+        <div className="bg-white rounded-2xl border border-gray-100 p-8">
+          <h2 className="font-semibold text-[#22283a] mb-6">Uploaded Documents</h2>
           <div className="space-y-4">
             {documents.map(doc => {
               const parsed = getParsedData(doc);
@@ -430,7 +430,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
               const isImporting = importingId === doc.id;
 
               return (
-                <div key={doc.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                <div key={doc.id} className="border border-gray-100 rounded-2xl overflow-hidden hover:shadow-sm transition-shadow">
                   <div className="p-4">
                     <div className="flex items-start gap-3">
                       {doc.mimeType?.startsWith('image/') || doc.type === 'image' ? (
@@ -445,7 +445,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                               type="text"
                               value={editName}
                               onChange={(e) => setEditName(e.target.value)}
-                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#1051a5] outline-none"
+                              className="flex-1 px-2 py-1 text-sm border border-gray-200 rounded-xl focus:ring-1 focus:ring-[#1051a5] outline-none"
                               autoFocus
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter') {
@@ -470,10 +470,10 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                             </button>
                           </div>
                         ) : (
-                          <h4 className="text-gray-900 truncate">{doc.name}</h4>
+                          <h4 className="font-semibold text-[#22283a] truncate">{doc.name}</h4>
                         )}
                         <div className="flex items-center gap-2 mt-1 flex-wrap">
-                          <p className="text-gray-600 text-sm">From: {doc.country}</p>
+                          <p className="text-gray-400 text-sm">From: {doc.country}</p>
                           {doc.fileSize && (
                             <span className="text-gray-400 text-xs">({formatFileSize(doc.fileSize)})</span>
                           )}
@@ -484,7 +484,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                             </span>
                           )}
                         </div>
-                        <p className="text-gray-500 text-sm">
+                        <p className="text-gray-400 text-sm">
                           {new Date(doc.uploadDate).toLocaleDateString()}
                         </p>
                       </div>
@@ -494,7 +494,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                             <button
                               onClick={() => handleProcess(doc.id)}
                               disabled={isProcessing}
-                              className="flex items-center gap-1 px-3 py-1.5 bg-[#97bf2d] hover:bg-[#87af1d] text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                              className="flex items-center gap-1 px-3 py-1.5 bg-[#97bf2d] hover:bg-[#87af1d] text-white text-xs font-medium rounded-full transition-colors disabled:opacity-50"
                               title="Extract vaccination records with AI"
                             >
                               {isProcessing ? (
@@ -507,7 +507,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                             <button
                               onClick={() => handleProcessDoctorNotes(doc.id)}
                               disabled={isProcessing}
-                              className="flex items-center gap-1 px-3 py-1.5 bg-[#1051a5] hover:bg-[#0d4185] text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                              className="flex items-center gap-1 px-3 py-1.5 bg-[#1051a5] hover:bg-[#0d4185] text-white text-xs font-medium rounded-full transition-colors disabled:opacity-50"
                               title="Analyze handwritten doctor notes for exemptions & immunity"
                             >
                               {isProcessing ? (
@@ -566,17 +566,17 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                   </div>
 
                   {isExpanded && parsed && (
-                    <div className="border-t border-gray-200 bg-gray-50 p-4 space-y-4">
+                    <div className="border-t border-gray-100 bg-[#fafafa] p-4 space-y-4">
                       {parsed.summary && (
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-3">
                           <p className="text-sm text-blue-800">{parsed.summary}</p>
                         </div>
                       )}
 
                       {parsed.patient_info && (parsed.patient_info.full_name || parsed.patient_info.date_of_birth) && (
-                        <div className="bg-white rounded-lg p-3 border border-gray-200">
-                          <h5 className="text-xs font-semibold text-gray-500 uppercase mb-2">Patient Information</h5>
-                          <div className="text-sm text-gray-700 space-y-1">
+                        <div className="bg-white rounded-2xl p-3 border border-gray-100">
+                          <h5 className="text-xs font-semibold text-[#22283a] uppercase mb-2">Patient Information</h5>
+                          <div className="text-sm text-gray-400 space-y-1">
                             {parsed.patient_info.full_name && <p>Name: {parsed.patient_info.full_name}</p>}
                             {parsed.patient_info.date_of_birth && <p>DOB: {parsed.patient_info.date_of_birth}</p>}
                           </div>
@@ -586,11 +586,11 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                       {parsed.vaccinations && parsed.vaccinations.length > 0 && (
                         <div>
                           <div className="flex items-center justify-between mb-3">
-                            <h5 className="text-xs font-semibold text-gray-500 uppercase">Extracted Vaccinations</h5>
+                            <h5 className="text-xs font-semibold text-[#22283a] uppercase">Extracted Vaccinations</h5>
                             <button
                               onClick={() => handleImportVaccinations(doc.id)}
                               disabled={isImporting}
-                              className="flex items-center gap-1 px-3 py-1.5 bg-[#26844f] hover:bg-[#1e6b3f] text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                              className="flex items-center gap-1 px-3 py-1.5 bg-[#26844f] hover:bg-[#1e6b3f] text-white text-xs font-medium rounded-full transition-colors disabled:opacity-50"
                             >
                               {isImporting ? (
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -602,20 +602,20 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                           </div>
                           <div className="space-y-2">
                             {parsed.vaccinations.map((v, i) => (
-                              <div key={i} className="bg-white rounded-lg p-3 border border-gray-200">
+                              <div key={i} className="bg-white rounded-2xl p-3 border border-gray-100">
                                 <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-medium text-sm text-gray-900">{v.vaccine_name}</span>
+                                  <span className="font-semibold text-sm text-[#22283a]">{v.vaccine_name}</span>
                                   {v.dose_number && (
-                                    <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Dose {v.dose_number}</span>
+                                    <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">Dose {v.dose_number}</span>
                                   )}
                                 </div>
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 text-xs text-gray-600">
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 text-xs text-gray-400">
                                   {v.date && <span>Date: {v.date}</span>}
                                   {v.provider && <span>Provider: {v.provider}</span>}
                                   {v.country_given && <span>Country: {v.country_given}</span>}
                                   {v.location && <span>Location: {v.location}</span>}
                                 </div>
-                                {v.notes && <p className="text-xs text-gray-500 mt-1">{v.notes}</p>}
+                                {v.notes && <p className="text-xs text-gray-400 mt-1">{v.notes}</p>}
                               </div>
                             ))}
                           </div>
@@ -625,14 +625,14 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                       {(parsed as any).exemptions && (parsed as any).exemptions.length > 0 && (
                         <div>
                           <div className="flex items-center justify-between mb-3">
-                            <h5 className="text-xs font-semibold text-gray-500 uppercase flex items-center gap-1">
+                            <h5 className="text-xs font-semibold text-[#22283a] uppercase flex items-center gap-1">
                               <ShieldCheck className="w-3.5 h-3.5 text-purple-600" />
                               Medical Exemptions / Immunity Evidence
                             </h5>
                             <button
                               onClick={() => handleImportExemptions(doc.id)}
                               disabled={isImporting}
-                              className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-50"
+                              className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-medium rounded-full transition-colors disabled:opacity-50"
                             >
                               {isImporting ? (
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -653,19 +653,19 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                               };
                               const typeInfo = typeLabels[ex.exemption_type] || typeLabels.other;
                               return (
-                                <div key={i} className="bg-white rounded-lg p-3 border border-purple-200">
+                                <div key={i} className="bg-white rounded-2xl p-3 border border-gray-100">
                                   <div className="flex items-center gap-2 mb-1">
                                     <ShieldCheck className="w-4 h-4 text-purple-600" />
-                                    <span className="font-medium text-sm text-gray-900">{ex.vaccine_name}</span>
-                                    <span className={`text-xs px-1.5 py-0.5 rounded ${typeInfo.color}`}>{typeInfo.label}</span>
+                                    <span className="font-semibold text-sm text-[#22283a]">{ex.vaccine_name}</span>
+                                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${typeInfo.color}`}>{typeInfo.label}</span>
                                   </div>
-                                  <p className="text-xs text-gray-700 ml-6 mb-1">{ex.reason}</p>
-                                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 text-xs text-gray-500 ml-6">
+                                  <p className="text-xs text-gray-400 ml-6 mb-1">{ex.reason}</p>
+                                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1 text-xs text-gray-400 ml-6">
                                     {ex.doctor_name && <span>Doctor: {ex.doctor_name}</span>}
                                     {ex.doctor_license && <span>License: {ex.doctor_license}</span>}
                                     {ex.document_date && <span>Date: {ex.document_date}</span>}
                                   </div>
-                                  {ex.notes && <p className="text-xs text-gray-500 mt-1 ml-6 italic">{ex.notes}</p>}
+                                  {ex.notes && <p className="text-xs text-gray-400 mt-1 ml-6 italic">{ex.notes}</p>}
                                 </div>
                               );
                             })}
@@ -674,7 +674,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                       )}
 
                       {parsed.vaccinations?.length === 0 && !(parsed as any).exemptions?.length && (
-                        <div className="text-sm text-gray-500 text-center py-2">
+                        <div className="text-sm text-gray-400 text-center py-2">
                           No vaccination records or exemptions found in this document.
                         </div>
                       )}
@@ -688,9 +688,9 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
       )}
 
       {exemptions.length > 0 && (
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-purple-600" />
+        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+          <h3 className="text-lg font-semibold text-[#22283a] mb-4 flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-[#22283a]/30" />
             Saved Medical Exemptions ({exemptions.length})
           </h3>
           <div className="space-y-2">
@@ -704,23 +704,23 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
               };
               const typeInfo = typeLabels[ex.exemptionType] || typeLabels.other;
               return (
-                <div key={ex.id} className="flex items-center justify-between bg-purple-50 rounded-lg p-3 border border-purple-200">
+                <div key={ex.id} className="flex items-center justify-between bg-[#fafafa] rounded-2xl p-3 border border-gray-100">
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="w-4 h-4 text-purple-600 flex-shrink-0" />
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm text-gray-900">{ex.vaccineName}</span>
-                        <span className={`text-xs px-1.5 py-0.5 rounded ${typeInfo.color}`}>{typeInfo.label}</span>
+                        <span className="font-semibold text-sm text-[#22283a]">{ex.vaccineName}</span>
+                        <span className={`text-xs px-1.5 py-0.5 rounded-full ${typeInfo.color}`}>{typeInfo.label}</span>
                       </div>
-                      <p className="text-xs text-gray-600">{ex.reason}</p>
-                      {ex.doctorName && <p className="text-xs text-gray-500">Dr. {ex.doctorName}</p>}
+                      <p className="text-xs text-gray-400">{ex.reason}</p>
+                      {ex.doctorName && <p className="text-xs text-gray-400">Dr. {ex.doctorName}</p>}
                     </div>
                   </div>
                 </div>
               );
             })}
           </div>
-          <p className="text-xs text-gray-500 mt-3">
+          <p className="text-xs text-gray-400 mt-3">
             These exemptions will be considered when checking compliance requirements.
           </p>
         </div>

@@ -54,7 +54,7 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-extrabold text-[#22283a] mb-1">
+        <h1 className="text-3xl font-semibold text-[#22283a] mb-1">
           Welcome back{profile ? `, ${profile.fullName}` : ''}
         </h1>
         <p className="text-gray-400">
@@ -74,15 +74,15 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
             <button
               key={stat.id}
               onClick={() => onNavigate(stat.id)}
-              className="bg-white rounded-2xl border border-gray-100 p-6 text-left transition-all hover:shadow-md hover:-translate-y-0.5 group"
+              className="bg-white rounded-2xl border border-gray-100 p-6 text-left transition-all hover:border-gray-200 group"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${stat.color}08` }}>
-                  <Icon className="w-5 h-5" style={{ color: stat.color }} />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#fafafa]">
+                  <Icon className="w-5 h-5 text-[#22283a]/30" />
                 </div>
                 <ArrowRight className="w-4 h-4 text-gray-200 group-hover:text-gray-400 transition-colors" />
               </div>
-              <div className="text-3xl font-extrabold text-[#22283a] mb-0.5">{stat.value}</div>
+              <div className="text-3xl font-semibold text-[#22283a] mb-0.5">{stat.value}</div>
               <div className="text-sm font-medium text-gray-500">{stat.label}</div>
               <div className="text-xs text-gray-300 mt-1">{stat.sub}</div>
             </button>
@@ -94,14 +94,14 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
           <div className="p-6">
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 bg-[#1051a5]/8 rounded-xl flex items-center justify-center">
-                <Target className="w-5 h-5 text-[#1051a5]" />
+              <div className="w-10 h-10 bg-[#fafafa] rounded-xl flex items-center justify-center">
+                <Target className="w-5 h-5 text-[#22283a]/30" />
               </div>
               <div>
-                <h2 className="text-lg font-extrabold text-[#22283a]">U.S. College Compliance</h2>
+                <h2 className="text-lg font-semibold text-[#22283a]">U.S. College Compliance</h2>
                 <p className="text-gray-400 text-xs">Required for undergraduate admission</p>
               </div>
-              <div className="ml-auto text-3xl font-extrabold text-[#1051a5]">{compliance.percentage}%</div>
+              <div className="ml-auto text-3xl font-semibold text-[#1051a5]">{compliance.percentage}%</div>
             </div>
             
             <Progress value={compliance.percentage} className="h-2 bg-gray-100" />
@@ -132,7 +132,7 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
               <AlertCircle className="w-5 h-5 text-amber-600" />
             </div>
             <div>
-              <h3 className="text-amber-900 font-bold mb-1">Complete Your Profile</h3>
+              <h3 className="text-amber-900 font-semibold mb-1">Complete Your Profile</h3>
               <p className="text-amber-700/70 text-sm mb-4">
                 Add your personal information to get personalized vaccine tracking and compliance recommendations.
               </p>
@@ -149,7 +149,7 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
       )}
 
       <div>
-        <h2 className="text-lg font-extrabold text-[#22283a] mb-4">Quick Actions</h2>
+        <h2 className="text-lg font-semibold text-[#22283a] mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {[
             { id: 'upload' as const, icon: Upload, title: 'Upload Document', sub: 'Add vaccine records', color: '#1051a5' },
@@ -159,13 +159,13 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
             <button
               key={id}
               onClick={() => onNavigate(id)}
-              className="flex items-center gap-4 bg-white border border-gray-100 hover:border-gray-200 p-5 rounded-2xl transition-all hover:shadow-sm group text-left"
+              className="flex items-center gap-4 bg-white border border-gray-100 hover:border-gray-200 p-5 rounded-2xl transition-all group text-left"
             >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${color}08` }}>
-                <Icon className="w-5 h-5" style={{ color }} />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-[#fafafa]">
+                <Icon className="w-5 h-5 text-[#22283a]/30" />
               </div>
               <div>
-                <div className="font-bold text-[#22283a] text-sm">{title}</div>
+                <div className="font-semibold text-[#22283a] text-sm">{title}</div>
                 <div className="text-gray-400 text-xs">{sub}</div>
               </div>
               <ArrowRight className="w-4 h-4 text-gray-200 group-hover:text-gray-400 ml-auto transition-colors" />
@@ -177,7 +177,7 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
       {vaccinations.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-extrabold text-[#22283a]">Recent Vaccinations</h2>
+            <h2 className="text-lg font-semibold text-[#22283a]">Recent Vaccinations</h2>
             {vaccinations.length > 5 && (
               <button
                 onClick={() => onNavigate('timeline')}
@@ -192,8 +192,8 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
             {vaccinations.slice(0, 5).map(vax => (
               <div key={vax.id} className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-gray-50 flex items-center justify-center shrink-0">
-                    <Syringe className="w-4 h-4 text-gray-400" />
+                  <div className="w-9 h-9 rounded-lg bg-[#fafafa] flex items-center justify-center shrink-0">
+                    <Syringe className="w-4 h-4 text-[#22283a]/30" />
                   </div>
                   <div>
                     <p className="text-[#22283a] font-medium text-sm">{vax.vaccineName}</p>

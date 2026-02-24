@@ -31,20 +31,20 @@ export function VaccinationTimeline({ vaccinations, onAdd, onDelete }: Vaccinati
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-6">
-          <Clock className="w-8 h-8 text-[#1051a5]" />
+          <Clock className="w-8 h-8 text-[#22283a]/30" />
           <div>
-            <h1 className="text-[#22283a]">Vaccine Timeline</h1>
-            <p className="text-[#6b7280]">All your vaccinations in chronological order</p>
+            <h1 className="text-[#22283a] font-semibold">Vaccine Timeline</h1>
+            <p className="text-gray-400">All your vaccinations in chronological order</p>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-gray-50 p-4 rounded-lg mb-6">
+        <div className="bg-[#fafafa] p-4 rounded-2xl border border-gray-100 mb-6">
           <div className="flex items-center gap-2 mb-3">
-            <Filter className="w-5 h-5 text-[#6b7280]" />
-            <h3 className="text-[#22283a]">Filters</h3>
+            <Filter className="w-5 h-5 text-gray-400" />
+            <h3 className="text-sm font-semibold text-[#22283a]">Filters</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <CustomSelect
@@ -74,24 +74,24 @@ export function VaccinationTimeline({ vaccinations, onAdd, onDelete }: Vaccinati
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-[#e8f0fa] p-4 rounded-lg text-center border-l-4 border-[#1051a5]">
-            <div className="text-[#1051a5]">{vaccinations.length}</div>
-            <p className="text-[#22283a] text-sm">Total Vaccines</p>
+          <div className="bg-[#fafafa] p-4 rounded-2xl border border-gray-100 text-center">
+            <div className="text-[#1051a5] font-semibold">{vaccinations.length}</div>
+            <p className="text-gray-400 text-sm">Total Vaccines</p>
           </div>
-          <div className="bg-[#e6f3ec] p-4 rounded-lg text-center border-l-4 border-[#26844f]">
-            <div className="text-[#26844f]">{vaccinations.filter(v => v.verified).length}</div>
-            <p className="text-[#22283a] text-sm">Verified</p>
+          <div className="bg-[#fafafa] p-4 rounded-2xl border border-gray-100 text-center">
+            <div className="text-[#26844f] font-semibold">{vaccinations.filter(v => v.verified).length}</div>
+            <p className="text-gray-400 text-sm">Verified</p>
           </div>
-          <div className="bg-[#f5f9e8] p-4 rounded-lg text-center border-l-4 border-[#97bf2d]">
-            <div className="text-[#97bf2d]">{vaccinations.filter(v => !v.verified).length}</div>
-            <p className="text-[#22283a] text-sm">Pending</p>
+          <div className="bg-[#fafafa] p-4 rounded-2xl border border-gray-100 text-center">
+            <div className="text-[#97bf2d] font-semibold">{vaccinations.filter(v => !v.verified).length}</div>
+            <p className="text-gray-400 text-sm">Pending</p>
           </div>
         </div>
 
         {/* Timeline */}
         {filteredVaccinations.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
-            <Clock className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+          <div className="text-center py-12 text-gray-400">
+            <Clock className="w-16 h-16 mx-auto mb-4 text-gray-200" />
             <p>No vaccination records found</p>
             <p className="text-sm mt-2">
               {filterCountry !== 'all' || filterVerified !== 'all'
@@ -104,12 +104,12 @@ export function VaccinationTimeline({ vaccinations, onAdd, onDelete }: Vaccinati
             {filteredVaccinations.map((vax) => (
               <div
                 key={vax.id}
-                className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow"
+                className="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-sm transition-shadow"
               >
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-gray-900">{vax.vaccineName}</h3>
+                      <h3 className="font-semibold text-[#22283a]">{vax.vaccineName}</h3>
                       {vax.verified ? (
                         <span className="flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
                           <CheckCircle className="w-4 h-4" />
@@ -125,7 +125,7 @@ export function VaccinationTimeline({ vaccinations, onAdd, onDelete }: Vaccinati
                         Dose {vax.doseNumber}
                       </span>
                     </div>
-                    <p className="text-gray-600">{formatDate(vax.date)}</p>
+                    <p className="text-gray-400">{formatDate(vax.date)}</p>
                   </div>
                   <button
                     onClick={() => onDelete(vax.id)}
@@ -137,21 +137,21 @@ export function VaccinationTimeline({ vaccinations, onAdd, onDelete }: Vaccinati
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-500">Country:</span>
-                    <span className="ml-2 text-gray-900">{vax.countryGiven}</span>
+                    <span className="text-gray-400">Country:</span>
+                    <span className="ml-2 text-[#22283a]">{vax.countryGiven}</span>
                   </div>
                   <div>
-                    <span className="text-gray-500">Location:</span>
-                    <span className="ml-2 text-gray-900">{vax.location}</span>
+                    <span className="text-gray-400">Location:</span>
+                    <span className="ml-2 text-[#22283a]">{vax.location}</span>
                   </div>
                   <div className="md:col-span-2">
-                    <span className="text-gray-500">Provider:</span>
-                    <span className="ml-2 text-gray-900">{vax.provider}</span>
+                    <span className="text-gray-400">Provider:</span>
+                    <span className="ml-2 text-[#22283a]">{vax.provider}</span>
                   </div>
                   {vax.notes && (
                     <div className="md:col-span-2 pt-2 border-t border-gray-100">
-                      <span className="text-gray-500">Notes:</span>
-                      <p className="mt-1 text-gray-900">{vax.notes}</p>
+                      <span className="text-gray-400">Notes:</span>
+                      <p className="mt-1 text-[#22283a]">{vax.notes}</p>
                     </div>
                   )}
                 </div>

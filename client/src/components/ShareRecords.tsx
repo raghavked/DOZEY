@@ -177,98 +177,98 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-6">
-          <Share2 className="w-8 h-8 text-[#97bf2d]" />
+          <Share2 className="w-8 h-8 text-[#22283a]/30" />
           <div>
-            <h1 className="text-[#22283a]">Share Records</h1>
-            <p className="text-gray-600">Securely share your vaccination records with healthcare providers</p>
+            <h1 className="text-[#22283a] font-semibold">Share Records</h1>
+            <p className="text-gray-400">Securely share your vaccination records with healthcare providers</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
           <button
             onClick={() => setShareMethod('card')}
-            className={`p-6 rounded-xl border-2 transition-all ${
+            className={`p-6 rounded-2xl border transition-all ${
               shareMethod === 'card'
-                ? 'border-[#1051a5] bg-blue-50'
-                : 'border-gray-200 hover:border-[#1051a5]/50'
+                ? 'border-[#1051a5] bg-[#1051a5]/5'
+                : 'border-gray-100 hover:border-[#1051a5]/50'
             }`}
           >
-            <CreditCard className="w-8 h-8 text-[#1051a5] mx-auto mb-3" />
-            <h3 className="text-[#22283a] mb-1">Vaccine Card</h3>
-            <p className="text-gray-600 text-sm">COVID-19 style card format</p>
+            <CreditCard className={`w-8 h-8 mx-auto mb-3 ${shareMethod === 'card' ? 'text-[#1051a5]' : 'text-[#22283a]/30'}`} />
+            <h3 className="text-[#22283a] font-semibold mb-1">Vaccine Card</h3>
+            <p className="text-gray-400 text-sm">COVID-19 style card format</p>
           </button>
 
           <button
             onClick={() => setShareMethod('link')}
-            className={`p-6 rounded-xl border-2 transition-all ${
+            className={`p-6 rounded-2xl border transition-all ${
               shareMethod === 'link'
-                ? 'border-[#1051a5] bg-blue-50'
-                : 'border-gray-200 hover:border-[#1051a5]/50'
+                ? 'border-[#1051a5] bg-[#1051a5]/5'
+                : 'border-gray-100 hover:border-[#1051a5]/50'
             }`}
           >
-            <LinkIcon className="w-8 h-8 text-[#97bf2d] mx-auto mb-3" />
-            <h3 className="text-[#22283a] mb-1">Share Link</h3>
-            <p className="text-gray-600 text-sm">Generate a secure link</p>
+            <LinkIcon className={`w-8 h-8 mx-auto mb-3 ${shareMethod === 'link' ? 'text-[#1051a5]' : 'text-[#22283a]/30'}`} />
+            <h3 className="text-[#22283a] font-semibold mb-1">Share Link</h3>
+            <p className="text-gray-400 text-sm">Generate a secure link</p>
           </button>
 
           <button
             onClick={() => setShareMethod('email')}
-            className={`p-6 rounded-xl border-2 transition-all ${
+            className={`p-6 rounded-2xl border transition-all ${
               shareMethod === 'email'
-                ? 'border-[#1051a5] bg-blue-50'
-                : 'border-gray-200 hover:border-[#1051a5]/50'
+                ? 'border-[#1051a5] bg-[#1051a5]/5'
+                : 'border-gray-100 hover:border-[#1051a5]/50'
             }`}
           >
-            <Mail className="w-8 h-8 text-[#97bf2d] mx-auto mb-3" />
-            <h3 className="text-[#22283a] mb-1">Send Email</h3>
-            <p className="text-gray-600 text-sm">Email directly to provider</p>
+            <Mail className={`w-8 h-8 mx-auto mb-3 ${shareMethod === 'email' ? 'text-[#1051a5]' : 'text-[#22283a]/30'}`} />
+            <h3 className="text-[#22283a] font-semibold mb-1">Send Email</h3>
+            <p className="text-gray-400 text-sm">Email directly to provider</p>
           </button>
 
           <button
             onClick={() => setShareMethod('pdf')}
-            className={`p-6 rounded-xl border-2 transition-all ${
+            className={`p-6 rounded-2xl border transition-all ${
               shareMethod === 'pdf'
-                ? 'border-[#1051a5] bg-blue-50'
-                : 'border-gray-200 hover:border-[#1051a5]/50'
+                ? 'border-[#1051a5] bg-[#1051a5]/5'
+                : 'border-gray-100 hover:border-[#1051a5]/50'
             }`}
           >
-            <Download className="w-8 h-8 text-[#97bf2d] mx-auto mb-3" />
-            <h3 className="text-[#22283a] mb-1">Full Summary</h3>
-            <p className="text-gray-600 text-sm">Download detailed summary</p>
+            <Download className={`w-8 h-8 mx-auto mb-3 ${shareMethod === 'pdf' ? 'text-[#1051a5]' : 'text-[#22283a]/30'}`} />
+            <h3 className="text-[#22283a] font-semibold mb-1">Full Summary</h3>
+            <p className="text-gray-400 text-sm">Download detailed summary</p>
           </button>
         </div>
 
         {shareMethod === 'card' && (
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-gray-900 mb-4">Vaccine Card Export</h3>
-            <p className="text-gray-600 mb-6 text-sm">
+          <div className="bg-[#fafafa] p-6 rounded-2xl">
+            <h3 className="text-gray-900 font-semibold mb-4">Vaccine Card Export</h3>
+            <p className="text-gray-400 mb-6 text-sm">
               Download your vaccination records in a compact card format similar to COVID-19 vaccine cards.
               Lists each vaccine with dose numbers, dates, providers, and locations.
             </p>
 
             <div className="bg-white border-2 border-[#1051a5] rounded-xl p-6 mb-6 max-w-md mx-auto shadow-md">
               <div className="text-center border-b-2 border-[#1051a5] pb-3 mb-4">
-                <div className="text-[#1051a5] font-bold text-lg">VACCINATION RECORD CARD</div>
+                <div className="text-[#1051a5] font-semibold text-lg">VACCINATION RECORD CARD</div>
                 <div className="text-[#97bf2d] font-semibold text-sm">DOZEY</div>
               </div>
               <div className="space-y-2 text-sm mb-4">
                 <div className="flex">
-                  <span className="text-gray-500 w-28 shrink-0">Name:</span>
+                  <span className="text-gray-400 w-28 shrink-0">Name:</span>
                   <span className="text-[#22283a] font-medium">{profile?.fullName || 'Your Name'}</span>
                 </div>
                 <div className="flex">
-                  <span className="text-gray-500 w-28 shrink-0">Date of Birth:</span>
+                  <span className="text-gray-400 w-28 shrink-0">Date of Birth:</span>
                   <span className="text-[#22283a] font-medium">{profile?.dateOfBirth ? new Date(profile.dateOfBirth).toLocaleDateString() : 'N/A'}</span>
                 </div>
               </div>
               <div className="border-t border-gray-200 pt-3">
-                <div className="text-xs text-gray-400 mb-2 uppercase tracking-wide font-semibold">Vaccinations ({vaccinations.length})</div>
+                <div className="text-xs text-gray-400 mb-2 uppercase tracking-wide font-medium">Vaccinations ({vaccinations.length})</div>
                 {vaccinations.slice(0, 3).map((v, i) => (
                   <div key={i} className="flex justify-between text-xs py-1 border-b border-gray-100">
                     <span className="font-medium text-[#22283a]">{v.vaccineName} (Dose {v.doseNumber})</span>
-                    <span className="text-gray-500">{new Date(v.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })}</span>
+                    <span className="text-gray-400">{new Date(v.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })}</span>
                   </div>
                 ))}
                 {vaccinations.length > 3 && (
@@ -279,7 +279,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
 
             <button
               onClick={generateVaccineCard}
-              className="w-full bg-[#1051a5] hover:bg-[#0d4185] text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2 font-semibold"
+              className="w-full bg-[#1051a5] hover:bg-[#0d4185] text-white py-3 rounded-full transition-colors flex items-center justify-center gap-2 font-semibold"
             >
               <CreditCard className="w-5 h-5" />
               Download Vaccine Card
@@ -288,8 +288,8 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
         )}
 
         {shareMethod === 'link' && (
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-gray-900 mb-4">Generate Secure Link</h3>
+          <div className="bg-[#fafafa] p-6 rounded-2xl">
+            <h3 className="text-gray-900 font-semibold mb-4">Generate Secure Link</h3>
             
             <div className="space-y-4 mb-6">
               <CustomSelect
@@ -319,11 +319,11 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-lg border border-gray-200 flex items-center gap-3 mb-4">
-              <code className="flex-1 text-sm text-gray-600 break-all">{mockShareLink}</code>
+            <div className="bg-white p-4 rounded-2xl border border-gray-100 flex items-center gap-3 mb-4">
+              <code className="flex-1 text-sm text-gray-400 break-all">{mockShareLink}</code>
               <button
                 onClick={handleCopyLink}
-                className="bg-[#97bf2d] hover:bg-[#7a9924] text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                className="bg-[#97bf2d] hover:bg-[#7a9924] text-white px-4 py-2 rounded-full transition-colors flex items-center gap-2"
               >
                 {copied ? (
                   <>
@@ -339,15 +339,15 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
               </button>
             </div>
 
-            <p className="text-gray-500 text-sm">
+            <p className="text-gray-400 text-sm">
               This link will expire in {expirationDays} day{expirationDays !== 1 ? 's' : ''} and can be accessed by anyone with the URL.
             </p>
           </div>
         )}
 
         {shareMethod === 'email' && (
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-gray-900 mb-4">Send via Email</h3>
+          <div className="bg-[#fafafa] p-6 rounded-2xl">
+            <h3 className="text-gray-900 font-semibold mb-4">Send via Email</h3>
             
             <div className="space-y-4">
               <div>
@@ -360,7 +360,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="doctor@clinic.com"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
                 />
               </div>
 
@@ -374,14 +374,14 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
                   onChange={(e) => setMessage(e.target.value)}
                   rows={4}
                   placeholder="Add a message to your healthcare provider..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none resize-none"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none resize-none"
                 />
               </div>
 
               <button
                 onClick={handleSendEmail}
                 disabled={!email}
-                className="w-full bg-[#97bf2d] hover:bg-[#7a9924] disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-[#97bf2d] hover:bg-[#7a9924] disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 rounded-full transition-colors flex items-center justify-center gap-2"
               >
                 <Mail className="w-5 h-5" />
                 Send Email
@@ -391,12 +391,12 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
         )}
 
         {shareMethod === 'pdf' && (
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-gray-900 mb-4">Download Full Summary</h3>
+          <div className="bg-[#fafafa] p-6 rounded-2xl">
+            <h3 className="text-gray-900 font-semibold mb-4">Download Full Summary</h3>
             
-            <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
-              <h4 className="text-gray-900 mb-3">What's included:</h4>
-              <ul className="space-y-2 text-gray-600">
+            <div className="bg-white p-6 rounded-2xl border border-gray-100 mb-4">
+              <h4 className="text-gray-900 font-semibold mb-3">What's included:</h4>
+              <ul className="space-y-2 text-gray-400">
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-500" />
                   Complete patient profile
@@ -418,24 +418,24 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
 
             <button
               onClick={generatePDF}
-              className="w-full bg-[#97bf2d] hover:bg-[#7a9924] text-white py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-[#97bf2d] hover:bg-[#7a9924] text-white py-3 rounded-full transition-colors flex items-center justify-center gap-2"
             >
               <Download className="w-5 h-5" />
               Download Summary (TXT)
             </button>
             
-            <p className="text-gray-500 text-sm mt-4">
+            <p className="text-gray-400 text-sm mt-4">
               Note: In a production version, this would generate a professionally formatted PDF document.
             </p>
           </div>
         )}
 
-        <div className="mt-8 bg-blue-50 border-l-4 border-[#1051a5] p-5 rounded-lg">
+        <div className="mt-8 bg-[#fafafa] rounded-2xl border border-gray-100 p-5">
           <div className="flex items-center gap-2 mb-2">
-            <Shield className="w-5 h-5 text-[#1051a5]" />
+            <Shield className="w-5 h-5 text-[#22283a]/30" />
             <h4 className="text-[#22283a] font-semibold">Privacy & Security</h4>
           </div>
-          <ul className="text-gray-600 text-sm space-y-1">
+          <ul className="text-gray-400 text-sm space-y-1">
             <li>All shared links are encrypted and expire automatically</li>
             <li>You can revoke access at any time from your dashboard</li>
             <li>Recipients cannot modify your records</li>

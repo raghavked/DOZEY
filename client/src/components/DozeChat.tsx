@@ -214,7 +214,7 @@ export function DozeChat() {
   return (
     <div className="fixed bottom-0 right-0 z-50 p-4 sm:p-6">
       <div
-        className={`absolute bottom-20 right-4 sm:right-6 w-[calc(100vw-2rem)] sm:w-[400px] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden transition-all duration-300 ease-in-out origin-bottom-right ${
+        className={`absolute bottom-20 right-4 sm:right-6 w-[calc(100vw-2rem)] sm:w-[400px] bg-white rounded-2xl shadow-xl border border-gray-100 flex flex-col overflow-hidden transition-all duration-300 ease-in-out origin-bottom-right ${
           isOpen
             ? 'opacity-100 scale-100 translate-y-0'
             : 'opacity-0 scale-95 translate-y-4 pointer-events-none'
@@ -239,7 +239,7 @@ export function DozeChat() {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-1 bg-gray-50/50">
+        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-1 bg-[#fafafa]/50">
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'items-end gap-2'} mb-3`}>
               {msg.role === 'assistant' && (
@@ -262,7 +262,7 @@ export function DozeChat() {
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="border-t border-gray-200 bg-white px-3 py-3 flex-shrink-0">
+        <div className="border-t border-gray-100 bg-white px-3 py-3 flex-shrink-0">
           <div className="flex items-center gap-2">
             <input
               ref={inputRef}
@@ -271,7 +271,7 @@ export function DozeChat() {
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Ask Doze anything..."
-              className="flex-1 bg-gray-100 rounded-full px-4 py-2.5 text-sm text-[#22283a] placeholder-gray-400 outline-none focus:ring-2 focus:ring-[#1051a5]/30 transition-shadow"
+              className="flex-1 bg-[#fafafa] rounded-full px-4 py-2.5 text-sm text-[#22283a] placeholder-gray-400 outline-none focus:ring-2 focus:ring-[#1051a5]/10 border border-gray-100 transition-shadow"
               disabled={isLoading}
             />
             <button

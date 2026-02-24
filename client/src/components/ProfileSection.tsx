@@ -239,11 +239,11 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
   return (
     <div className="max-w-3xl mx-auto">
       {isNewUser && (
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 flex items-start gap-3">
+        <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 mb-6 flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-[#1051a5] flex-shrink-0 mt-0.5" />
           <div>
             <h3 className="font-semibold text-[#1051a5] mb-1">Welcome to DOZEY!</h3>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-gray-400">
               Please complete your profile to get started. This information helps us manage your vaccination records 
               and check compliance with your destination's requirements.
             </p>
@@ -251,18 +251,18 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      <div className="bg-white rounded-2xl border border-gray-100 p-8">
         <div className="flex items-center gap-3 mb-6">
           <User className="w-8 h-8 text-[#1051a5]" />
-          <h1 className="text-[#22283a]">Your Profile</h1>
+          <h1 className="font-semibold text-[#22283a]">Your Profile</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <h2 className="text-gray-900 mb-4">Basic Information</h2>
+            <h2 className="text-sm font-semibold text-[#22283a] uppercase tracking-wide mb-4">Basic Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label htmlFor="fullName" className="block text-gray-700 mb-2">
+                <label htmlFor="fullName" className="block text-xs text-gray-400 font-medium mb-2">
                   Full Legal Name *
                 </label>
                 <input
@@ -272,12 +272,12 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
                   value={formData.fullName}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
                 />
               </div>
 
               <div>
-                <label htmlFor="dateOfBirth" className="block text-gray-700 mb-2">
+                <label htmlFor="dateOfBirth" className="block text-xs text-gray-400 font-medium mb-2">
                   Date of Birth *
                 </label>
                 <input
@@ -287,7 +287,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
                   value={formData.dateOfBirth}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
                 />
               </div>
 
@@ -304,7 +304,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
           </div>
 
           <div>
-            <h2 className="text-gray-900 mb-4">Current Location</h2>
+            <h2 className="text-sm font-semibold text-[#22283a] uppercase tracking-wide mb-4">Current Location</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <AutocompleteInput
                 id="currentCountry"
@@ -328,7 +328,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
           </div>
 
           <div>
-            <h2 className="text-gray-900 mb-4">Citizenship(s)</h2>
+            <h2 className="text-sm font-semibold text-[#22283a] uppercase tracking-wide mb-4">Citizenship(s)</h2>
             <div className="flex gap-2 mb-3">
               <AutocompleteInput
                 value={citizenshipInput}
@@ -340,7 +340,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
               <button
                 type="button"
                 onClick={addCitizenship}
-                className="bg-[#1051a5] hover:bg-[#0d4185] text-white px-4 py-2 rounded-lg transition-colors flex-shrink-0"
+                className="bg-[#1051a5] hover:bg-[#0d4185] text-white px-4 py-2 rounded-full transition-colors flex-shrink-0"
               >
                 Add
               </button>
@@ -349,7 +349,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
               {formData.citizenships.map((citizenship) => (
                 <span
                   key={citizenship}
-                  className="bg-blue-50 text-[#1051a5] border border-blue-200 px-3 py-1 rounded-full flex items-center gap-2 text-sm"
+                  className="bg-blue-50 text-[#1051a5] border border-blue-100 px-3 py-1 rounded-full flex items-center gap-2 text-sm"
                 >
                   {citizenship}
                   <button
@@ -365,7 +365,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
           </div>
 
           <div>
-            <h2 className="text-gray-900 mb-4">Languages Spoken</h2>
+            <h2 className="text-sm font-semibold text-[#22283a] uppercase tracking-wide mb-4">Languages Spoken</h2>
             <div className="flex gap-2 mb-3">
               <AutocompleteInput
                 value={languageInput}
@@ -377,7 +377,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
               <button
                 type="button"
                 onClick={addLanguage}
-                className="bg-[#1051a5] hover:bg-[#0d4185] text-white px-4 py-2 rounded-lg transition-colors flex-shrink-0"
+                className="bg-[#1051a5] hover:bg-[#0d4185] text-white px-4 py-2 rounded-full transition-colors flex-shrink-0"
               >
                 Add
               </button>
@@ -386,7 +386,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
               {formData.languages.map((language) => (
                 <span
                   key={language}
-                  className="bg-green-50 text-[#26844f] border border-green-200 px-3 py-1 rounded-full flex items-center gap-2 text-sm"
+                  className="bg-green-50 text-[#26844f] border border-green-100 px-3 py-1 rounded-full flex items-center gap-2 text-sm"
                 >
                   {language}
                   <button
@@ -402,7 +402,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
           </div>
 
           <div>
-            <h2 className="text-gray-900 mb-4">Healthcare Information</h2>
+            <h2 className="text-sm font-semibold text-[#22283a] uppercase tracking-wide mb-4">Healthcare Information</h2>
             <div className="grid grid-cols-1 gap-4">
               <AutocompleteInput
                 id="primaryProvider"
@@ -419,10 +419,10 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
                 if (!providerConfig) return null;
                 const detailsObj = getProviderDetailsObj();
                 return (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h3 className="text-gray-800 font-medium mb-3">{providerConfig.heading}</h3>
+                  <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+                    <h3 className="text-sm font-semibold text-[#22283a] mb-3">{providerConfig.heading}</h3>
                     {detailsObj.legacyNotes && (
-                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                      <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-3 mb-3">
                         <p className="text-yellow-800 text-xs font-medium mb-1">Previously saved details:</p>
                         <p className="text-yellow-700 text-sm">{detailsObj.legacyNotes}</p>
                         <p className="text-yellow-600 text-xs mt-1">Please enter this information into the fields below. It will be cleared once you start filling in the fields.</p>
@@ -431,7 +431,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {providerConfig.fields.map((field) => (
                         <div key={field.key} className={field.key === 'address' ? 'md:col-span-2' : ''}>
-                          <label htmlFor={`pd-${field.key}`} className="block text-gray-600 text-sm mb-1">
+                          <label htmlFor={`pd-${field.key}`} className="block text-xs text-gray-400 font-medium mb-1">
                             {field.label}{field.required ? ' *' : ''}
                           </label>
                           <input
@@ -441,12 +441,12 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
                             onChange={(e) => updateProviderDetail(field.key, e.target.value)}
                             required={field.required}
                             placeholder={field.placeholder}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none text-sm"
+                            className="w-full px-3 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none text-sm"
                           />
                         </div>
                       ))}
                     </div>
-                    <p className="text-gray-500 text-xs mt-3">
+                    <p className="text-gray-400 text-xs mt-3">
                       This information helps us connect with your provider for record verification and transfers.
                     </p>
                   </div>
@@ -461,7 +461,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
                 suggestions={COUNTRIES}
                 placeholder="e.g., United States, Canada, United Kingdom"
               />
-              <p className="text-gray-500 text-sm -mt-3 ml-1">
+              <p className="text-gray-400 text-sm -mt-3 ml-1">
                 The country you're applying for a visa to. Use the Compliance page to check that country's vaccination requirements.
               </p>
 
@@ -473,7 +473,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
                 suggestions={INSTITUTIONS}
                 placeholder="e.g., University of California Berkeley, Stanford University"
               />
-              <p className="text-gray-500 text-sm -mt-3 ml-1">
+              <p className="text-gray-400 text-sm -mt-3 ml-1">
                 The school or institution you're sending records to. Use the Compliance page to check their vaccination requirements.
               </p>
 
@@ -485,7 +485,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
                 suggestions={EMPLOYERS}
                 placeholder="e.g., Kaiser Permanente, World Health Organization, US Army"
               />
-              <p className="text-gray-500 text-sm -mt-3 ml-1">
+              <p className="text-gray-400 text-sm -mt-3 ml-1">
                 The employer or organization requiring your health records. Use the Compliance page to check their requirements.
               </p>
             </div>
@@ -493,7 +493,7 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
 
           <button
             type="submit"
-            className={`w-full py-3 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+            className={`w-full py-3 rounded-full transition-colors flex items-center justify-center gap-2 ${
               saved
                 ? 'bg-[#26844f] text-white'
                 : 'bg-[#1051a5] hover:bg-[#0d4185] text-white'

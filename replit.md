@@ -138,10 +138,17 @@ docs/                      # Documentation
 - Dark off-black (#22283a) panels for auth pages, minimal bullet-point trust signals
 - Light footer (#fafafa) with border-top, "Actively in development" only in footer
 - Dashboard: spacious layout, outline-style buttons, pill-tab navigation, no gradient banners
-- Icons use subtle opacity (text-[#22283a]/40) rather than bold colors
+- Icons use subtle opacity (text-[#22283a]/30) rather than bold colors
 - Feature grids use gap-px with bg-gray-200 for Apple-style grid lines
+- Cards: bg-white rounded-2xl border border-gray-100 (no shadow-lg)
+- Inputs: rounded-xl border-gray-200 focus:ring-[color]/10
+- Labels: text-xs text-gray-400 font-medium uppercase tracking-wide
+- Dashboard nav: frosted glass (bg-white/80 backdrop-blur-2xl)
+- Secondary backgrounds: bg-[#fafafa]
+- Description text: text-gray-400 (not text-gray-600)
 
 ## Recent Changes
+- 2026-02-24: Applied Apple/Episense design to ALL dashboard components: rounded-2xl cards, border-gray-100, font-semibold, text-gray-400 descriptions, subtler icons (text-[#22283a]/30), frosted glass nav, rounded-full CTAs, bg-[#fafafa] secondary backgrounds
 - 2026-02-24: Apple-like refinement: centered heroes, font-semibold, frosted glass navbar, light footer, subtler typography
 - 2026-02-24: Removed "Actively in development" from header/hero, kept only in footer
 - 2026-02-24: PublicNavbar: slimmer (h-16), frosted glass, smaller text (13px), dark Sign In button
