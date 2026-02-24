@@ -73,7 +73,7 @@ export function RegisterPage() {
       <div className="min-h-screen bg-[#fefefe] flex items-center justify-center px-4">
         <div className="w-full max-w-sm text-center">
           <Link to="/">
-            <DozeyLogo className="h-10 mx-auto mb-8" />
+            <DozeyLogo className="h-12 mx-auto mb-8" />
           </Link>
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-8 h-8 text-[#26844f]" />
@@ -101,7 +101,7 @@ export function RegisterPage() {
           <div className="absolute bottom-1/4 left-1/4 w-[300px] h-[300px] bg-[#1051a5]/10 rounded-full blur-[80px]" />
         </div>
         <div className="relative flex flex-col justify-center px-16 max-w-lg">
-          <DozeyLogo className="h-12 mb-12" theme="dark" />
+          <DozeyLogo className="h-14 mb-12" theme="dark" />
           <h2 className="text-4xl font-extrabold mb-6 leading-[1.05]">
             Your health records,
             <br />unified
@@ -124,7 +124,7 @@ export function RegisterPage() {
         <div className="w-full max-w-sm">
           <div className="text-center mb-8 lg:hidden">
             <Link to="/">
-              <DozeyLogo className="h-10 mx-auto mb-4" />
+              <DozeyLogo className="h-12 mx-auto mb-4" />
             </Link>
           </div>
 

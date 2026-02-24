@@ -7,7 +7,7 @@ export function PublicFooter() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 mb-12">
           <div className="md:col-span-5">
-            <DozeyLogo className="h-7 mb-4" theme="light" />
+            <DozeyLogo className="h-9 mb-4" theme="light" />
             <p className="text-gray-400 text-sm leading-relaxed max-w-sm mb-4">
               Healthcare that moves with you. Managing vaccination records across borders for
               immigrants, international students, and global workers.

@@ -78,18 +78,18 @@ export function DozeyLogo({ className = 'h-10', variant = 'full', theme = 'light
   }
 
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
+    <div className={`flex items-center gap-3 ${className}`}>
       <Mark />
       <div className="flex flex-col justify-center leading-none">
         <span
           className="font-extrabold tracking-wide"
-          style={{ color: textColor, fontSize: '1.4em', lineHeight: 1 }}
+          style={{ color: textColor, fontSize: '1.6em', lineHeight: 1 }}
         >
           DOZEY
         </span>
         <span
           className="tracking-widest uppercase font-medium"
-          style={{ color: green, fontSize: '0.45em', lineHeight: 1.8 }}
+          style={{ color: green, fontSize: '0.5em', lineHeight: 1.8 }}
         >
           Vaccine Records
         </span>

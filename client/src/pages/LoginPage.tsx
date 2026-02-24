@@ -35,7 +35,7 @@ export function LoginPage() {
           <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-[#26844f]/10 rounded-full blur-[80px]" />
         </div>
         <div className="relative flex flex-col justify-center px-16 max-w-lg">
-          <DozeyLogo className="h-12 mb-12" theme="dark" />
+          <DozeyLogo className="h-14 mb-12" theme="dark" />
           <h2 className="text-4xl font-extrabold mb-6 leading-[1.05]">
             Healthcare that
             <br />moves with you
@@ -58,7 +58,7 @@ export function LoginPage() {
         <div className="w-full max-w-sm">
           <div className="text-center mb-8 lg:hidden">
             <Link to="/">
-              <DozeyLogo className="h-10 mx-auto mb-4" />
+              <DozeyLogo className="h-12 mx-auto mb-4" />
             </Link>
           </div>
 
