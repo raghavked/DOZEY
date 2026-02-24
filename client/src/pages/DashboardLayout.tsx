@@ -106,6 +106,7 @@ export function DashboardLayout() {
         return (
           <VaccinationTimeline
             vaccinations={vaccinations}
+            documents={documents}
             onAdd={(v) => addVaccination(v)}
             onDelete={(id) => deleteVaccination(String(id))}
           />
