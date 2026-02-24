@@ -332,6 +332,7 @@ export function registerRoutes(app: Express) {
           .returning();
 
         let autoImported = 0;
+        let needsReview = 0;
         const existingFromDoc = await db
           .select()
           .from(vaccinations)
@@ -340,14 +341,19 @@ export function registerRoutes(app: Express) {
         if (existingFromDoc.length === 0) {
           const parsedVaccs = result.parsedData?.vaccinations || [];
           for (const v of parsedVaccs) {
+            const hasRequiredFields = v.vaccine_name && v.date;
+            if (!hasRequiredFields) {
+              needsReview++;
+              continue;
+            }
             try {
               await db.insert(vaccinations).values({
                 userId,
-                vaccineName: v.vaccine_name || "Unknown Vaccine",
-                date: v.date || new Date().toISOString().split("T")[0],
-                doseNumber: v.dose_number || 1,
+                vaccineName: v.vaccine_name,
+                date: v.date,
+                doseNumber: v.dose_number || null,
                 location: v.location || null,
-                countryGiven: v.country_given || doc.country || null,
+                countryGiven: v.country_given || null,
                 provider: v.provider || null,
                 notes: v.notes || null,
                 verified: true,
@@ -365,6 +371,7 @@ export function registerRoutes(app: Express) {
           document: updated,
           parsedData: result.parsedData,
           autoImported,
+          needsReview,
         });
       } catch (processingError: any) {
         await db
@@ -419,29 +426,74 @@ export function registerRoutes(app: Express) {
       }
 
       const inserted = [];
+      const skipped = [];
       for (const v of vaccs) {
+        if (!v.vaccine_name || !v.date) {
+          skipped.push(v);
+          continue;
+        }
         const [record] = await db
           .insert(vaccinations)
           .values({
             userId,
-            vaccineName: v.vaccine_name || "Unknown Vaccine",
-            date: v.date || new Date().toISOString().split("T")[0],
-            doseNumber: v.dose_number || 1,
+            vaccineName: v.vaccine_name,
+            date: v.date,
+            doseNumber: v.dose_number || null,
             location: v.location || null,
-            countryGiven: v.country_given || doc.country || null,
+            countryGiven: v.country_given || null,
             provider: v.provider || null,
             notes: v.notes || null,
-            verified: false,
+            verified: true,
             documentId: String(doc.id),
           })
           .returning();
         inserted.push(record);
       }
 
-      res.json({ success: true, imported: inserted.length, vaccinations: inserted });
+      res.json({ success: true, imported: inserted.length, skipped: skipped.length, skippedRecords: skipped, vaccinations: inserted });
     } catch (error) {
       console.error("Error importing vaccinations:", error);
       res.status(500).json({ message: "Failed to import vaccinations" });
+    }
+  });
+
+  app.post("/api/documents/:id/import-single-vaccination", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const id = parseInt(req.params.id as string);
+      const [doc] = await db
+        .select()
+        .from(documents)
+        .where(and(eq(documents.id, id), eq(documents.userId, userId)));
+
+      if (!doc) return res.status(404).json({ message: "Document not found" });
+
+      const { vaccine_name, date, dose_number, provider, country_given, location, notes } = req.body;
+
+      if (!vaccine_name || !date) {
+        return res.status(400).json({ message: "Vaccine name and date are required" });
+      }
+
+      const [record] = await db
+        .insert(vaccinations)
+        .values({
+          userId,
+          vaccineName: vaccine_name,
+          date,
+          doseNumber: dose_number || null,
+          location: location || null,
+          countryGiven: country_given || null,
+          provider: provider || null,
+          notes: notes || null,
+          verified: true,
+          documentId: String(id),
+        })
+        .returning();
+
+      res.json({ success: true, vaccination: record });
+    } catch (error) {
+      console.error("Error importing single vaccination:", error);
+      res.status(500).json({ message: "Failed to import vaccination" });
     }
   });
 
@@ -477,17 +529,22 @@ export function registerRoutes(app: Express) {
         .from(vaccinations)
         .where(and(eq(vaccinations.userId, userId), eq(vaccinations.documentId, String(id))));
 
+      let needsReviewVacc = 0;
       if (existingVaccs.length === 0) {
         const parsedVaccs = result.parsedData?.vaccinations || [];
         for (const v of parsedVaccs) {
+          if (!v.vaccine_name || !v.date) {
+            needsReviewVacc++;
+            continue;
+          }
           try {
             await db.insert(vaccinations).values({
               userId,
-              vaccineName: v.vaccine_name || "Unknown Vaccine",
-              date: v.date || new Date().toISOString().split("T")[0],
-              doseNumber: v.dose_number || 1,
+              vaccineName: v.vaccine_name,
+              date: v.date,
+              doseNumber: v.dose_number || null,
               location: v.location || null,
-              countryGiven: v.country_given || doc.country || null,
+              countryGiven: v.country_given || null,
               provider: v.provider || null,
               notes: v.notes || null,
               verified: true,
@@ -500,6 +557,7 @@ export function registerRoutes(app: Express) {
         }
       }
 
+      let needsReviewExempt = 0;
       const existingExempts = await db
         .select()
         .from(medicalExemptions)
@@ -508,12 +566,16 @@ export function registerRoutes(app: Express) {
       if (existingExempts.length === 0) {
         const parsedExemptions = result.parsedData?.exemptions || [];
         for (const ex of parsedExemptions) {
+          if (!ex.vaccine_name || !ex.reason) {
+            needsReviewExempt++;
+            continue;
+          }
           try {
             await db.insert(medicalExemptions).values({
               userId,
-              vaccineName: ex.vaccine_name || "Unknown",
+              vaccineName: ex.vaccine_name,
               exemptionType: ex.exemption_type || "other",
-              reason: ex.reason || "Documented in medical records",
+              reason: ex.reason,
               doctorName: ex.doctor_name || null,
               doctorLicense: ex.doctor_license || null,
               documentDate: ex.document_date || null,
@@ -528,7 +590,7 @@ export function registerRoutes(app: Express) {
         }
       }
 
-      res.json({ success: true, parsedData: result.parsedData, autoImportedVacc, autoImportedExempt });
+      res.json({ success: true, parsedData: result.parsedData, autoImportedVacc, autoImportedExempt, needsReviewVacc, needsReviewExempt });
     } catch (error: any) {
       const id = parseInt(req.params.id as string);
       await db.update(documents).set({ processingStatus: "error" }).where(eq(documents.id, id));

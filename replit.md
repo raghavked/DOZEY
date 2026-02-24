@@ -152,6 +152,10 @@ docs/                      # Documentation
 - Auth pages: split layout, left brand gradient panel (from-[#4a7fb5] to-[#4d9068]), right clean form (#fbfbfd)
 
 ## Recent Changes
+- 2026-02-24: Strict AI extraction: AI prompts now only extract data explicitly found in documents, never fabricate/assume. Missing fields use null. Confidence and missing_fields indicators added.
+- 2026-02-24: Review flow for incomplete records: records missing vaccine name or date are NOT auto-imported; instead flagged for user review with inline editing form to fill missing details before importing individually.
+- 2026-02-24: Import-single-vaccination endpoint: allows importing individual records with user-provided data for missing fields.
+- 2026-02-24: Compliance engine prompts updated to not fabricate specific contact info, form names, or URLs when unknown.
 - 2026-02-24: Cross-feature data flow: processed document data (patient info, countries, providers) now suggests auto-fill for Profile, Country History, and Dashboard insights with one-click apply
 - 2026-02-24: Added interactive immunization globe (react-simple-maps) with clickable country markers, analyzed documents panel, chronological year-grouped timeline, and comprehensive filtering (vaccine type, year, country, status)
 - 2026-02-24: Removed all dark/black backgrounds - fully light theme with light gradient heroes, brand gradient auth panels, bg-[#4a7fb5] active states

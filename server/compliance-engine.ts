@@ -55,7 +55,9 @@ Rules:
 - Food service/childcare employers may require: Hepatitis A, TB screening
 - General office employers may have minimal requirements (COVID-19, Flu recommended)
 - Always include a source_notes field reminding users to verify with the employer directly
-- Be specific about dose counts and any alternatives`;
+- Be specific about dose counts and any alternatives
+- If you don't have specific information about the employer, state that clearly in source_notes and provide general industry-standard requirements instead
+- NEVER fabricate specific contact information, form names, or submission instructions if you don't know them — use null or a note to check with the employer`;
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
@@ -107,7 +109,9 @@ Rules:
 - Include IHR (International Health Regulations) requirements when applicable
 - Always mention the medical examination requirement for immigration if applicable
 - Always include a source_notes field reminding users to verify with the embassy/consulate directly
-- Be specific about which vaccines are legally required vs recommended`;
+- Be specific about which vaccines are legally required vs recommended
+- If you don't have specific information about this country's requirements, state that clearly in source_notes and provide commonly required vaccines for the region instead
+- NEVER fabricate specific form names, contact information, or submission instructions if you don't know them — use null or advise checking with the embassy`;
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
@@ -156,7 +160,9 @@ Rules:
 - Include state-specific mandates when known
 - Always include a source_notes field reminding users to verify with the institution directly
 - Be specific about dose counts and any alternatives (e.g., titer tests)
-- Include the institution's health portal or submission method if known`;
+- Include the institution's health portal or submission method if known
+- If you don't have specific information about this institution, state that clearly in source_notes and provide typical requirements for similar institutions in that region
+- NEVER fabricate specific portal URLs, phone numbers, or form names if you don't know them — use null or advise checking with the institution`;
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",

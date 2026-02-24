@@ -44,6 +44,9 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
   const [expandedDoc, setExpandedDoc] = useState<string | null>(null);
   const [importingId, setImportingId] = useState<string | null>(null);
   const [processError, setProcessError] = useState<string | null>(null);
+  const [editingVaccIdx, setEditingVaccIdx] = useState<{ docId: string; idx: number } | null>(null);
+  const [editVaccForm, setEditVaccForm] = useState<{ vaccine_name: string; date: string; dose_number: string; provider: string; country_given: string; location: string; notes: string }>({ vaccine_name: '', date: '', dose_number: '', provider: '', country_given: '', location: '', notes: '' });
+  const [importingSingle, setImportingSingle] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = (e: React.DragEvent) => {
@@ -134,8 +137,12 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
       setExpandedDoc(docId);
       onRefresh?.();
 
-      if (data.autoImported && data.autoImported > 0) {
+      if (data.autoImported > 0 && data.needsReview > 0) {
+        alert(`Document processed! ${data.autoImported} complete record${data.autoImported !== 1 ? 's' : ''} imported. ${data.needsReview} record${data.needsReview !== 1 ? 's' : ''} need${data.needsReview === 1 ? 's' : ''} your review — please fill in the missing details below.`);
+      } else if (data.autoImported > 0) {
         alert(`Document processed! ${data.autoImported} vaccination${data.autoImported !== 1 ? 's' : ''} automatically added to your timeline.`);
+      } else if (data.needsReview > 0) {
+        alert(`Document processed! ${data.needsReview} record${data.needsReview !== 1 ? 's' : ''} found but missing required details. Please fill in the missing information below to import.`);
       }
     } catch (err: any) {
       setProcessError(err.message || 'Failed to process document');
@@ -165,8 +172,12 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
       const data = await res.json();
       if (data.alreadyImported) {
         alert(`These vaccinations were already imported automatically (${data.alreadyImported} record${data.alreadyImported !== 1 ? 's' : ''}).`);
-      } else {
+      } else if (data.imported > 0 && data.skipped > 0) {
+        alert(`Imported ${data.imported} record${data.imported !== 1 ? 's' : ''}. ${data.skipped} record${data.skipped !== 1 ? 's' : ''} skipped — please review and fill in missing details to import them individually.`);
+      } else if (data.imported > 0) {
         alert(`Successfully imported ${data.imported} vaccination record${data.imported !== 1 ? 's' : ''}!`);
+      } else if (data.skipped > 0) {
+        alert(`No records could be imported. ${data.skipped} record${data.skipped !== 1 ? 's' : ''} need${data.skipped === 1 ? 's' : ''} your review — please fill in the missing vaccine name and date.`);
       }
       onRefresh?.();
     } catch (err: any) {
@@ -202,13 +213,72 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
       const parts: string[] = [];
       if (data.autoImportedVacc > 0) parts.push(`${data.autoImportedVacc} vaccination${data.autoImportedVacc !== 1 ? 's' : ''}`);
       if (data.autoImportedExempt > 0) parts.push(`${data.autoImportedExempt} exemption${data.autoImportedExempt !== 1 ? 's' : ''}`);
-      if (parts.length > 0) {
+      const reviewParts: string[] = [];
+      if (data.needsReviewVacc > 0) reviewParts.push(`${data.needsReviewVacc} vaccination${data.needsReviewVacc !== 1 ? 's' : ''}`);
+      if (data.needsReviewExempt > 0) reviewParts.push(`${data.needsReviewExempt} exemption${data.needsReviewExempt !== 1 ? 's' : ''}`);
+      if (parts.length > 0 && reviewParts.length > 0) {
+        alert(`Document processed! ${parts.join(' and ')} imported. ${reviewParts.join(' and ')} need your review — please fill in missing details below.`);
+      } else if (parts.length > 0) {
         alert(`Document processed! ${parts.join(' and ')} automatically imported.`);
+      } else if (reviewParts.length > 0) {
+        alert(`Document processed! ${reviewParts.join(' and ')} found but need your review — please fill in missing details below.`);
       }
     } catch (err: any) {
       setProcessError(err.message || 'Failed to process doctor notes');
     } finally {
       setProcessingId(null);
+    }
+  };
+
+  const startEditVacc = (docId: string, idx: number, v: any) => {
+    setEditingVaccIdx({ docId, idx });
+    setEditVaccForm({
+      vaccine_name: v.vaccine_name || '',
+      date: v.date || '',
+      dose_number: v.dose_number?.toString() || '',
+      provider: v.provider || '',
+      country_given: v.country_given || '',
+      location: v.location || '',
+      notes: v.notes || '',
+    });
+  };
+
+  const handleImportSingleVacc = async (docId: string) => {
+    if (!editVaccForm.vaccine_name || !editVaccForm.date) {
+      alert('Please fill in at least the vaccine name and date before importing.');
+      return;
+    }
+    setImportingSingle(true);
+    try {
+      const sb = await getSupabase();
+      const { data: { session } } = await sb.auth.getSession();
+      const res = await fetch(`/api/documents/${docId}/import-single-vaccination`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({
+          vaccine_name: editVaccForm.vaccine_name,
+          date: editVaccForm.date,
+          dose_number: editVaccForm.dose_number ? parseInt(editVaccForm.dose_number) : null,
+          provider: editVaccForm.provider || null,
+          country_given: editVaccForm.country_given || null,
+          location: editVaccForm.location || null,
+          notes: editVaccForm.notes || null,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Import failed');
+      }
+      setEditingVaccIdx(null);
+      onRefresh?.();
+      alert('Vaccination record imported successfully!');
+    } catch (err: any) {
+      alert(err.message || 'Failed to import vaccination');
+    } finally {
+      setImportingSingle(false);
     }
   };
 
@@ -603,48 +673,142 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
 
                       {parsed.vaccinations && parsed.vaccinations.length > 0 && (() => {
                         const alreadyImported = vaccinations.some(v => v.documentId === doc.id);
+                        const completeRecords = parsed.vaccinations.filter((v: any) => v.vaccine_name && v.date);
+                        const incompleteRecords = parsed.vaccinations.filter((v: any) => !v.vaccine_name || !v.date);
                         return (
                         <div>
-                          <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                             <h5 className="text-xs font-semibold text-[#1d1d1f] uppercase">Extracted Vaccinations</h5>
                             {alreadyImported ? (
                               <span className="flex items-center gap-1 px-3 py-1.5 bg-[#4d9068]/10 text-[#4d9068] text-xs font-medium rounded-full">
                                 <CheckCircle2 className="w-3.5 h-3.5" />
                                 Imported to Timeline
                               </span>
-                            ) : (
-                              <button
-                                onClick={() => handleImportVaccinations(doc.id)}
-                                disabled={isImporting}
-                                className="flex items-center gap-1 px-3 py-1.5 bg-[#4d9068] hover:bg-[#3d7a58] text-white text-xs font-medium rounded-full transition-colors disabled:opacity-50"
-                              >
-                                {isImporting ? (
-                                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                ) : (
-                                  <Import className="w-3.5 h-3.5" />
+                            ) : completeRecords.length > 0 ? (
+                              <div className="flex items-center gap-2">
+                                {incompleteRecords.length > 0 && (
+                                  <span className="text-xs text-amber-600">
+                                    {incompleteRecords.length} need{incompleteRecords.length === 1 ? 's' : ''} review
+                                  </span>
                                 )}
-                                {isImporting ? 'Importing...' : 'Import All to Timeline'}
-                              </button>
+                                <button
+                                  onClick={() => handleImportVaccinations(doc.id)}
+                                  disabled={isImporting}
+                                  className="flex items-center gap-1 px-3 py-1.5 bg-[#4d9068] hover:bg-[#3d7a58] text-white text-xs font-medium rounded-full transition-colors disabled:opacity-50"
+                                >
+                                  {isImporting ? (
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                  ) : (
+                                    <Import className="w-3.5 h-3.5" />
+                                  )}
+                                  {isImporting ? 'Importing...' : `Import ${completeRecords.length} Complete`}
+                                </button>
+                              </div>
+                            ) : (
+                              <span className="flex items-center gap-1 px-3 py-1.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+                                <AlertCircle className="w-3.5 h-3.5" />
+                                All records need your review
+                              </span>
                             )}
                           </div>
                           <div className="space-y-2">
-                            {parsed.vaccinations.map((v, i) => (
-                              <div key={i} className="bg-white rounded-2xl p-3 border-0">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="font-semibold text-sm text-[#1d1d1f]">{v.vaccine_name}</span>
-                                  {v.dose_number && (
-                                    <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">Dose {v.dose_number}</span>
+                            {parsed.vaccinations.map((v: any, i: number) => {
+                              const isEditing = editingVaccIdx?.docId === doc.id && editingVaccIdx?.idx === i;
+                              const missingRequired = !v.vaccine_name || !v.date;
+                              const missingFields = v.missing_fields || [];
+                              const isAlreadyImported = vaccinations.some(vr => vr.documentId === doc.id);
+                              const confidence = v.confidence || 'medium';
+
+                              if (isEditing) {
+                                return (
+                                  <div key={i} className="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-3">
+                                    <div className="flex items-center justify-between">
+                                      <h6 className="text-xs font-semibold text-amber-800 uppercase">Fill in missing details</h6>
+                                      <button onClick={() => setEditingVaccIdx(null)} className="text-[#86868b] hover:text-[#1d1d1f]"><X className="w-4 h-4" /></button>
+                                    </div>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                      <div>
+                                        <label className="text-xs text-[#86868b] mb-1 block">Vaccine Name *</label>
+                                        <AutocompleteInput value={editVaccForm.vaccine_name} onChange={(val) => setEditVaccForm(p => ({...p, vaccine_name: val}))} suggestions={VACCINES} placeholder="e.g. COVID-19 Pfizer" className="bg-white border border-black/10 rounded-xl px-3 py-2 text-sm w-full" />
+                                      </div>
+                                      <div>
+                                        <label className="text-xs text-[#86868b] mb-1 block">Date *</label>
+                                        <input type="date" value={editVaccForm.date} onChange={(e) => setEditVaccForm(p => ({...p, date: e.target.value}))} className="bg-white border border-black/10 rounded-xl px-3 py-2 text-sm w-full" />
+                                      </div>
+                                      <div>
+                                        <label className="text-xs text-[#86868b] mb-1 block">Dose Number</label>
+                                        <input type="number" min="1" max="10" value={editVaccForm.dose_number} onChange={(e) => setEditVaccForm(p => ({...p, dose_number: e.target.value}))} className="bg-white border border-black/10 rounded-xl px-3 py-2 text-sm w-full" placeholder="e.g. 1" />
+                                      </div>
+                                      <div>
+                                        <label className="text-xs text-[#86868b] mb-1 block">Provider</label>
+                                        <AutocompleteInput value={editVaccForm.provider} onChange={(val) => setEditVaccForm(p => ({...p, provider: val}))} suggestions={HEALTHCARE_PROVIDERS} placeholder="e.g. CVS Pharmacy" className="bg-white border border-black/10 rounded-xl px-3 py-2 text-sm w-full" />
+                                      </div>
+                                      <div>
+                                        <label className="text-xs text-[#86868b] mb-1 block">Country</label>
+                                        <AutocompleteInput value={editVaccForm.country_given} onChange={(val) => setEditVaccForm(p => ({...p, country_given: val}))} suggestions={COUNTRIES} placeholder="e.g. United States" className="bg-white border border-black/10 rounded-xl px-3 py-2 text-sm w-full" />
+                                      </div>
+                                      <div>
+                                        <label className="text-xs text-[#86868b] mb-1 block">Location</label>
+                                        <input type="text" value={editVaccForm.location} onChange={(e) => setEditVaccForm(p => ({...p, location: e.target.value}))} className="bg-white border border-black/10 rounded-xl px-3 py-2 text-sm w-full" placeholder="e.g. Main Street Clinic" />
+                                      </div>
+                                    </div>
+                                    <div className="flex justify-end gap-2">
+                                      <button onClick={() => setEditingVaccIdx(null)} className="px-3 py-1.5 text-xs text-[#86868b] hover:text-[#1d1d1f] rounded-full">Cancel</button>
+                                      <button
+                                        onClick={() => handleImportSingleVacc(doc.id)}
+                                        disabled={importingSingle || !editVaccForm.vaccine_name || !editVaccForm.date}
+                                        className="flex items-center gap-1 px-3 py-1.5 bg-[#4d9068] hover:bg-[#3d7a58] text-white text-xs font-medium rounded-full transition-colors disabled:opacity-50"
+                                      >
+                                        {importingSingle ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Import className="w-3.5 h-3.5" />}
+                                        {importingSingle ? 'Importing...' : 'Import This Record'}
+                                      </button>
+                                    </div>
+                                  </div>
+                                );
+                              }
+
+                              return (
+                                <div key={i} className={`rounded-2xl p-3 border-0 ${missingRequired ? 'bg-amber-50 border border-amber-200' : 'bg-white'}`}>
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="font-semibold text-sm text-[#1d1d1f]">{v.vaccine_name || <span className="text-amber-600 italic">Name not found</span>}</span>
+                                    {v.dose_number && (
+                                      <span className="text-xs bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">Dose {v.dose_number}</span>
+                                    )}
+                                    {confidence === 'low' && (
+                                      <span className="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">Low confidence</span>
+                                    )}
+                                    {missingRequired && !isAlreadyImported && (
+                                      <button
+                                        onClick={() => startEditVacc(doc.id, i, v)}
+                                        className="ml-auto flex items-center gap-1 px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white text-xs font-medium rounded-full transition-colors"
+                                      >
+                                        <Pencil className="w-3 h-3" />
+                                        Fill Missing Info
+                                      </button>
+                                    )}
+                                    {!missingRequired && !isAlreadyImported && (
+                                      <button
+                                        onClick={() => startEditVacc(doc.id, i, v)}
+                                        className="ml-auto text-[#86868b] hover:text-[#4a7fb5] transition-colors p-1"
+                                        title="Edit before importing"
+                                      >
+                                        <Pencil className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 text-xs text-[#86868b]">
+                                    {v.date ? <span>Date: {v.date}</span> : <span className="text-amber-600">Date: not found</span>}
+                                    {v.provider && <span>Provider: {v.provider}</span>}
+                                    {v.country_given && <span>Country: {v.country_given}</span>}
+                                    {v.location && <span>Location: {v.location}</span>}
+                                  </div>
+                                  {missingFields.length > 0 && !missingRequired && (
+                                    <p className="text-xs text-amber-600 mt-1">Missing: {missingFields.join(', ')}</p>
                                   )}
+                                  {v.notes && <p className="text-xs text-[#86868b] mt-1">{v.notes}</p>}
                                 </div>
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-4 gap-y-1 text-xs text-[#86868b]">
-                                  {v.date && <span>Date: {v.date}</span>}
-                                  {v.provider && <span>Provider: {v.provider}</span>}
-                                  {v.country_given && <span>Country: {v.country_given}</span>}
-                                  {v.location && <span>Location: {v.location}</span>}
-                                </div>
-                                {v.notes && <p className="text-xs text-[#86868b] mt-1">{v.notes}</p>}
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         </div>
                         );

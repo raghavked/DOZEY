@@ -123,6 +123,8 @@ export interface ParsedVaccinationData {
     country_given: string | null;
     location: string | null;
     notes: string | null;
+    confidence?: 'high' | 'medium' | 'low';
+    missing_fields?: string[];
   }>;
   patient_info?: {
     full_name: string | null;

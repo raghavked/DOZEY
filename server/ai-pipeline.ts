@@ -99,37 +99,44 @@ function safeParseJSON(content: string): any {
 export async function parseVaccinationData(text: string): Promise<any> {
   const openai = getOpenAIClient();
 
-  const systemPrompt = `You are a medical document parser for the DOZEY vaccination records system. Extract vaccination and medical record data from the provided text.
+  const systemPrompt = `You are a strict medical document parser for the DOZEY vaccination records system. Your job is to extract ONLY data that is explicitly written in the document. NEVER guess, assume, or generate data that is not clearly present in the text.
 
 Return a JSON object with this exact structure:
 {
   "vaccinations": [
     {
-      "vaccine_name": "Full vaccine name (e.g., COVID-19 Pfizer-BioNTech, Measles-Mumps-Rubella (MMR))",
-      "date": "YYYY-MM-DD format if available, otherwise the date string as-is",
-      "dose_number": 1,
-      "provider": "Healthcare provider or clinic name if mentioned",
-      "country_given": "Country where vaccine was administered if mentioned",
-      "location": "Specific location/clinic/hospital if mentioned",
-      "notes": "Any additional relevant notes (lot number, batch, etc.)"
+      "vaccine_name": "Exact vaccine name as written in the document. Use standard English name if you can confidently identify it, otherwise use the name exactly as written.",
+      "date": "YYYY-MM-DD format ONLY if a specific date is clearly written. Use null if no date is found. Do NOT guess or approximate dates.",
+      "dose_number": null,
+      "provider": null,
+      "country_given": null,
+      "location": null,
+      "notes": "Any additional relevant notes (lot number, batch, etc.)",
+      "confidence": "high | medium | low",
+      "missing_fields": ["list of field names that could not be found in the document"]
     }
   ],
   "patient_info": {
-    "full_name": "Patient name if found",
-    "date_of_birth": "YYYY-MM-DD if found",
-    "id_number": "Any patient ID number if found"
+    "full_name": "Patient name ONLY if explicitly written. null otherwise.",
+    "date_of_birth": "YYYY-MM-DD ONLY if explicitly written. null otherwise.",
+    "id_number": "Patient ID ONLY if explicitly written. null otherwise."
   },
   "document_type": "vaccination_card | immunization_record | medical_certificate | lab_result | other",
-  "summary": "Brief 1-2 sentence summary of the document contents"
+  "summary": "Brief 1-2 sentence summary of what data was actually found in the document"
 }
 
-Rules:
-- Extract ALL vaccinations mentioned, even partial data
-- If a field is not found, use null
-- Standardize vaccine names to common English names where possible
-- For dates, try to parse into YYYY-MM-DD format
-- Include lot/batch numbers in notes if present
-- If no vaccination data is found, return empty vaccinations array with a summary of what the document contains`;
+CRITICAL RULES:
+- ONLY extract data that is explicitly written in the document text
+- If a field value is not clearly present, you MUST set it to null — NEVER fabricate, guess, or assume
+- Do NOT invent dates, providers, countries, dose numbers, or any other field
+- For dose_number: only include if explicitly stated (e.g., "Dose 2", "2nd dose"). Use null if not mentioned.
+- For country_given: only include if the country is explicitly mentioned. Do NOT infer from language or other clues.
+- For provider: only include if the healthcare provider name is explicitly written.
+- For date: only include if a specific date is written. Do NOT use today's date or approximate.
+- Set confidence to "high" if the vaccine name and date are both clear, "medium" if one is unclear, "low" if the record is very uncertain
+- Include "missing_fields" array listing which important fields (date, dose_number, provider, country_given) were NOT found
+- If no vaccination data is found at all, return empty vaccinations array with a summary of what the document actually contains
+- Include lot/batch numbers in notes if present`;
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
@@ -176,13 +183,15 @@ Return a JSON object with this exact structure:
 {
   "vaccinations": [
     {
-      "vaccine_name": "Full vaccine name",
-      "date": "YYYY-MM-DD if available",
-      "dose_number": 1,
-      "provider": "Healthcare provider name if mentioned",
-      "country_given": "Country if mentioned",
-      "location": "Clinic/hospital if mentioned",
-      "notes": "Any additional notes"
+      "vaccine_name": "Full vaccine name ONLY if explicitly found. null otherwise.",
+      "date": "YYYY-MM-DD ONLY if explicitly written. null if not found. Do NOT guess.",
+      "dose_number": null,
+      "provider": null,
+      "country_given": null,
+      "location": null,
+      "notes": "Any additional notes",
+      "confidence": "high | medium | low",
+      "missing_fields": ["list of field names not found in document"]
     }
   ],
   "exemptions": [
@@ -205,16 +214,19 @@ Return a JSON object with this exact structure:
   "summary": "Brief 2-3 sentence summary of the document, noting key exemptions/immunity evidence found"
 }
 
-Rules:
+CRITICAL RULES:
+- ONLY extract data that is explicitly written in the document. NEVER guess, assume, or fabricate any information.
 - This is often HANDWRITTEN text that has been OCR'd, so expect spelling errors, abbreviations, and messy formatting
 - Common handwriting abbreviations: "pt" = patient, "hx" = history, "dx" = diagnosis, "rx" = prescription, "c/o" = complaining of, "s/p" = status post, "w/" = with, "w/o" = without
-- Look for ANY evidence of prior disease, positive titers, or medical reasons not to vaccinate
 - If the doctor notes the patient "had" or "contracted" a disease, that's natural immunity
 - Titer results showing "positive", "immune", or "reactive" indicate immunity
-- Extract the doctor's name and credentials whenever visible
+- Extract the doctor's name and credentials ONLY if explicitly visible in the text
 - If vaccination records are also mentioned, include those too
-- Be generous in interpreting exemptions - if there's reasonable evidence of immunity, include it
-- Always include enough detail in the "reason" field to support the exemption claim`;
+- For ALL fields: if the information is not explicitly present in the text, use null. Do NOT invent names, dates, license numbers, or reasons.
+- For dates: only include if explicitly written. Use null otherwise. Do NOT use today's date.
+- For dose_number: only include if explicitly stated. Use null otherwise.
+- Include "confidence" field ("high", "medium", "low") and "missing_fields" array for each vaccination entry
+- Include enough detail in the "reason" field to support the exemption claim, but ONLY using information from the document`;
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
