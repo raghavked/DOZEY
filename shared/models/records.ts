@@ -59,7 +59,9 @@ export const countryHistory = pgTable("country_history", {
   country: varchar("country").notNull(),
   state: varchar("state"),
   startYear: integer("start_year").notNull(),
+  startMonth: integer("start_month"),
   endYear: varchar("end_year").notNull(),
+  endMonth: integer("end_month"),
 });
 
 export const medicalExemptions = pgTable("medical_exemptions", {

@@ -62,7 +62,9 @@ export interface CountryPeriod {
   country: string;
   state?: string;
   startYear: number;
+  startMonth?: number | null;
   endYear: number | string;
+  endMonth?: number | null;
 }
 
 export interface UploadedDocument {
