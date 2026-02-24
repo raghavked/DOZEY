@@ -1,16 +1,16 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import dozeyLogo from '@/assets/dozey-logo.png';
+import { DozeyLogo } from '@/components/DozeyLogo';
 
 export function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-green-50/20">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">
           <Link to="/" className="text-[#1051a5] hover:text-[#0d4185] transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <img src={dozeyLogo} alt="DOZEY" className="h-10" />
+          <DozeyLogo className="h-10" />
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 md:p-12">

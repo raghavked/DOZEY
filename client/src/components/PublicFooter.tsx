@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Shield, Heart } from 'lucide-react';
-import dozeyLogo from '@/assets/dozey-logo.png';
+import { DozeyLogo } from '@/components/DozeyLogo';
 
 export function PublicFooter() {
   return (
@@ -8,7 +8,7 @@ export function PublicFooter() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="md:col-span-2">
-            <img src={dozeyLogo} alt="DOZEY" className="h-12 mb-4 brightness-200" />
+            <DozeyLogo className="h-10 mb-4" theme="dark" />
             <p className="text-white/60 text-sm leading-relaxed max-w-md mb-4">
               Healthcare that moves with you. Managing medical records across borders for
               immigrants, international students, and global workers.

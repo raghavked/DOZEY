@@ -139,7 +139,7 @@ export function DashboardLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f0f4f8] to-[#e1e8ed]">
+    <div className="min-h-screen bg-gray-50">
       <Navigation
         currentPage={currentPage}
         onNavigate={setCurrentPage}

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import dozeyLogo from '@/assets/dozey-logo.png';
+import { DozeyLogo } from '@/components/DozeyLogo';
 
 const links = [
   { to: '/', label: 'Home' },
@@ -20,7 +20,7 @@ export function PublicNavbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link to="/" className="flex-shrink-0">
-            <img src={dozeyLogo} alt="DOZEY" className="h-16" />
+            <DozeyLogo className="h-12" />
           </Link>
 
           <div className="hidden lg:flex lg:items-center lg:space-x-6">

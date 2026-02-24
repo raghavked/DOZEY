@@ -1,7 +1,7 @@
-import { User, Globe, Upload, Clock, Share2, Bell, LayoutDashboard, LogOut, Target } from 'lucide-react';
+import { User, Globe, Upload, Clock, Share2, Bell, LayoutDashboard, LogOut, Target, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { LanguageSelector } from '@/components/LanguageSelector';
-import dozeyLogo from '@/assets/dozey-logo.png';
+import { DozeyLogo } from '@/components/DozeyLogo';
 
 interface NavigationProps {
   currentPage: string;
@@ -32,25 +32,24 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
   };
 
   return (
-    <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between py-4">
-          <div className="flex items-center gap-3">
-            <img src={dozeyLogo} alt="DOZEY" className="h-16" />
-          </div>
-          <div className="flex items-center gap-3">
+    <nav className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <DozeyLogo className="h-10" />
+
+          <div className="flex items-center gap-4">
             <LanguageSelector />
             {userName && (
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#1051a5] text-white flex items-center justify-center text-sm font-medium">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#1051a5] to-[#26844f] text-white flex items-center justify-center text-sm font-bold shadow-md">
                   {userName.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-sm text-[#22283a] hidden sm:inline">{userName}</span>
+                <span className="text-sm font-medium text-[#22283a] hidden sm:inline">{userName}</span>
               </div>
             )}
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Sign Out</span>
@@ -58,7 +57,7 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
           </div>
         </div>
         
-        <div className="flex overflow-x-auto gap-1 pb-2 -mx-4 px-4">
+        <div className="flex overflow-x-auto gap-1 pb-3 -mx-4 px-4 scrollbar-hide">
           {navItems.map(item => {
             const Icon = item.icon;
             const isActive = currentPage === item.id;
@@ -66,14 +65,14 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
               <button
                 key={item.id}
                 onClick={() => onNavigate(item.id as any)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl whitespace-nowrap transition-all text-sm font-medium ${
                   isActive
-                    ? 'bg-[#1051a5] text-white'
-                    : 'text-[#22283a] hover:bg-[#97bf2d] hover:text-white'
+                    ? 'bg-[#1051a5] text-white shadow-md shadow-[#1051a5]/25'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-[#22283a]'
                 }`}
               >
                 <Icon className="w-4 h-4" />
-                <span className="text-sm">{item.label}</span>
+                <span>{item.label}</span>
               </button>
             );
           })}
