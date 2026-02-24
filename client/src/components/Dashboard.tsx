@@ -1,6 +1,7 @@
 import { VaccinationRecord, UserProfile, CountryPeriod, UploadedDocument } from '@/types';
-import { User, Globe, FileText, Syringe, AlertCircle, CheckCircle, Target, ArrowRight, Upload, Shield, Share2, Bell } from 'lucide-react';
+import { User, Globe, FileText, Syringe, AlertCircle, CheckCircle, Target, ArrowRight, Upload, Shield, Share2, Bell, Sparkles } from 'lucide-react';
 import { Progress } from './ui/progress';
+import { generateDashboardInsights } from '@/lib/document-suggestions';
 
 interface DashboardProps {
   vaccinations: VaccinationRecord[];
@@ -50,6 +51,7 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
   const verifiedCount = vaccinations.filter(v => v.verified).length;
   const unverifiedCount = vaccinations.length - verifiedCount;
   const compliance = calculateCompliance(vaccinations);
+  const insights = generateDashboardInsights(documents, vaccinations, profile, countryHistory);
 
   return (
     <div className="space-y-6">
@@ -61,6 +63,32 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
           {profile?.targetCountry ? `Tracking compliance for ${profile.targetCountry}` : 'Manage your vaccination records'}
         </p>
       </div>
+
+      {insights.length > 0 && (
+        <div className="bg-[#8aab45]/10 rounded-2xl p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-5 h-5 text-[#4d9068]" />
+            <h2 className="font-semibold text-[#4d9068]">Smart Suggestions</h2>
+          </div>
+          <div className="space-y-2">
+            {insights.map((insight, idx) => (
+              <div key={idx} className="flex items-center gap-3 bg-white rounded-xl px-4 py-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-[#1d1d1f]">{insight.message}</p>
+                </div>
+                {insight.action && insight.navigateTo && (
+                  <button
+                    onClick={() => onNavigate(insight.navigateTo!)}
+                    className="text-xs bg-[#4d9068] text-white px-4 py-2 rounded-full hover:bg-[#3f7a56] transition-colors whitespace-nowrap"
+                  >
+                    {insight.action}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[

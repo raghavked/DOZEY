@@ -1,23 +1,44 @@
 import { useState } from 'react';
-import { CountryPeriod } from '@/types';
-import { Globe, Plus, Trash2, MapPin } from 'lucide-react';
+import { CountryPeriod, VaccinationRecord, UploadedDocument } from '@/types';
+import { Globe, Plus, Trash2, MapPin, Sparkles, X, Check } from 'lucide-react';
 import { AutocompleteInput } from '@/components/AutocompleteInput';
 import { COUNTRIES, US_STATES } from '@/lib/autocomplete-data';
+import { extractCountrySuggestions } from '@/lib/document-suggestions';
 
 interface CountryHistoryProps {
   periods: CountryPeriod[];
   onAdd: (period: Omit<CountryPeriod, 'id'>) => void;
   onDelete: (id: string) => void;
+  vaccinations?: VaccinationRecord[];
+  documents?: UploadedDocument[];
 }
 
-export function CountryHistory({ periods, onAdd, onDelete }: CountryHistoryProps) {
+export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], documents = [] }: CountryHistoryProps) {
   const [showForm, setShowForm] = useState(false);
+  const [dismissedCountries, setDismissedCountries] = useState<Set<string>>(new Set());
   const [formData, setFormData] = useState({
     country: '',
     state: '',
     startYear: new Date().getFullYear(),
     endYear: 'Present' as number | 'Present',
   });
+
+  const countrySuggestions = extractCountrySuggestions(vaccinations, documents, periods)
+    .filter(s => !dismissedCountries.has(s.country.toLowerCase()));
+
+  const addSuggestedCountry = (suggestion: { country: string; earliestYear: number; latestYear: number }) => {
+    onAdd({
+      country: suggestion.country,
+      state: '',
+      startYear: suggestion.earliestYear,
+      endYear: suggestion.latestYear >= new Date().getFullYear() ? 'Present' : suggestion.latestYear,
+    });
+    setDismissedCountries(prev => new Set([...prev, suggestion.country.toLowerCase()]));
+  };
+
+  const dismissCountrySuggestion = (country: string) => {
+    setDismissedCountries(prev => new Set([...prev, country.toLowerCase()]));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,6 +73,46 @@ export function CountryHistory({ periods, onAdd, onDelete }: CountryHistoryProps
             <Plus className="w-5 h-5" />
             Add Country/Region Period
           </button>
+        )}
+
+        {countrySuggestions.length > 0 && (
+          <div className="bg-[#8aab45]/10 rounded-2xl p-4 mb-6">
+            <div className="flex items-start gap-3 mb-3">
+              <Sparkles className="w-5 h-5 text-[#4d9068] flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-[#4d9068] mb-1">Countries found in your records</h3>
+                <p className="text-sm text-[#86868b]">
+                  Your vaccination records mention these countries. Add them to your history?
+                </p>
+              </div>
+            </div>
+            <div className="space-y-2 ml-8">
+              {countrySuggestions.map(s => (
+                <div key={s.country} className="flex items-center gap-2 bg-white rounded-xl px-4 py-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-[#1d1d1f]">{s.country}</p>
+                    <span className="text-xs text-[#86868b]">
+                      {s.vaccinationCount} vaccination{s.vaccinationCount !== 1 ? 's' : ''}
+                      {s.earliestYear ? ` · ${s.earliestYear}${s.latestYear !== s.earliestYear ? `–${s.latestYear}` : ''}` : ''}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => addSuggestedCountry(s)}
+                    className="text-xs bg-[#4d9068]/10 text-[#4d9068] px-3 py-1.5 rounded-full hover:bg-[#4d9068]/20 transition-colors flex items-center gap-1"
+                  >
+                    <Check className="w-3 h-3" />
+                    Add
+                  </button>
+                  <button
+                    onClick={() => dismissCountrySuggestion(s.country)}
+                    className="text-[#86868b] hover:text-[#1d1d1f] transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {showForm && (

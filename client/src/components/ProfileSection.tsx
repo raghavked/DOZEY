@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
-import { UserProfile } from '@/types';
-import { User, Save, AlertCircle } from 'lucide-react';
+import { UserProfile, UploadedDocument } from '@/types';
+import { User, Save, AlertCircle, Sparkles, X } from 'lucide-react';
 import { AutocompleteInput } from '@/components/AutocompleteInput';
 import { COUNTRIES, LANGUAGES_LIST, HEALTHCARE_PROVIDERS, US_STATES, INSTITUTIONS, EMPLOYERS } from '@/lib/autocomplete-data';
+import { extractProfileSuggestions, type ProfileSuggestion } from '@/lib/document-suggestions';
 
 interface ProfileSectionProps {
   profile: UserProfile | null;
   onSave: (profile: UserProfile) => void;
   isNewUser?: boolean;
+  documents?: UploadedDocument[];
 }
 
-export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionProps) {
+export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: ProfileSectionProps) {
   const [formData, setFormData] = useState<UserProfile>(
     profile || {
       fullName: '',
@@ -31,6 +33,29 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
   const [citizenshipInput, setCitizenshipInput] = useState('');
   const [languageInput, setLanguageInput] = useState('');
   const [saved, setSaved] = useState(false);
+  const [dismissedSuggestions, setDismissedSuggestions] = useState<Set<string>>(new Set());
+
+  const suggestions = extractProfileSuggestions(documents, formData).filter(
+    s => !dismissedSuggestions.has(s.field)
+  );
+
+  const applySuggestion = (suggestion: ProfileSuggestion) => {
+    setFormData(prev => ({ ...prev, [suggestion.field]: suggestion.value }));
+    setDismissedSuggestions(prev => new Set([...prev, suggestion.field]));
+  };
+
+  const dismissSuggestion = (field: string) => {
+    setDismissedSuggestions(prev => new Set([...prev, field]));
+  };
+
+  const applyAllSuggestions = () => {
+    const updates: Partial<UserProfile> = {};
+    suggestions.forEach(s => {
+      (updates as any)[s.field] = s.value;
+    });
+    setFormData(prev => ({ ...prev, ...updates }));
+    setDismissedSuggestions(prev => new Set([...prev, ...suggestions.map(s => s.field)]));
+  };
 
   useEffect(() => {
     if (profile) {
@@ -247,6 +272,51 @@ export function ProfileSection({ profile, onSave, isNewUser }: ProfileSectionPro
               Please complete your profile to get started. This information helps us manage your vaccination records 
               and check compliance with your destination's requirements.
             </p>
+          </div>
+        </div>
+      )}
+
+      {suggestions.length > 0 && (
+        <div className="bg-[#8aab45]/10 rounded-2xl p-4 mb-6">
+          <div className="flex items-start gap-3 mb-3">
+            <Sparkles className="w-5 h-5 text-[#4d9068] flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h3 className="font-semibold text-[#4d9068] mb-1">Information found in your documents</h3>
+              <p className="text-sm text-[#86868b]">
+                We extracted the following from your uploaded records. Click to apply.
+              </p>
+            </div>
+            {suggestions.length > 1 && (
+              <button
+                onClick={applyAllSuggestions}
+                className="text-xs bg-[#4d9068] text-white px-3 py-1.5 rounded-full hover:bg-[#3f7a56] transition-colors whitespace-nowrap"
+              >
+                Apply All
+              </button>
+            )}
+          </div>
+          <div className="space-y-2 ml-8">
+            {suggestions.map(s => (
+              <div key={s.field} className="flex items-center gap-2 bg-white rounded-xl px-4 py-2">
+                <div className="flex-1 min-w-0">
+                  <span className="text-xs text-[#86868b]">{s.label}</span>
+                  <p className="text-sm font-medium text-[#1d1d1f] truncate">{s.value}</p>
+                  <span className="text-xs text-[#86868b]">From: {s.source}</span>
+                </div>
+                <button
+                  onClick={() => applySuggestion(s)}
+                  className="text-xs bg-[#4d9068]/10 text-[#4d9068] px-3 py-1.5 rounded-full hover:bg-[#4d9068]/20 transition-colors whitespace-nowrap"
+                >
+                  Apply
+                </button>
+                <button
+                  onClick={() => dismissSuggestion(s.field)}
+                  className="text-[#86868b] hover:text-[#1d1d1f] transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       )}

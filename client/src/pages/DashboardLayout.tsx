@@ -81,13 +81,15 @@ export function DashboardLayout() {
           />
         );
       case 'profile':
-        return <ProfileSection profile={defaultProfile} onSave={(p) => saveProfile(p)} isNewUser={isNewUser} />;
+        return <ProfileSection profile={defaultProfile} onSave={(p) => saveProfile(p)} isNewUser={isNewUser} documents={documents} />;
       case 'countries':
         return (
           <CountryHistory
             periods={countryHistory}
             onAdd={(period) => addCountryPeriod(period)}
             onDelete={(id) => deleteCountryPeriod(String(id))}
+            vaccinations={vaccinations}
+            documents={documents}
           />
         );
       case 'upload':
