@@ -20,6 +20,7 @@ import {
   ArrowRight,
   Linkedin,
   Github,
+  Instagram,
 } from 'lucide-react';
 
 function scrollToSection(id: string) {
@@ -412,6 +413,15 @@ export function LandingPage() {
               <p className="text-[#1d1d1f]/60 text-lg">
                 Have questions or feedback? We'd love to hear from you.
               </p>
+              <a
+                href="https://www.instagram.com/dozeyrecords?igsh=NTc4MTIwNjQ2YQ=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 mt-4 text-[#4a7fb5] hover:text-[#3a6a9a] font-medium transition-colors"
+              >
+                <Instagram className="w-5 h-5" />
+                <span>Follow us on Instagram</span>
+              </a>
             </div>
 
             <form
@@ -509,9 +519,20 @@ export function LandingPage() {
             <p className="text-sm">
               &copy; {new Date().getFullYear()} DOZEY. All rights reserved.
             </p>
-            <div className="flex items-center gap-2">
-              <Heart className="w-4 h-4 text-[#8aab45]" />
-              <span className="text-sm">Built with care for global health equity</span>
+            <div className="flex items-center gap-4">
+              <a
+                href="https://www.instagram.com/dozeyrecords?igsh=NTc4MTIwNjQ2YQ=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#86868b] hover:text-[#4a7fb5] transition-colors"
+                aria-label="Follow us on Instagram"
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+              <div className="flex items-center gap-2">
+                <Heart className="w-4 h-4 text-[#8aab45]" />
+                <span className="text-sm">Built with care for global health equity</span>
+              </div>
             </div>
           </div>
         </div>
