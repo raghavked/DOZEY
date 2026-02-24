@@ -148,6 +148,7 @@ docs/                      # Documentation
 - Description text: text-gray-400 (not text-gray-600)
 
 ## Recent Changes
+- 2026-02-24: Fuller layout: removed max-w-4xl constraints, 3-column dashboard grid (2-col main + sidebar), 2-column grids for vaccinations/documents/compliance/alerts, reduced spacing (space-y-6/5), 4-column common requirements grid
 - 2026-02-24: Applied Apple/Episense design to ALL dashboard components: rounded-2xl cards, border-gray-100, font-semibold, text-gray-400 descriptions, subtler icons (text-[#22283a]/30), frosted glass nav, rounded-full CTAs, bg-[#fafafa] secondary backgrounds
 - 2026-02-24: Apple-like refinement: centered heroes, font-semibold, frosted glass navbar, light footer, subtler typography
 - 2026-02-24: Removed "Actively in development" from header/hero, kept only in footer
