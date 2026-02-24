@@ -42,7 +42,7 @@ export function TeamPage() {
     },
     {
       name: 'Raghav Kedia',
-      role: 'Co-Founder & CTO',
+      role: 'CTO',
       bio: 'UC Davis Computer Science and Economics student with expertise in AI and computing systems. Leads the technical architecture and development of DOZEY\'s platform.',
       photo: raghavImg,
       social: { linkedin: 'https://www.linkedin.com/in/raghav-kedia-169a42279/' },
