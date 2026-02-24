@@ -152,6 +152,7 @@ docs/                      # Documentation
 - Auth pages: split layout, left brand gradient panel (from-[#4a7fb5] to-[#4d9068]), right clean form (#fbfbfd)
 
 ## Recent Changes
+- 2026-02-24: Added interactive immunization globe (react-simple-maps) with clickable country markers, analyzed documents panel, chronological year-grouped timeline, and comprehensive filtering (vaccine type, year, country, status)
 - 2026-02-24: Removed all dark/black backgrounds - fully light theme with light gradient heroes, brand gradient auth panels, bg-[#4a7fb5] active states
 - 2026-02-24: Complete Apple iPhone 17 Pro redesign: muted color palette (#4a7fb5, #8aab45, #4d9068, #1d1d1f), borderless cards, bg-[#f5f5f7] inputs, massive typography, generous spacing (py-24 to py-32), applied to ALL public pages, auth pages, and dashboard components
 - 2026-02-24: Fuller layout: removed max-w-4xl constraints, 3-column dashboard grid (2-col main + sidebar), 2-column grids for vaccinations/documents/compliance/alerts
