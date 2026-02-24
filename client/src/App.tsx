@@ -17,10 +17,10 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-blue-50/30 to-green-50/20">
+      <div className="min-h-screen flex items-center justify-center bg-[#fbfbfd]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-[#1051a5] border-t-transparent rounded-full animate-spin" />
-          <p className="text-[#22283a] text-lg">Loading DOZEY...</p>
+          <div className="w-12 h-12 border-4 border-[#4a7fb5] border-t-transparent rounded-full animate-spin" />
+          <p className="text-[#1d1d1f] text-lg">Loading DOZEY...</p>
         </div>
       </div>
     );

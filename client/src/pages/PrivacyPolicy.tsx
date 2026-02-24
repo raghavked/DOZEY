@@ -7,28 +7,28 @@ export function PrivacyPolicy() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center gap-4 mb-8">
-          <Link to="/" className="text-[#1051a5] hover:text-[#0d4185] transition-colors">
+          <Link to="/" className="text-[#4a7fb5] hover:text-[#3a6a9a] transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <DozeyLogo className="h-10" />
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 md:p-12">
-          <h1 className="text-3xl font-bold text-[#22283a] mb-2">Privacy Policy & HIPAA Notice of Privacy Practices</h1>
+          <h1 className="text-3xl font-bold text-[#1d1d1f] mb-2">Privacy Policy & HIPAA Notice of Privacy Practices</h1>
           <p className="text-gray-500 mb-8">Last Updated: February 23, 2026</p>
 
-          <div className="prose prose-gray max-w-none space-y-6 text-[#22283a]">
+          <div className="prose prose-gray max-w-none space-y-6 text-[#1d1d1f]">
             <div className="bg-green-50 border border-green-200 rounded-lg p-5 mb-6">
-              <h3 className="font-semibold text-[#26844f] mb-2">Your Privacy Matters</h3>
+              <h3 className="font-semibold text-[#4d9068] mb-2">Your Privacy Matters</h3>
               <p className="text-gray-700 text-sm leading-relaxed">
                 This Privacy Policy and HIPAA Notice of Privacy Practices describes how DOZEY Inc. ("DOZEY," "we," "us," or "our") collects, uses, discloses, and protects your personal information and Protected Health Information (PHI). This notice is provided in accordance with the Health Insurance Portability and Accountability Act (HIPAA) and applicable state and international privacy laws.
               </p>
             </div>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">1. Information We Collect</h2>
+              <h2 className="text-xl font-semibold text-[#4a7fb5] mt-8 mb-3">1. Information We Collect</h2>
 
-              <h3 className="font-semibold text-[#22283a] mt-4 mb-2">1.1 Information You Provide</h3>
+              <h3 className="font-semibold text-[#1d1d1f] mt-4 mb-2">1.1 Information You Provide</h3>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>Account Information:</strong> Email address, name, password (encrypted)</li>
                 <li><strong>Profile Information:</strong> Date of birth, country of residence, country of origin, citizenships, languages spoken, healthcare provider information</li>
@@ -38,7 +38,7 @@ export function PrivacyPolicy() {
                 <li><strong>Communications:</strong> Messages sent through the Doze chatbot, support requests</li>
               </ul>
 
-              <h3 className="font-semibold text-[#22283a] mt-4 mb-2">1.2 Information Collected Automatically</h3>
+              <h3 className="font-semibold text-[#1d1d1f] mt-4 mb-2">1.2 Information Collected Automatically</h3>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>Usage Data:</strong> Pages visited, features used, time spent on the Service</li>
                 <li><strong>Device Information:</strong> Browser type, operating system, device identifiers</li>
@@ -48,7 +48,7 @@ export function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">2. How We Use Your Information</h2>
+              <h2 className="text-xl font-semibold text-[#4a7fb5] mt-8 mb-3">2. How We Use Your Information</h2>
               <p className="text-gray-700 leading-relaxed">We use your information for the following purposes:</p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>Service Delivery:</strong> To provide, maintain, and improve the DOZEY platform</li>
@@ -64,9 +64,9 @@ export function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">3. HIPAA-Specific Privacy Practices</h2>
+              <h2 className="text-xl font-semibold text-[#4a7fb5] mt-8 mb-3">3. HIPAA-Specific Privacy Practices</h2>
 
-              <h3 className="font-semibold text-[#22283a] mt-4 mb-2">3.1 Uses and Disclosures of PHI</h3>
+              <h3 className="font-semibold text-[#1d1d1f] mt-4 mb-2">3.1 Uses and Disclosures of PHI</h3>
               <p className="text-gray-700 leading-relaxed">We may use and disclose your PHI in the following ways:</p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>For Treatment:</strong> To share your records with healthcare providers at your request</li>
@@ -77,7 +77,7 @@ export function PrivacyPolicy() {
                 <li><strong>To Avert a Serious Threat:</strong> To prevent or lessen a serious and imminent threat to health or safety</li>
               </ul>
 
-              <h3 className="font-semibold text-[#22283a] mt-4 mb-2">3.2 Uses and Disclosures Requiring Your Written Authorization</h3>
+              <h3 className="font-semibold text-[#1d1d1f] mt-4 mb-2">3.2 Uses and Disclosures Requiring Your Written Authorization</h3>
               <p className="text-gray-700 leading-relaxed">We will obtain your written authorization before:</p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li>Using or disclosing your PHI for marketing purposes</li>
@@ -86,14 +86,14 @@ export function PrivacyPolicy() {
                 <li>Any other use or disclosure not described in this Notice</li>
               </ul>
 
-              <h3 className="font-semibold text-[#22283a] mt-4 mb-2">3.3 Minimum Necessary Standard</h3>
+              <h3 className="font-semibold text-[#1d1d1f] mt-4 mb-2">3.3 Minimum Necessary Standard</h3>
               <p className="text-gray-700 leading-relaxed">
                 When using or disclosing PHI, we apply the minimum necessary standard, meaning we make reasonable efforts to limit the PHI used, disclosed, or requested to the minimum necessary to accomplish the intended purpose.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">4. Data Security</h2>
+              <h2 className="text-xl font-semibold text-[#4a7fb5] mt-8 mb-3">4. Data Security</h2>
               <p className="text-gray-700 leading-relaxed">We implement comprehensive security measures to protect your information:</p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>Encryption:</strong> All data is encrypted in transit (TLS 1.2+) and at rest (AES-256)</li>
@@ -108,7 +108,7 @@ export function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">5. Third-Party Service Providers</h2>
+              <h2 className="text-xl font-semibold text-[#4a7fb5] mt-8 mb-3">5. Third-Party Service Providers</h2>
               <p className="text-gray-700 leading-relaxed">We use the following categories of third-party service providers, all bound by Business Associate Agreements (BAAs) or equivalent data processing agreements:</p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>Cloud Infrastructure:</strong> For secure data hosting and storage (SOC 2 Type II certified)</li>
@@ -120,7 +120,7 @@ export function PrivacyPolicy() {
                 We carefully vet all third-party providers and require them to: (a) execute BAAs before accessing any PHI, (b) maintain appropriate administrative, physical, and technical safeguards, (c) report any security incidents promptly, and (d) return or destroy PHI upon termination of the agreement.
               </p>
 
-              <h3 className="font-semibold text-[#22283a] mt-4 mb-2">5.1 AI Data Processing Details</h3>
+              <h3 className="font-semibold text-[#1d1d1f] mt-4 mb-2">5.1 AI Data Processing Details</h3>
               <p className="text-gray-700 leading-relaxed">When you use AI-powered features, your data is processed as follows:</p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>OCR Extraction:</strong> Document images/PDFs are sent via encrypted connection to extract text. The provider does not store your documents or extracted text after processing.</li>
@@ -131,9 +131,9 @@ export function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">6. Your Rights</h2>
+              <h2 className="text-xl font-semibold text-[#4a7fb5] mt-8 mb-3">6. Your Rights</h2>
 
-              <h3 className="font-semibold text-[#22283a] mt-4 mb-2">6.1 HIPAA Rights</h3>
+              <h3 className="font-semibold text-[#1d1d1f] mt-4 mb-2">6.1 HIPAA Rights</h3>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>Access:</strong> Request access to your PHI (we will respond within 30 days)</li>
                 <li><strong>Amendment:</strong> Request correction of inaccurate PHI</li>
@@ -143,7 +143,7 @@ export function PrivacyPolicy() {
                 <li><strong>Complaint:</strong> File a complaint with us or the Department of Health and Human Services if you believe your privacy rights have been violated</li>
               </ul>
 
-              <h3 className="font-semibold text-[#22283a] mt-4 mb-2">6.2 Additional Rights (GDPR, CCPA, and Other Laws)</h3>
+              <h3 className="font-semibold text-[#1d1d1f] mt-4 mb-2">6.2 Additional Rights (GDPR, CCPA, and Other Laws)</h3>
               <p className="text-gray-700 leading-relaxed">Depending on your location, you may also have the right to:</p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>Data Portability:</strong> Export your data in a machine-readable format</li>
@@ -155,7 +155,7 @@ export function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">7. Data Retention</h2>
+              <h2 className="text-xl font-semibold text-[#4a7fb5] mt-8 mb-3">7. Data Retention</h2>
               <p className="text-gray-700 leading-relaxed">
                 We retain your personal information and PHI for as long as your account is active. After account deletion, we will securely delete or de-identify your data within 30 days, except:
               </p>
@@ -167,21 +167,21 @@ export function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">8. Children's Privacy</h2>
+              <h2 className="text-xl font-semibold text-[#4a7fb5] mt-8 mb-3">8. Children's Privacy</h2>
               <p className="text-gray-700 leading-relaxed">
                 The Service is not intended for children under 18 years of age. We do not knowingly collect personal information from children under 18. If we learn we have collected information from a child under 18, we will promptly delete it. Parents or guardians who believe their child has provided information to us should contact us immediately.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">9. International Data Transfers</h2>
+              <h2 className="text-xl font-semibold text-[#4a7fb5] mt-8 mb-3">9. International Data Transfers</h2>
               <p className="text-gray-700 leading-relaxed">
                 Your information may be transferred to and processed in countries other than your country of residence. We ensure appropriate safeguards are in place for international transfers, including Standard Contractual Clauses (SCCs) for transfers from the EEA, UK, or Switzerland, and compliance with applicable cross-border data transfer mechanisms.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">10. Cookies and Tracking</h2>
+              <h2 className="text-xl font-semibold text-[#4a7fb5] mt-8 mb-3">10. Cookies and Tracking</h2>
               <p className="text-gray-700 leading-relaxed">DOZEY uses only essential cookies required for the Service to function:</p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>Authentication Cookies:</strong> To maintain your login session</li>
@@ -193,7 +193,7 @@ export function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">11. Your Right to File a Complaint</h2>
+              <h2 className="text-xl font-semibold text-[#4a7fb5] mt-8 mb-3">11. Your Right to File a Complaint</h2>
               <p className="text-gray-700 leading-relaxed">
                 If you believe your privacy rights have been violated, you have the right to file a complaint. You will not be penalized or retaliated against for filing a complaint. You may file a complaint with:
               </p>
@@ -208,14 +208,14 @@ export function PrivacyPolicy() {
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">12. Changes to This Policy</h2>
+              <h2 className="text-xl font-semibold text-[#4a7fb5] mt-8 mb-3">12. Changes to This Policy</h2>
               <p className="text-gray-700 leading-relaxed">
                 We will notify you of material changes to this Privacy Policy at least 30 days before they take effect via email or in-app notification. We encourage you to review this policy periodically. The "Last Updated" date at the top indicates when the policy was last revised.
               </p>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold text-[#1051a5] mt-8 mb-3">13. Contact Us</h2>
+              <h2 className="text-xl font-semibold text-[#4a7fb5] mt-8 mb-3">13. Contact Us</h2>
               <p className="text-gray-700 leading-relaxed">
                 For questions about this Privacy Policy, to exercise your rights, or to file a complaint:
               </p>

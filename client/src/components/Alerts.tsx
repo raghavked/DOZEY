@@ -152,20 +152,20 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
 
   return (
     <div>
-      <div className="bg-white rounded-2xl border border-gray-100 p-8">
+      <div className="bg-white rounded-2xl p-8">
         <div className="flex items-center gap-3 mb-6">
-          <Bell className="w-8 h-8 text-[#22283a]/30" />
+          <Bell className="w-8 h-8 text-[#1d1d1f]/30" />
           <div>
-            <h1 className="text-[#22283a] font-semibold">Alerts & Recommendations</h1>
-            <p className="text-gray-400">Important notifications about your vaccination records</p>
+            <h1 className="text-[#1d1d1f] font-semibold">Alerts & Recommendations</h1>
+            <p className="text-[#86868b]">Important notifications about your vaccination records</p>
           </div>
         </div>
 
         {alerts.length === 0 ? (
           <div className="text-center py-12">
             <CheckCircle className="w-16 h-16 text-gray-200 mx-auto mb-4" />
-            <h3 className="text-[#22283a] font-semibold mb-2">All Clear!</h3>
-            <p className="text-gray-400">
+            <h3 className="text-[#1d1d1f] font-semibold mb-2">All Clear!</h3>
+            <p className="text-[#86868b]">
               No alerts at this time. Your records look good.
             </p>
           </div>
@@ -187,7 +187,7 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
               return (
                 <div
                   key={index}
-                  className={`border-l-4 border border-gray-100 p-6 rounded-2xl ${colorClasses[alert.type]}`}
+                  className={`border-l-4 p-6 rounded-xl ${colorClasses[alert.type]}`}
                 >
                   <div className="flex gap-3">
                     <Icon className={`w-6 h-6 flex-shrink-0 ${iconColors[alert.type]}`} />
@@ -202,12 +202,12 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
           </div>
         )}
 
-        <div className="mt-8 pt-8 border-t border-gray-200">
-          <h2 className="text-sm font-semibold text-[#22283a] mb-4">Common Vaccination Requirements</h2>
+        <div className="mt-8 pt-8 border-t border-black/5">
+          <h2 className="text-sm font-semibold text-[#1d1d1f] mb-4">Common Vaccination Requirements</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <div className="bg-[#fafafa] p-4 rounded-2xl border border-gray-100">
-              <h4 className="text-sm font-semibold text-[#22283a] mb-2">University Students</h4>
-              <ul className="text-gray-400 text-sm space-y-1">
+            <div className="bg-[#f5f5f7] p-4 rounded-2xl">
+              <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">University Students</h4>
+              <ul className="text-[#86868b] text-sm space-y-1">
                 <li>• MMR (Measles, Mumps, Rubella)</li>
                 <li>• Meningococcal (Meningitis)</li>
                 <li>• Hepatitis B</li>
@@ -215,9 +215,9 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
               </ul>
             </div>
 
-            <div className="bg-[#fafafa] p-4 rounded-2xl border border-gray-100">
-              <h4 className="text-sm font-semibold text-[#22283a] mb-2">Immigration/Work Visa</h4>
-              <ul className="text-gray-400 text-sm space-y-1">
+            <div className="bg-[#f5f5f7] p-4 rounded-2xl">
+              <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">Immigration/Work Visa</h4>
+              <ul className="text-[#86868b] text-sm space-y-1">
                 <li>• Varies by country</li>
                 <li>• Usually includes MMR, Varicella</li>
                 <li>• TB test often required</li>
@@ -225,9 +225,9 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
               </ul>
             </div>
 
-            <div className="bg-[#fafafa] p-4 rounded-2xl border border-gray-100">
-              <h4 className="text-sm font-semibold text-[#22283a] mb-2">International Travel</h4>
-              <ul className="text-gray-400 text-sm space-y-1">
+            <div className="bg-[#f5f5f7] p-4 rounded-2xl">
+              <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">International Travel</h4>
+              <ul className="text-[#86868b] text-sm space-y-1">
                 <li>• Yellow Fever (Africa, South America)</li>
                 <li>• Typhoid</li>
                 <li>• Hepatitis A</li>
@@ -235,9 +235,9 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
               </ul>
             </div>
 
-            <div className="bg-[#fafafa] p-4 rounded-2xl border border-gray-100">
-              <h4 className="text-sm font-semibold text-[#22283a] mb-2">Healthcare Workers</h4>
-              <ul className="text-gray-400 text-sm space-y-1">
+            <div className="bg-[#f5f5f7] p-4 rounded-2xl">
+              <h4 className="text-sm font-semibold text-[#1d1d1f] mb-2">Healthcare Workers</h4>
+              <ul className="text-[#86868b] text-sm space-y-1">
                 <li>• Hepatitis B</li>
                 <li>• Annual Flu vaccine</li>
                 <li>• MMR</li>

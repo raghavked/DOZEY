@@ -54,37 +54,37 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-semibold text-[#22283a] mb-1">
+        <h1 className="text-3xl font-semibold text-[#1d1d1f] mb-1">
           Welcome back{profile ? `, ${profile.fullName}` : ''}
         </h1>
-        <p className="text-gray-400">
+        <p className="text-[#86868b]">
           {profile?.targetCountry ? `Tracking compliance for ${profile.targetCountry}` : 'Manage your vaccination records'}
         </p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { id: 'timeline' as const, icon: Syringe, value: vaccinations.length, label: 'Vaccines', color: '#1051a5', sub: `${verifiedCount} verified` },
-          { id: 'countries' as const, icon: Globe, value: countryHistory.length, label: 'Countries', color: '#26844f', sub: 'Residence history' },
-          { id: 'upload' as const, icon: FileText, value: documents.length, label: 'Documents', color: '#22283a', sub: 'Uploaded files' },
-          { id: 'profile' as const, icon: User, value: profile ? '100%' : '0%', label: 'Profile', color: '#1051a5', sub: profile ? 'Complete' : 'Incomplete' },
+          { id: 'timeline' as const, icon: Syringe, value: vaccinations.length, label: 'Vaccines', sub: `${verifiedCount} verified` },
+          { id: 'countries' as const, icon: Globe, value: countryHistory.length, label: 'Countries', sub: 'Residence history' },
+          { id: 'upload' as const, icon: FileText, value: documents.length, label: 'Documents', sub: 'Uploaded files' },
+          { id: 'profile' as const, icon: User, value: profile ? '100%' : '0%', label: 'Profile', sub: profile ? 'Complete' : 'Incomplete' },
         ].map((stat) => {
           const Icon = stat.icon;
           return (
             <button
               key={stat.id}
               onClick={() => onNavigate(stat.id)}
-              className="bg-white rounded-2xl border border-gray-100 p-6 text-left transition-all hover:border-gray-200 group"
+              className="bg-white rounded-2xl p-6 text-left transition-all hover:shadow-sm group"
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#fafafa]">
-                  <Icon className="w-5 h-5 text-[#22283a]/30" />
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-[#f5f5f7]">
+                  <Icon className="w-5 h-5 text-[#86868b]" />
                 </div>
-                <ArrowRight className="w-4 h-4 text-gray-200 group-hover:text-gray-400 transition-colors" />
+                <ArrowRight className="w-4 h-4 text-[#1d1d1f]/10 group-hover:text-[#86868b] transition-colors" />
               </div>
-              <div className="text-3xl font-semibold text-[#22283a] mb-0.5">{stat.value}</div>
-              <div className="text-sm font-medium text-gray-500">{stat.label}</div>
-              <div className="text-xs text-gray-300 mt-1">{stat.sub}</div>
+              <div className="text-3xl font-semibold text-[#1d1d1f] mb-0.5">{stat.value}</div>
+              <div className="text-sm font-medium text-[#1d1d1f]">{stat.label}</div>
+              <div className="text-xs text-[#86868b] mt-1">{stat.sub}</div>
             </button>
           );
         })}
@@ -93,21 +93,21 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="lg:col-span-2 space-y-5">
           {profile?.targetCountry === 'United States' && (
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-2xl overflow-hidden">
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-5">
-                  <div className="w-10 h-10 bg-[#fafafa] rounded-xl flex items-center justify-center">
-                    <Target className="w-5 h-5 text-[#22283a]/30" />
+                  <div className="w-10 h-10 bg-[#f5f5f7] rounded-xl flex items-center justify-center">
+                    <Target className="w-5 h-5 text-[#86868b]" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold text-[#22283a]">U.S. College Compliance</h2>
-                    <p className="text-gray-400 text-xs">Required for undergraduate admission</p>
+                    <h2 className="text-lg font-semibold text-[#1d1d1f]">U.S. College Compliance</h2>
+                    <p className="text-[#86868b] text-xs">Required for undergraduate admission</p>
                   </div>
-                  <div className="ml-auto text-3xl font-semibold text-[#1051a5]">{compliance.percentage}%</div>
+                  <div className="ml-auto text-3xl font-semibold text-[#4a7fb5]">{compliance.percentage}%</div>
                 </div>
                 
-                <Progress value={compliance.percentage} className="h-2 bg-gray-100" />
-                <p className="text-gray-400 text-xs mt-2">
+                <Progress value={compliance.percentage} className="h-2 bg-[#f5f5f7]" />
+                <p className="text-[#86868b] text-xs mt-2">
                   {compliance.totalCompleted} of {compliance.totalRequired} required doses completed
                 </p>
               </div>
@@ -128,7 +128,7 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
           )}
 
           {!profile && (
-            <div className="bg-amber-50 border border-amber-200/50 rounded-2xl p-6">
+            <div className="bg-amber-50 rounded-2xl p-6">
               <div className="flex gap-4">
                 <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
                   <AlertCircle className="w-5 h-5 text-amber-600" />
@@ -140,7 +140,7 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
                   </p>
                   <button
                     onClick={() => onNavigate('profile')}
-                    className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-full font-medium transition-colors text-sm"
+                    className="inline-flex items-center gap-2 bg-[#4a7fb5] hover:bg-[#3d6d9e] text-white px-5 py-2.5 rounded-full font-medium transition-colors text-sm"
                   >
                     Set Up Profile
                     <ArrowRight className="w-4 h-4" />
@@ -152,28 +152,28 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-[#22283a] mb-3">Quick Actions</h2>
+          <h2 className="text-lg font-semibold text-[#1d1d1f] mb-3">Quick Actions</h2>
           <div className="space-y-2">
             {[
-              { id: 'upload' as const, icon: Upload, title: 'Upload Document', sub: 'Add vaccine records', color: '#1051a5' },
-              { id: 'compliance' as const, icon: Shield, title: 'Check Compliance', sub: 'Verify requirements', color: '#26844f' },
-              { id: 'share' as const, icon: Share2, title: 'Share Records', sub: 'Export & share', color: '#22283a' },
-              { id: 'alerts' as const, icon: Bell, title: 'View Alerts', sub: 'Notifications & tips', color: '#22283a' },
-              { id: 'countries' as const, icon: Globe, title: 'Country History', sub: 'Track residences', color: '#26844f' },
+              { id: 'upload' as const, icon: Upload, title: 'Upload Document', sub: 'Add vaccine records' },
+              { id: 'compliance' as const, icon: Shield, title: 'Check Compliance', sub: 'Verify requirements' },
+              { id: 'share' as const, icon: Share2, title: 'Share Records', sub: 'Export & share' },
+              { id: 'alerts' as const, icon: Bell, title: 'View Alerts', sub: 'Notifications & tips' },
+              { id: 'countries' as const, icon: Globe, title: 'Country History', sub: 'Track residences' },
             ].map(({ id, icon: Icon, title, sub }) => (
               <button
                 key={id}
                 onClick={() => onNavigate(id)}
-                className="flex items-center gap-3 w-full bg-white border border-gray-100 hover:border-gray-200 p-4 rounded-xl transition-all group text-left"
+                className="flex items-center gap-3 w-full bg-[#f5f5f7] hover:bg-[#e8e8ed] p-4 rounded-xl transition-all group text-left"
               >
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-[#fafafa]">
-                  <Icon className="w-4 h-4 text-[#22283a]/30" />
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-white">
+                  <Icon className="w-4 h-4 text-[#86868b]" />
                 </div>
                 <div className="min-w-0">
-                  <div className="font-semibold text-[#22283a] text-sm">{title}</div>
-                  <div className="text-gray-400 text-xs">{sub}</div>
+                  <div className="font-semibold text-[#1d1d1f] text-sm">{title}</div>
+                  <div className="text-[#86868b] text-xs">{sub}</div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-gray-200 group-hover:text-gray-400 ml-auto shrink-0 transition-colors" />
+                <ArrowRight className="w-4 h-4 text-[#1d1d1f]/10 group-hover:text-[#86868b] ml-auto shrink-0 transition-colors" />
               </button>
             ))}
           </div>
@@ -183,11 +183,11 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
       {vaccinations.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-[#22283a]">Recent Vaccinations</h2>
+            <h2 className="text-lg font-semibold text-[#1d1d1f]">Recent Vaccinations</h2>
             {vaccinations.length > 6 && (
               <button
                 onClick={() => onNavigate('timeline')}
-                className="text-[#1051a5] hover:text-[#0d4185] text-sm font-medium flex items-center gap-1"
+                className="text-[#4a7fb5] hover:text-[#3d6d9e] text-sm font-medium flex items-center gap-1"
               >
                 View all ({vaccinations.length})
                 <ArrowRight className="w-4 h-4" />
@@ -196,23 +196,23 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
             {vaccinations.slice(0, 6).map(vax => (
-              <div key={vax.id} className="flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 hover:border-gray-200 transition-colors">
+              <div key={vax.id} className="flex items-center justify-between p-4 bg-white rounded-xl transition-colors">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-[#fafafa] flex items-center justify-center shrink-0">
-                    <Syringe className="w-4 h-4 text-[#22283a]/30" />
+                  <div className="w-9 h-9 rounded-lg bg-[#f5f5f7] flex items-center justify-center shrink-0">
+                    <Syringe className="w-4 h-4 text-[#86868b]" />
                   </div>
                   <div>
-                    <p className="text-[#22283a] font-medium text-sm">{vax.vaccineName}</p>
-                    <p className="text-gray-400 text-xs">{vax.location} · {(() => { const [y,m,d] = vax.date.split('-').map(Number); return new Date(y, m-1, d).toLocaleDateString(); })()}</p>
+                    <p className="text-[#1d1d1f] font-medium text-sm">{vax.vaccineName}</p>
+                    <p className="text-[#86868b] text-xs">{vax.location} · {(() => { const [y,m,d] = vax.date.split('-').map(Number); return new Date(y, m-1, d).toLocaleDateString(); })()}</p>
                   </div>
                 </div>
                 {vax.verified ? (
-                  <div className="flex items-center gap-1.5 text-[#26844f] bg-green-50 px-3 py-1 rounded-full text-xs font-medium">
+                  <div className="flex items-center gap-1.5 text-[#4d9068] bg-[#4d9068]/10 px-3 py-1 rounded-full text-xs font-medium">
                     <CheckCircle className="w-3 h-3" />
                     Verified
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1.5 text-amber-600 bg-amber-50 px-3 py-1 rounded-full text-xs font-medium">
+                  <div className="flex items-center gap-1.5 text-[#86868b] bg-[#f5f5f7] px-3 py-1 rounded-full text-xs font-medium">
                     <AlertCircle className="w-3 h-3" />
                     Pending
                   </div>

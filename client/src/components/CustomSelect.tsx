@@ -91,7 +91,7 @@ export function CustomSelect({
   return (
     <div ref={containerRef} className={`relative ${className || ''}`}>
       {label && (
-        <label htmlFor={id} className="block text-gray-700 mb-2">
+        <label htmlFor={id} className="block text-[#1d1d1f] mb-2">
           {label}
           {required && ' *'}
         </label>
@@ -107,18 +107,18 @@ export function CustomSelect({
           }
         }}
         onKeyDown={handleKeyDown}
-        className="w-full flex items-center justify-between px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none text-left transition-colors hover:border-gray-400"
+        className="w-full flex items-center justify-between px-4 py-2 bg-[#f5f5f7] rounded-xl focus:ring-2 focus:ring-[#4a7fb5]/20 focus:border-transparent outline-none text-left transition-colors"
       >
-        <span className={selectedOption ? 'text-gray-900' : 'text-gray-400'}>
+        <span className={selectedOption ? 'text-[#1d1d1f]' : 'text-[#86868b]'}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 text-[#86868b] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
         <ul
           ref={listRef}
-          className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto"
+          className="absolute z-50 w-full mt-1 bg-white rounded-xl shadow-lg max-h-64 overflow-y-auto"
           role="listbox"
         >
           {options.map((option, index) => {
@@ -138,15 +138,15 @@ export function CustomSelect({
                 onMouseEnter={() => setActiveIndex(index)}
                 className={`flex items-center justify-between px-4 py-2.5 cursor-pointer transition-colors ${
                   isActive
-                    ? 'bg-[#1051a5] text-white'
+                    ? 'bg-[#4a7fb5] text-white'
                     : isSelected
-                    ? 'bg-blue-50 text-[#1051a5]'
-                    : 'text-gray-900 hover:bg-blue-50'
+                    ? 'bg-[#f5f5f7] text-[#4a7fb5]'
+                    : 'text-[#1d1d1f] hover:bg-[#f5f5f7]'
                 }`}
               >
                 <span className="text-sm">{option.label}</span>
                 {isSelected && (
-                  <Check className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#1051a5]'}`} />
+                  <Check className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#4a7fb5]'}`} />
                 )}
               </li>
             );

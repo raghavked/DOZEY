@@ -4,7 +4,7 @@ import { PublicFooter } from '@/components/PublicFooter';
 
 export function PublicLayout() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-green-50/20 text-[#22283a]">
+    <div className="min-h-screen bg-[#fbfbfd] text-[#1d1d1f]">
       <PublicNavbar />
       <Outlet />
       <PublicFooter />

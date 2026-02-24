@@ -82,12 +82,14 @@ docs/                      # Documentation
 - `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (secret)
 - `DATABASE_URL` - PostgreSQL connection string
 
-## DOZEY Brand Colors
-- Brand Blue: #1051a5
-- Brand Light Green: #97bf2d
-- Brand Green: #26844f
-- Brand Off-Black: #22283a
-- Brand White: #fefefe
+## DOZEY Brand Colors (Muted Apple Palette)
+- Brand Blue: #4a7fb5 (muted, was #1051a5)
+- Brand Light Green: #8aab45 (muted, was #97bf2d)
+- Brand Green: #4d9068 (muted, was #26844f)
+- Brand Off-Black: #1d1d1f (Apple black)
+- Brand White: #fbfbfd (Apple white)
+- Apple Gray: #86868b (secondary text)
+- Light Gray: #f5f5f7 (section backgrounds, inputs)
 
 ## Domain
 - Production domain: dozeyrecords.com
@@ -130,33 +132,27 @@ docs/                      # Documentation
 - ComplianceReport component: 3-tab selector, popular suggestions per type, requirement-by-requirement status, gap analysis, export
 - Profile includes `targetInstitution`, `targetEmployment`, and `targetCountry` fields
 
-## Design System (Apple/Episense-Inspired)
-- Sleek minimal aesthetic: centered hero text, font-semibold (not extrabold), clean gradients
-- Transparent navbar with frosted glass (backdrop-blur-2xl, bg-white/80) on scroll
+## Design System (Apple iPhone 17 Pro-Inspired)
+- Muted color palette: #4a7fb5 blue, #8aab45 green, #4d9068 dark green, #1d1d1f black, #fbfbfd white
+- Hero sections: dark gradient bg (from-[#1d1d1f] to-[#2d2d30]), massive centered typography (text-6xl to text-8xl)
+- Navbar: slim h-14, transparent with frosted glass on scroll (bg-white/80 backdrop-blur-xl border-b border-black/5)
+- Footer: bg-[#f5f5f7], Apple-style horizontal links with | dividers, text-xs text-[#86868b]
 - Scroll animations: fadeInUp, fadeIn, scaleIn, slideInLeft, slideInRight via IntersectionObserver
-- Rounded-full CTAs (white on hero, brand blue elsewhere), muted text (white/40, gray-400), xs tracking-widest labels
-- Dark off-black (#22283a) panels for auth pages, minimal bullet-point trust signals
-- Light footer (#fafafa) with border-top, "Actively in development" only in footer
-- Dashboard: spacious layout, outline-style buttons, pill-tab navigation, no gradient banners
-- Icons use subtle opacity (text-[#22283a]/30) rather than bold colors
-- Feature grids use gap-px with bg-gray-200 for Apple-style grid lines
-- Cards: bg-white rounded-2xl border border-gray-100 (no shadow-lg)
-- Inputs: rounded-xl border-gray-200 focus:ring-[color]/10
-- Labels: text-xs text-gray-400 font-medium uppercase tracking-wide
-- Dashboard nav: frosted glass (bg-white/80 backdrop-blur-2xl)
-- Secondary backgrounds: bg-[#fafafa]
-- Description text: text-gray-400 (not text-gray-600)
+- Cards: bg-white rounded-2xl, NO visible borders, clean backgrounds
+- Inputs: bg-[#f5f5f7] border-0 rounded-xl (background contrast instead of borders)
+- Icons: text-[#86868b] or text-[#1d1d1f]/30 (very subtle)
+- Section labels: text-xs text-[#4a7fb5] font-medium uppercase tracking-widest
+- Secondary text: text-[#86868b] (Apple gray)
+- CTAs: rounded-full, bg-[#4a7fb5] text-white (primary), bg-[#1d1d1f] text-white (dark)
+- Section backgrounds alternate: #fbfbfd (white), #f5f5f7 (light gray), #1d1d1f (dark)
+- Section spacing: py-24 lg:py-32 for generous whitespace
+- Dashboard: bg-[#f5f5f7] main, bg-white cards with no borders, pill-tab navigation
+- Status badges: Verified bg-[#4d9068]/10, Pending bg-[#f5f5f7]
+- Auth pages: split layout, left dark panel (#1d1d1f), right clean form (#fbfbfd)
 
 ## Recent Changes
-- 2026-02-24: Fuller layout: removed max-w-4xl constraints, 3-column dashboard grid (2-col main + sidebar), 2-column grids for vaccinations/documents/compliance/alerts, reduced spacing (space-y-6/5), 4-column common requirements grid
-- 2026-02-24: Applied Apple/Episense design to ALL dashboard components: rounded-2xl cards, border-gray-100, font-semibold, text-gray-400 descriptions, subtler icons (text-[#22283a]/30), frosted glass nav, rounded-full CTAs, bg-[#fafafa] secondary backgrounds
-- 2026-02-24: Apple-like refinement: centered heroes, font-semibold, frosted glass navbar, light footer, subtler typography
-- 2026-02-24: Removed "Actively in development" from header/hero, kept only in footer
-- 2026-02-24: PublicNavbar: slimmer (h-16), frosted glass, smaller text (13px), dark Sign In button
-- 2026-02-24: PublicFooter: Changed from dark to light (#fafafa) with border-top
-- 2026-02-24: All hero sections centered, gradient-to-b, consistent layout
-- 2026-02-24: Login/Register: Dark off-black panels, minimal trust signals, rounded-full buttons
-- 2026-02-24: Dashboard/Navigation: Cleaner stat cards, pill-tab nav, outline action buttons
+- 2026-02-24: Complete Apple iPhone 17 Pro redesign: muted color palette (#4a7fb5, #8aab45, #4d9068, #1d1d1f), dark hero sections, borderless cards, bg-[#f5f5f7] inputs, massive typography, generous spacing (py-24 to py-32), applied to ALL public pages, auth pages, and dashboard components
+- 2026-02-24: Fuller layout: removed max-w-4xl constraints, 3-column dashboard grid (2-col main + sidebar), 2-column grids for vaccinations/documents/compliance/alerts
 - 2026-02-24: ShareRecords: COVID-19 vaccine card format export option
 - 2026-02-23: New user onboarding: redirects to profile page on first sign-up with welcome banner
 - 2026-02-23: Made healthcare provider required in profile; added smart autocomplete to all text inputs (countries, vaccines, providers, languages, institutions, employers, states)

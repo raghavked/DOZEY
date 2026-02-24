@@ -27,8 +27,8 @@ const impactStories = [
 ];
 
 const categoryColors: Record<string, string> = {
-  Employment: '#1051a5',
-  Education: '#26844f',
+  Employment: '#4a7fb5',
+  Education: '#4d9068',
   Refugee: '#c2410c',
   Immigration: '#7c3aed',
 };
@@ -66,60 +66,60 @@ export function ProgressPage() {
 
   return (
     <div ref={scrollRef} className="min-h-screen">
-      <section className="relative min-h-[70vh] flex items-center bg-gradient-to-b from-[#0a3d7a] via-[#1051a5] to-[#1a4a8a] text-white overflow-hidden">
+      <section className="relative min-h-[70vh] flex items-center bg-gradient-to-b from-[#1d1d1f] to-[#2d2d30] text-white overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute bottom-1/3 right-1/3 w-[500px] h-[500px] bg-[#97bf2d]/5 rounded-full blur-[150px]" />
+          <div className="absolute bottom-1/3 right-1/3 w-[500px] h-[500px] bg-[#8aab45]/5 rounded-full blur-[150px]" />
         </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 pt-40 w-full">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="text-[#97bf2d] text-xs font-semibold uppercase tracking-widest mb-6 animate-fade-in">
+            <p className="text-[#8aab45] text-xs font-medium uppercase tracking-widest mb-6 animate-fade-in">
               Progress & Validation
             </p>
-            <h1 className="animate-fade-in-up text-5xl lg:text-6xl xl:text-7xl font-semibold leading-[1.05] tracking-tight mb-6">
-              Validated by <span className="text-[#97bf2d]">real people</span>
+            <h1 className="animate-fade-in-up text-6xl lg:text-7xl xl:text-8xl font-semibold leading-[1.05] tracking-tight mb-6">
+              Validated by <span className="text-[#8aab45]">real people</span>
             </h1>
             <p className="animate-fade-in-up delay-200 text-base text-white/40 max-w-lg mx-auto font-light">
               Built on extensive research, real-world validation, and recognition from top innovation programs.
             </p>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#fefefe] to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#fbfbfd] to-transparent" />
       </section>
 
-      <section className="py-20 lg:py-28 bg-[#fefefe]">
+      <section className="py-24 lg:py-32 bg-[#fbfbfd]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-16 mb-24">
             {[
-              { value: '60+', label: 'Customer Interviews', color: '#1051a5' },
-              { value: '10+', label: 'Healthcare Experts', color: '#26844f' },
-              { value: '86%', label: 'Validate Problem', color: '#22283a' },
-              { value: '5', label: 'Countries Validated', color: '#1051a5' },
+              { value: '60+', label: 'Customer Interviews', color: '#4a7fb5' },
+              { value: '10+', label: 'Healthcare Experts', color: '#4d9068' },
+              { value: '86%', label: 'Validate Problem', color: '#1d1d1f' },
+              { value: '5', label: 'Countries Validated', color: '#4a7fb5' },
             ].map((stat, i) => (
               <div key={stat.label} className={`animate-on-scroll delay-${(i + 1) * 100} text-center`}>
-                <div className="text-5xl lg:text-6xl font-semibold tracking-tight mb-2" style={{ color: stat.color }}>
+                <div className="text-6xl lg:text-7xl font-semibold tracking-tight mb-3" style={{ color: stat.color }}>
                   {stat.value}
                 </div>
-                <div className="text-gray-400 text-xs font-medium uppercase tracking-widest">{stat.label}</div>
+                <div className="text-[#86868b] text-xs font-medium uppercase tracking-widest">{stat.label}</div>
               </div>
             ))}
           </div>
 
           <div className="animate-on-scroll grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            <div className="bg-[#fafafa] rounded-2xl p-8">
-              <GraduationCap className="w-6 h-6 text-[#22283a]/40 mb-4" />
-              <h3 className="text-base font-semibold text-[#22283a] mb-1">EIR at UC Davis</h3>
-              <p className="text-xs text-gray-400 mb-3">Entrepreneur in Residence</p>
-              <p className="text-sm text-gray-400 leading-relaxed">
+            <div className="bg-[#f5f5f7] rounded-2xl p-8">
+              <GraduationCap className="w-6 h-6 text-[#1d1d1f]/40 mb-4" />
+              <h3 className="text-base font-semibold text-[#1d1d1f] mb-1">EIR at UC Davis</h3>
+              <p className="text-xs text-[#86868b] mb-3">Entrepreneur in Residence</p>
+              <p className="text-sm text-[#86868b] leading-relaxed">
                 Selected as an Entrepreneur in Residence at UC Davis, receiving mentorship,
                 resources, and support to develop DOZEY from concept to product.
               </p>
             </div>
 
-            <div className="bg-[#fafafa] rounded-2xl p-8">
-              <Trophy className="w-6 h-6 text-[#22283a]/40 mb-4" />
-              <h3 className="text-base font-semibold text-[#22283a] mb-1">Hult Prize Regionals</h3>
-              <p className="text-xs text-gray-400 mb-3">Regional Winner</p>
-              <p className="text-sm text-gray-400 leading-relaxed">
+            <div className="bg-[#f5f5f7] rounded-2xl p-8">
+              <Trophy className="w-6 h-6 text-[#1d1d1f]/40 mb-4" />
+              <h3 className="text-base font-semibold text-[#1d1d1f] mb-1">Hult Prize Regionals</h3>
+              <p className="text-xs text-[#86868b] mb-3">Regional Winner</p>
+              <p className="text-sm text-[#86868b] leading-relaxed">
                 Won the Hult Prize Regional Competition, recognized for our innovative approach
                 to solving global healthcare record portability challenges.
               </p>
@@ -128,14 +128,17 @@ export function ProgressPage() {
         </div>
       </section>
 
-      <section className="py-20 lg:py-28 bg-[#fafafa]">
+      <section className="py-24 lg:py-32 bg-[#f5f5f7]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <div className="animate-on-scroll">
-              <h2 className="text-3xl lg:text-4xl font-semibold text-[#22283a] mb-3">
+              <p className="text-[#4a7fb5] text-xs font-medium uppercase tracking-widest mb-4">
+                Stories
+              </p>
+              <h2 className="text-5xl lg:text-6xl font-semibold text-[#1d1d1f] leading-[1.05] tracking-tight mb-3">
                 Impact Stories
               </h2>
-              <p className="text-base text-gray-400 max-w-lg mx-auto mb-10 font-light">
+              <p className="text-base text-[#86868b] max-w-lg mx-auto mb-10 font-light">
                 Real experiences from people who have faced the challenge of managing health records across borders.
               </p>
             </div>
@@ -145,8 +148,8 @@ export function ProgressPage() {
                 onClick={() => { setSelectedCategory(null); setCurrentStory(0); }}
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
                   !selectedCategory
-                    ? 'bg-[#22283a] text-white'
-                    : 'bg-white text-gray-400 hover:text-gray-600'
+                    ? 'bg-[#1d1d1f] text-white'
+                    : 'bg-white text-[#86868b] hover:text-[#1d1d1f]'
                 }`}
               >
                 All ({impactStories.length})
@@ -160,7 +163,7 @@ export function ProgressPage() {
                     className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
                       selectedCategory === cat
                         ? 'text-white'
-                        : 'bg-white text-gray-400 hover:text-gray-600'
+                        : 'bg-white text-[#86868b] hover:text-[#1d1d1f]'
                     }`}
                     style={selectedCategory === cat ? { backgroundColor: color } : {}}
                   >
@@ -178,21 +181,21 @@ export function ProgressPage() {
                   <span className="text-xs font-medium px-3 py-1 rounded-full text-white" style={{ backgroundColor: categoryColors[story.category] }}>
                     {story.category}
                   </span>
-                  <span className="text-xs text-gray-300">
+                  <span className="text-xs text-[#86868b]">
                     {(currentStory % filteredStories.length) + 1} / {filteredStories.length}
                   </span>
                 </div>
 
-                <Quote className="w-8 h-8 text-gray-200 mb-6" />
+                <Quote className="w-8 h-8 text-[#1d1d1f]/10 mb-6" />
 
-                <blockquote className="text-lg lg:text-xl text-[#22283a] leading-relaxed mb-10 font-light">
+                <blockquote className="text-lg lg:text-xl text-[#1d1d1f] leading-relaxed mb-10 font-light">
                   "{story.quote}"
                 </blockquote>
 
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-8 border-t border-gray-100">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-8 border-t border-[#f5f5f7]">
                   <div>
-                    <div className="font-semibold text-[#22283a]">{story.name}</div>
-                    <div className="flex items-center gap-1.5 text-gray-400 mt-1">
+                    <div className="font-semibold text-[#1d1d1f]">{story.name}</div>
+                    <div className="flex items-center gap-1.5 text-[#86868b] mt-1">
                       <MapPin className="w-3 h-3" />
                       <span className="text-xs">{story.location}</span>
                     </div>
@@ -207,7 +210,7 @@ export function ProgressPage() {
               <div className="flex items-center justify-between px-10 pb-8">
                 <button
                   onClick={prevStory}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#fafafa] hover:bg-gray-200 text-[#22283a] font-medium transition-all text-sm"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#f5f5f7] hover:bg-[#e8e8ed] text-[#1d1d1f] font-medium transition-all text-sm"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Previous
@@ -220,19 +223,19 @@ export function ProgressPage() {
                       onClick={() => setCurrentStory(idx)}
                       className={`w-1.5 h-1.5 rounded-full transition-all ${
                         idx === currentStory % filteredStories.length
-                          ? 'bg-[#22283a] w-5'
-                          : 'bg-gray-200 hover:bg-gray-300'
+                          ? 'bg-[#1d1d1f] w-5'
+                          : 'bg-[#1d1d1f]/15 hover:bg-[#1d1d1f]/30'
                       }`}
                     />
                   ))}
                   {filteredStories.length > 8 && (
-                    <span className="text-xs text-gray-300 ml-1">+{filteredStories.length - 8}</span>
+                    <span className="text-xs text-[#86868b] ml-1">+{filteredStories.length - 8}</span>
                   )}
                 </div>
 
                 <button
                   onClick={nextStory}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#22283a] hover:bg-[#1a1f2e] text-white font-medium transition-all text-sm"
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#1d1d1f] hover:bg-[#2d2d30] text-white font-medium transition-all text-sm"
                 >
                   Next
                   <ChevronRight className="w-4 h-4" />
@@ -243,18 +246,18 @@ export function ProgressPage() {
         </div>
       </section>
 
-      <section className="py-20 lg:py-28 bg-[#22283a] text-white">
+      <section className="py-24 lg:py-32 bg-[#1d1d1f] text-white">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="animate-on-scroll">
-            <h2 className="text-3xl lg:text-4xl font-semibold mb-6">Real-world validation, not hype</h2>
-            <p className="text-white/30 text-base mb-10 max-w-xl mx-auto font-light">
+            <h2 className="text-5xl lg:text-6xl font-semibold mb-6 leading-[1.05] tracking-tight">Real-world validation, not hype</h2>
+            <p className="text-white/40 text-base mb-10 max-w-xl mx-auto font-light">
               Every feature of DOZEY has been shaped by direct feedback from users who face
               this problem daily.
             </p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
               {['EIR at UC Davis', 'Hult Prize Winner', '5 Countries', '60+ Interviews'].map((badge) => (
                 <div key={badge} className="flex items-center gap-2 bg-white/5 rounded-full px-4 py-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-[#97bf2d]" />
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#8aab45]" />
                   <span className="text-sm text-white/40">{badge}</span>
                 </div>
               ))}

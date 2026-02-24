@@ -32,24 +32,24 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
   };
 
   return (
-    <nav className="bg-white/80 backdrop-blur-2xl border-b border-gray-100">
+    <nav className="bg-white border-b border-black/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <DozeyLogo className="h-11" />
+        <div className="flex items-center justify-between h-14">
+          <DozeyLogo className="h-10" />
 
           <div className="flex items-center gap-3">
             <LanguageSelector />
             {userName && (
               <div className="flex items-center gap-2.5">
-                <div className="w-7 h-7 rounded-full bg-[#22283a] text-white flex items-center justify-center text-xs font-medium">
+                <div className="w-7 h-7 rounded-full bg-[#1d1d1f] text-white flex items-center justify-center text-xs font-medium">
                   {userName.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-sm font-medium text-[#22283a] hidden sm:inline">{userName}</span>
+                <span className="text-sm font-medium text-[#1d1d1f] hidden sm:inline">{userName}</span>
               </div>
             )}
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-300 hover:text-red-500 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 text-sm text-[#86868b] hover:text-red-500 rounded-lg transition-colors"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Sign Out</span>
@@ -67,8 +67,8 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
                 onClick={() => onNavigate(item.id as any)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap transition-all text-sm ${
                   isActive
-                    ? 'bg-[#22283a] text-white font-medium'
-                    : 'text-gray-400 hover:bg-gray-50 hover:text-[#22283a] font-medium'
+                    ? 'bg-[#1d1d1f] text-white font-medium'
+                    : 'text-[#86868b] hover:bg-[#f5f5f7] hover:text-[#1d1d1f] font-medium'
                 }`}
               >
                 <Icon className="w-4 h-4" />

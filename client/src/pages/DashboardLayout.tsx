@@ -43,10 +43,10 @@ export function DashboardLayout() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#fafafa]">
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f5f7]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 border-gray-200 border-t-[#1051a5] rounded-full animate-spin" />
-          <p className="text-gray-400 text-sm">Loading your records...</p>
+          <div className="w-8 h-8 border-2 border-[#f5f5f7] border-t-[#4a7fb5] rounded-full animate-spin" />
+          <p className="text-[#86868b] text-sm">Loading your records...</p>
         </div>
       </div>
     );
@@ -139,13 +139,13 @@ export function DashboardLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
+    <div className="min-h-screen bg-[#f5f5f7]">
       <Navigation
         currentPage={currentPage}
         onNavigate={setCurrentPage}
         userName={userName}
       />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {renderPage()}
       </main>
       <DozeChat />

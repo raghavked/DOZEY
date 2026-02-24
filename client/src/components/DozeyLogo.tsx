@@ -5,17 +5,17 @@ interface DozeyLogoProps {
 }
 
 export function DozeyLogo({ className = 'h-10', variant = 'full', theme = 'light' }: DozeyLogoProps) {
-  const textColor = theme === 'dark' ? '#fefefe' : '#22283a';
-  const blue = '#1051a5';
-  const green = '#97bf2d';
-  const darkGreen = '#26844f';
+  const textColor = theme === 'dark' ? '#fbfbfd' : '#1d1d1f';
+  const blue = '#4a7fb5';
+  const green = '#8aab45';
+  const darkGreen = '#4d9068';
 
   const Mark = () => (
     <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0" style={{ height: '100%', width: 'auto' }}>
       <defs>
         <linearGradient id="shieldGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor={blue} />
-          <stop offset="100%" stopColor="#0d4290" />
+          <stop offset="100%" stopColor="#3a6a9e" />
         </linearGradient>
         <linearGradient id="accentGrad" x1="24" y1="36" x2="36" y2="48" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor={green} />
@@ -32,7 +32,7 @@ export function DozeyLogo({ className = 'h-10', variant = 'full', theme = 'light
         fill="none"
         stroke={blue}
         strokeWidth="1"
-        opacity="0.3"
+        opacity="0.2"
       />
       <rect x="21" y="14" width="6" height="18" rx="1.5" fill="white" opacity="0.95" />
       <rect x="15" y="20" width="18" height="6" rx="1.5" fill="white" opacity="0.95" />
@@ -50,10 +50,10 @@ export function DozeyLogo({ className = 'h-10', variant = 'full', theme = 'light
       <text
         x="0"
         y="28"
-        fontFamily="system-ui, -apple-system, 'Segoe UI', sans-serif"
+        fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif"
         fontSize="32"
-        fontWeight="800"
-        letterSpacing="1"
+        fontWeight="700"
+        letterSpacing="1.5"
         fill={textColor}
       >
         DOZEY
@@ -82,14 +82,14 @@ export function DozeyLogo({ className = 'h-10', variant = 'full', theme = 'light
       <Mark />
       <div className="flex flex-col justify-center leading-none">
         <span
-          className="font-extrabold tracking-wide"
-          style={{ color: textColor, fontSize: '1.6em', lineHeight: 1 }}
+          className="font-bold tracking-wide"
+          style={{ color: textColor, fontSize: '1.6em', lineHeight: 1, letterSpacing: '0.05em' }}
         >
           DOZEY
         </span>
         <span
-          className="tracking-widest uppercase font-medium"
-          style={{ color: green, fontSize: '0.5em', lineHeight: 1.8 }}
+          className="tracking-[0.2em] uppercase font-medium"
+          style={{ color: green, fontSize: '0.45em', lineHeight: 1.8 }}
         >
           Vaccine Records
         </span>

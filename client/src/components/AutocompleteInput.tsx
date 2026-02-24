@@ -110,7 +110,7 @@ export function AutocompleteInput({
   return (
     <div ref={containerRef} className={`relative ${className || ''}`}>
       {label && (
-        <label htmlFor={id} className="block text-gray-700 mb-2">
+        <label htmlFor={id} className="block text-[#1d1d1f] mb-2">
           {label}
           {required && ' *'}
         </label>
@@ -130,12 +130,12 @@ export function AutocompleteInput({
         placeholder={placeholder}
         required={required}
         autoComplete="off"
-        className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1051a5] focus:border-transparent outline-none"
+        className="w-full px-4 py-2 bg-[#f5f5f7] rounded-xl focus:ring-2 focus:ring-[#4a7fb5]/20 focus:border-transparent outline-none"
       />
       {isOpen && filtered.length > 0 && (
         <ul
           ref={listRef}
-          className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-y-auto"
+          className="absolute z-50 w-full mt-1 bg-white rounded-xl shadow-lg max-h-64 overflow-y-auto"
         >
           {filtered.map((item, index) => (
             <li
@@ -147,8 +147,8 @@ export function AutocompleteInput({
               onMouseEnter={() => setActiveIndex(index)}
               className={`px-4 py-2 cursor-pointer transition-colors ${
                 index === activeIndex
-                  ? 'bg-[#1051a5] text-white'
-                  : 'hover:bg-blue-50 text-gray-900'
+                  ? 'bg-[#4a7fb5] text-white'
+                  : 'hover:bg-[#f5f5f7] text-[#1d1d1f]'
               }`}
             >
               {item}

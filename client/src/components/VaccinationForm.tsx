@@ -50,7 +50,7 @@ export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full bg-[#1051a5] hover:bg-[#0d4185] text-white py-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg"
+        className="w-full bg-[#4a7fb5] hover:bg-[#3a6a9a] text-white py-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg"
       >
         <Plus className="w-5 h-5" />
         Add New Vaccination Record
@@ -148,7 +148,7 @@ export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
         <div className="flex gap-3 pt-4">
           <button
             type="submit"
-            className="flex-1 bg-[#1051a5] hover:bg-[#0d4185] text-white py-3 rounded-lg transition-colors"
+            className="flex-1 bg-[#4a7fb5] hover:bg-[#3a6a9a] text-white py-3 rounded-lg transition-colors"
           >
             Save Record
           </button>
