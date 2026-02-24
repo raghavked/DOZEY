@@ -7,15 +7,19 @@ import { users, profiles, vaccinations, documents, countryHistory, medicalExempt
 import { eq, and } from "drizzle-orm";
 import { processDocument, processDoctorNotesDocument } from "./ai-pipeline";
 import { lookupInstitutionRequirements, lookupEmployerRequirements, lookupCountryRequirements, checkCompliance, generateFormattedReport, type ComplianceLookupType } from "./compliance-engine";
+import { sanitizeString, sanitizeLongString, validateDate, validateId, validateDoseNumber, sanitizeProfileData } from "./validation";
+
+import crypto from "crypto";
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
     cb(null, path.resolve(__dirname, "../uploads"));
   },
   filename: (_req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, uniqueSuffix + ext);
+    const uniqueSuffix = crypto.randomBytes(16).toString("hex");
+    const ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, "");
+    const safeExt = [".pdf", ".jpg", ".jpeg", ".png", ".gif", ".webp", ".doc", ".docx"].includes(ext) ? ext : "";
+    cb(null, uniqueSuffix + safeExt);
   },
 });
 
@@ -70,7 +74,8 @@ export function registerRoutes(app: Express) {
   app.put("/api/auth/user", isAuthenticated, async (req, res) => {
     try {
       const authReq = req as AuthRequest;
-      const { firstName, lastName } = req.body;
+      const firstName = sanitizeString(req.body.firstName);
+      const lastName = sanitizeString(req.body.lastName);
       const [updated] = await db
         .update(users)
         .set({ firstName, lastName, updatedAt: new Date() })
@@ -97,7 +102,8 @@ export function registerRoutes(app: Express) {
   app.put("/api/profile", isAuthenticated, async (req, res) => {
     try {
       const userId = (req as AuthRequest).userId;
-      const data = { ...req.body, userId, updatedAt: new Date() };
+      const sanitized = sanitizeProfileData(req.body);
+      const data = { ...sanitized, userId, updatedAt: new Date() } as any;
       const [existing] = await db.select().from(profiles).where(eq(profiles.userId, userId));
       if (existing) {
         const [updated] = await db.update(profiles).set(data).where(eq(profiles.userId, userId)).returning();
@@ -126,7 +132,23 @@ export function registerRoutes(app: Express) {
   app.post("/api/vaccinations", isAuthenticated, async (req, res) => {
     try {
       const userId = (req as AuthRequest).userId;
-      const [record] = await db.insert(vaccinations).values({ ...req.body, userId }).returning();
+      const vaccineName = sanitizeString(req.body.vaccineName);
+      if (!vaccineName) {
+        return res.status(400).json({ message: "Vaccine name is required" });
+      }
+      const vaccData: any = {
+        userId,
+        vaccineName,
+        date: sanitizeString(req.body.date),
+        doseNumber: validateDoseNumber(req.body.doseNumber),
+        location: sanitizeString(req.body.location),
+        countryGiven: sanitizeString(req.body.countryGiven),
+        provider: sanitizeString(req.body.provider),
+        notes: sanitizeLongString(req.body.notes),
+        verified: req.body.verified === true,
+        documentId: sanitizeString(req.body.documentId),
+      };
+      const [record] = await db.insert(vaccinations).values(vaccData).returning();
       res.json(record);
     } catch (error) {
       console.error("Error creating vaccination:", error);
@@ -177,7 +199,9 @@ export function registerRoutes(app: Express) {
     try {
       const userId = (req as AuthRequest).userId;
       const file = req.file;
-      const { name, type, country } = req.body;
+      const name = sanitizeString(req.body.name) || "Untitled Document";
+      const type = sanitizeString(req.body.type);
+      const country = sanitizeString(req.body.country);
 
       const docData: any = { name, type, country, userId };
       if (file) {
@@ -205,7 +229,11 @@ export function registerRoutes(app: Express) {
         return res.status(404).json({ message: "File not found" });
       }
 
-      const filePath = path.resolve(__dirname, "../uploads", doc.filePath);
+      const uploadsDir = path.resolve(__dirname, "../uploads");
+      const filePath = path.resolve(uploadsDir, path.basename(doc.filePath));
+      if (!filePath.startsWith(uploadsDir)) {
+        return res.status(403).json({ message: "Access denied" });
+      }
       res.download(filePath, doc.fileName || doc.name);
     } catch (error) {
       console.error("Error downloading document:", error);
@@ -221,8 +249,9 @@ export function registerRoutes(app: Express) {
 
       if (doc?.filePath) {
         const fs = await import("fs");
-        const filePath = path.resolve(__dirname, "../uploads", doc.filePath);
-        if (fs.existsSync(filePath)) {
+        const uploadsBase = path.resolve(__dirname, "../uploads");
+        const filePath = path.resolve(uploadsBase, path.basename(doc.filePath));
+        if (filePath.startsWith(uploadsBase) && fs.existsSync(filePath)) {
           fs.unlinkSync(filePath);
         }
       }
@@ -249,7 +278,20 @@ export function registerRoutes(app: Express) {
   app.post("/api/country-history", isAuthenticated, async (req, res) => {
     try {
       const userId = (req as AuthRequest).userId;
-      const [period] = await db.insert(countryHistory).values({ ...req.body, userId }).returning();
+      const country = sanitizeString(req.body.country);
+      if (!country) {
+        return res.status(400).json({ message: "Country is required" });
+      }
+      const historyData: any = {
+        userId,
+        country,
+        state: sanitizeString(req.body.state),
+        startYear: typeof req.body.startYear === 'number' ? req.body.startYear : parseInt(req.body.startYear) || null,
+        endYear: req.body.endYear === 'Present' ? 'Present' : (typeof req.body.endYear === 'number' ? req.body.endYear : parseInt(req.body.endYear) || null),
+        startMonth: typeof req.body.startMonth === 'number' ? Math.min(12, Math.max(1, req.body.startMonth)) : null,
+        endMonth: typeof req.body.endMonth === 'number' ? Math.min(12, Math.max(1, req.body.endMonth)) : null,
+      };
+      const [period] = await db.insert(countryHistory).values(historyData).returning();
       res.json(period);
     } catch (error) {
       console.error("Error creating country period:", error);
@@ -273,11 +315,10 @@ export function registerRoutes(app: Express) {
     try {
       const userId = (req as AuthRequest).userId;
       const id = parseInt(req.params.id as string);
-      const { name, type, country } = req.body;
       const updates: Record<string, any> = {};
-      if (name !== undefined) updates.name = name;
-      if (type !== undefined) updates.type = type;
-      if (country !== undefined) updates.country = country;
+      if (req.body.name !== undefined) updates.name = sanitizeString(req.body.name);
+      if (req.body.type !== undefined) updates.type = sanitizeString(req.body.type);
+      if (req.body.country !== undefined) updates.country = sanitizeString(req.body.country);
 
       const [updated] = await db
         .update(documents)
