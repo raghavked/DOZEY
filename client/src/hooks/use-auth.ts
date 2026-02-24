@@ -82,7 +82,13 @@ export function useAuth() {
 
   const signUp = useCallback(async (email: string, password: string) => {
     const sb = await getSupabase();
-    const { data, error } = await sb.auth.signUp({ email, password });
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: "https://dozeyrecords.com/login",
+      },
+    });
     if (error) throw error;
     return data;
   }, []);
