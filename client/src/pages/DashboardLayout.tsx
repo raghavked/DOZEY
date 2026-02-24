@@ -102,6 +102,7 @@ export function DashboardLayout() {
             onAddVaccination={(v) => addVaccination(v)}
             onRefresh={() => { refreshAll(); refreshExemptions(); }}
             exemptions={exemptions}
+            vaccinations={vaccinations}
           />
         );
       case 'timeline':

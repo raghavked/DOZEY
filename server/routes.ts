@@ -315,10 +315,40 @@ export function registerRoutes(app: Express) {
           .where(eq(documents.id, id))
           .returning();
 
+        let autoImported = 0;
+        const existingFromDoc = await db
+          .select()
+          .from(vaccinations)
+          .where(and(eq(vaccinations.userId, userId), eq(vaccinations.documentId, String(id))));
+
+        if (existingFromDoc.length === 0) {
+          const parsedVaccs = result.parsedData?.vaccinations || [];
+          for (const v of parsedVaccs) {
+            try {
+              await db.insert(vaccinations).values({
+                userId,
+                vaccineName: v.vaccine_name || "Unknown Vaccine",
+                date: v.date || new Date().toISOString().split("T")[0],
+                doseNumber: v.dose_number || 1,
+                location: v.location || null,
+                countryGiven: v.country_given || doc.country || null,
+                provider: v.provider || null,
+                notes: v.notes || null,
+                verified: false,
+                documentId: String(id),
+              });
+              autoImported++;
+            } catch (insertErr) {
+              console.error("Failed to auto-import vaccination:", insertErr);
+            }
+          }
+        }
+
         res.json({
           success: true,
           document: updated,
           parsedData: result.parsedData,
+          autoImported,
         });
       } catch (processingError: any) {
         await db
@@ -348,6 +378,15 @@ export function registerRoutes(app: Express) {
 
       if (!doc || !doc.parsedData) {
         return res.status(400).json({ message: "Document has no parsed data" });
+      }
+
+      const existingFromDoc = await db
+        .select()
+        .from(vaccinations)
+        .where(and(eq(vaccinations.userId, userId), eq(vaccinations.documentId, String(id))));
+
+      if (existingFromDoc.length > 0) {
+        return res.json({ success: true, imported: 0, alreadyImported: existingFromDoc.length, message: "Vaccinations from this document were already imported automatically." });
       }
 
       let parsed: any;
@@ -414,7 +453,66 @@ export function registerRoutes(app: Express) {
         processingStatus: "completed",
       }).where(eq(documents.id, id));
 
-      res.json({ success: true, parsedData: result.parsedData });
+      let autoImportedVacc = 0;
+      let autoImportedExempt = 0;
+
+      const existingVaccs = await db
+        .select()
+        .from(vaccinations)
+        .where(and(eq(vaccinations.userId, userId), eq(vaccinations.documentId, String(id))));
+
+      if (existingVaccs.length === 0) {
+        const parsedVaccs = result.parsedData?.vaccinations || [];
+        for (const v of parsedVaccs) {
+          try {
+            await db.insert(vaccinations).values({
+              userId,
+              vaccineName: v.vaccine_name || "Unknown Vaccine",
+              date: v.date || new Date().toISOString().split("T")[0],
+              doseNumber: v.dose_number || 1,
+              location: v.location || null,
+              countryGiven: v.country_given || doc.country || null,
+              provider: v.provider || null,
+              notes: v.notes || null,
+              verified: false,
+              documentId: String(id),
+            });
+            autoImportedVacc++;
+          } catch (insertErr) {
+            console.error("Failed to auto-import vaccination:", insertErr);
+          }
+        }
+      }
+
+      const existingExempts = await db
+        .select()
+        .from(medicalExemptions)
+        .where(and(eq(medicalExemptions.userId, userId), eq(medicalExemptions.documentId, id)));
+
+      if (existingExempts.length === 0) {
+        const parsedExemptions = result.parsedData?.exemptions || [];
+        for (const ex of parsedExemptions) {
+          try {
+            await db.insert(medicalExemptions).values({
+              userId,
+              vaccineName: ex.vaccine_name || "Unknown",
+              exemptionType: ex.exemption_type || "other",
+              reason: ex.reason || "Documented in medical records",
+              doctorName: ex.doctor_name || null,
+              doctorLicense: ex.doctor_license || null,
+              documentDate: ex.document_date || null,
+              documentId: id,
+              notes: ex.notes || null,
+              verified: false,
+            });
+            autoImportedExempt++;
+          } catch (insertErr) {
+            console.error("Failed to auto-import exemption:", insertErr);
+          }
+        }
+      }
+
+      res.json({ success: true, parsedData: result.parsedData, autoImportedVacc, autoImportedExempt });
     } catch (error: any) {
       const id = parseInt(req.params.id as string);
       await db.update(documents).set({ processingStatus: "error" }).where(eq(documents.id, id));

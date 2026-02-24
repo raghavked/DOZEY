@@ -14,6 +14,7 @@ interface DocumentUploadProps {
   onAddVaccination: (vaccination: Omit<VaccinationRecord, 'id'>) => void;
   onRefresh?: () => void;
   exemptions?: MedicalExemption[];
+  vaccinations?: VaccinationRecord[];
 }
 
 function ProcessingStatusBadge({ status }: { status: string | null | undefined }) {
@@ -33,7 +34,7 @@ function ProcessingStatusBadge({ status }: { status: string | null | undefined }
   );
 }
 
-export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddVaccination, onRefresh, exemptions = [] }: DocumentUploadProps) {
+export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddVaccination, onRefresh, exemptions = [], vaccinations = [] }: DocumentUploadProps) {
   const [dragActive, setDragActive] = useState(false);
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -129,8 +130,13 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
         throw new Error(err.message || 'Processing failed');
       }
 
+      const data = await res.json();
       setExpandedDoc(docId);
       onRefresh?.();
+
+      if (data.autoImported && data.autoImported > 0) {
+        alert(`Document processed! ${data.autoImported} vaccination${data.autoImported !== 1 ? 's' : ''} automatically added to your timeline.`);
+      }
     } catch (err: any) {
       setProcessError(err.message || 'Failed to process document');
     } finally {
@@ -157,7 +163,11 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
       }
 
       const data = await res.json();
-      alert(`Successfully imported ${data.imported} vaccination record${data.imported !== 1 ? 's' : ''}!`);
+      if (data.alreadyImported) {
+        alert(`These vaccinations were already imported automatically (${data.alreadyImported} record${data.alreadyImported !== 1 ? 's' : ''}).`);
+      } else {
+        alert(`Successfully imported ${data.imported} vaccination record${data.imported !== 1 ? 's' : ''}!`);
+      }
       onRefresh?.();
     } catch (err: any) {
       alert(err.message || 'Failed to import vaccinations');
@@ -185,8 +195,16 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
         throw new Error(err.message || 'Processing failed');
       }
 
+      const data = await res.json();
       setExpandedDoc(docId);
       onRefresh?.();
+
+      const parts: string[] = [];
+      if (data.autoImportedVacc > 0) parts.push(`${data.autoImportedVacc} vaccination${data.autoImportedVacc !== 1 ? 's' : ''}`);
+      if (data.autoImportedExempt > 0) parts.push(`${data.autoImportedExempt} exemption${data.autoImportedExempt !== 1 ? 's' : ''}`);
+      if (parts.length > 0) {
+        alert(`Document processed! ${parts.join(' and ')} automatically imported.`);
+      }
     } catch (err: any) {
       setProcessError(err.message || 'Failed to process doctor notes');
     } finally {
@@ -583,22 +601,31 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                         </div>
                       )}
 
-                      {parsed.vaccinations && parsed.vaccinations.length > 0 && (
+                      {parsed.vaccinations && parsed.vaccinations.length > 0 && (() => {
+                        const alreadyImported = vaccinations.some(v => v.documentId === doc.id);
+                        return (
                         <div>
                           <div className="flex items-center justify-between mb-3">
                             <h5 className="text-xs font-semibold text-[#1d1d1f] uppercase">Extracted Vaccinations</h5>
-                            <button
-                              onClick={() => handleImportVaccinations(doc.id)}
-                              disabled={isImporting}
-                              className="flex items-center gap-1 px-3 py-1.5 bg-[#4d9068] hover:bg-[#3d7a58] text-white text-xs font-medium rounded-full transition-colors disabled:opacity-50"
-                            >
-                              {isImporting ? (
-                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                              ) : (
-                                <Import className="w-3.5 h-3.5" />
-                              )}
-                              {isImporting ? 'Importing...' : 'Import All to Timeline'}
-                            </button>
+                            {alreadyImported ? (
+                              <span className="flex items-center gap-1 px-3 py-1.5 bg-[#4d9068]/10 text-[#4d9068] text-xs font-medium rounded-full">
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                Imported to Timeline
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => handleImportVaccinations(doc.id)}
+                                disabled={isImporting}
+                                className="flex items-center gap-1 px-3 py-1.5 bg-[#4d9068] hover:bg-[#3d7a58] text-white text-xs font-medium rounded-full transition-colors disabled:opacity-50"
+                              >
+                                {isImporting ? (
+                                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                ) : (
+                                  <Import className="w-3.5 h-3.5" />
+                                )}
+                                {isImporting ? 'Importing...' : 'Import All to Timeline'}
+                              </button>
+                            )}
                           </div>
                           <div className="space-y-2">
                             {parsed.vaccinations.map((v, i) => (
@@ -620,7 +647,8 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                             ))}
                           </div>
                         </div>
-                      )}
+                        );
+                      })()}
 
                       {(parsed as any).exemptions && (parsed as any).exemptions.length > 0 && (
                         <div>
