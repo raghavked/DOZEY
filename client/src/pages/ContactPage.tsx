@@ -136,17 +136,15 @@ export function ContactPage() {
 
               <div className="bg-[#f5f5f7] rounded-2xl p-8 text-[#1d1d1f] mt-6">
                 <Syringe className="w-5 h-5 text-[#8aab45] mb-4" />
-                <h3 className="text-base font-semibold mb-2">Join the Waitlist</h3>
+                <h3 className="text-base font-semibold mb-2">Get Started Today</h3>
                 <p className="text-[#86868b] mb-6 text-sm leading-relaxed font-light">
                   Be among the first to experience DOZEY's secure vaccination record management platform.
                 </p>
                 <a
-                  href="https://forms.gle/Tr7WLVfQR6W3PeXb6"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/register"
                   className="inline-flex items-center gap-2 bg-[#4a7fb5] text-white font-semibold px-6 py-3 rounded-full hover:bg-[#3d6a9e] transition-all text-sm"
                 >
-                  Join Now
+                  Create Your Free Account
                   <ArrowRight className="w-4 h-4" />
                 </a>
               </div>
