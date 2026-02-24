@@ -78,12 +78,11 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
   const handleFiles = async (files: FileList) => {
     setUploading(true);
     for (const file of Array.from(files)) {
-      const country = prompt('Which country is this document from?') || 'Unknown';
       const formData = new FormData();
       formData.append('file', file);
       formData.append('name', file.name);
       formData.append('type', file.type.includes('pdf') ? 'pdf' : file.type.startsWith('image/') ? 'image' : 'document');
-      formData.append('country', country);
+      formData.append('country', 'Detecting...');
       onUpload(formData);
     }
     setUploading(false);
@@ -561,7 +560,12 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                           <h4 className="font-semibold text-[#1d1d1f] truncate">{doc.name}</h4>
                         )}
                         <div className="flex items-center gap-2 mt-1 flex-wrap">
-                          <p className="text-[#86868b] text-sm">From: {doc.country}</p>
+                          {doc.country && doc.country !== 'Detecting...' && (
+                            <p className="text-[#86868b] text-sm">From: {doc.country}</p>
+                          )}
+                          {doc.country === 'Detecting...' && (
+                            <p className="text-[#86868b] text-sm italic">Country: auto-detected after processing</p>
+                          )}
                           {doc.fileSize && (
                             <span className="text-[#86868b] text-xs">({formatFileSize(doc.fileSize)})</span>
                           )}

@@ -84,9 +84,11 @@ function safeParseJSON(content: string): any {
   } catch (e) {
     const vaccMatch = cleaned.match(/"vaccinations"\s*:\s*\[[\s\S]*?\]/);
     const summaryMatch = cleaned.match(/"summary"\s*:\s*"([^"]*)"/);
+    const originMatch = cleaned.match(/"document_origin"\s*:\s*\{[^}]*\}/);
     if (vaccMatch) {
       try {
-        const partialJson = `{${vaccMatch[0]}, "patient_info": null, "document_type": "other", "summary": "${summaryMatch ? summaryMatch[1] : 'Partially parsed document'}"}`;
+        const originPart = originMatch ? `, ${originMatch[0]}` : ', "document_origin": null';
+        const partialJson = `{${vaccMatch[0]}, "patient_info": null${originPart}, "document_type": "other", "summary": "${summaryMatch ? summaryMatch[1] : 'Partially parsed document'}"}`;
         return JSON.parse(partialJson);
       } catch {
         // fall through
@@ -121,22 +123,28 @@ Return a JSON object with this exact structure:
     "date_of_birth": "YYYY-MM-DD ONLY if explicitly written. null otherwise.",
     "id_number": "Patient ID ONLY if explicitly written. null otherwise."
   },
+  "document_origin": {
+    "country": "The country this document originates from. Determine from explicit mentions, or infer from: clinic/hospital addresses, healthcare system identifiers (e.g. NHS = UK, SUS = Brazil, UIDAI/Aadhaar = India, Medicare = Australia), provider names, government logos/stamps, phone number formats, vaccine brand names (e.g. Covishield/Covaxin = India, Sinovac = China/Brazil), document language, and formatting conventions. Use your best judgment. null only if absolutely no clues exist.",
+    "confidence": "high | medium | low",
+    "evidence": "Brief explanation of how the country was determined (e.g. 'Document written in Portuguese with Brazilian health ministry stamp', 'Clinic address mentions Mumbai, India')"
+  },
   "document_type": "vaccination_card | immunization_record | medical_certificate | lab_result | other",
   "summary": "Brief 1-2 sentence summary of what data was actually found in the document"
 }
 
 CRITICAL RULES:
-- ONLY extract data that is explicitly written in the document text
-- If a field value is not clearly present, you MUST set it to null — NEVER fabricate, guess, or assume
-- Do NOT invent dates, providers, countries, dose numbers, or any other field
+- ONLY extract vaccination data that is explicitly written in the document text
+- If a vaccination field value is not clearly present, you MUST set it to null — NEVER fabricate, guess, or assume
+- Do NOT invent dates, providers, dose numbers, or any other vaccination field
 - For dose_number: only include if explicitly stated (e.g., "Dose 2", "2nd dose"). Use null if not mentioned.
-- For country_given: only include if the country is explicitly mentioned. Do NOT infer from language or other clues.
+- For country_given: include if the country is explicitly mentioned per vaccination record. If not explicitly stated per record but the document_origin country is determined, you may use that as the country_given for individual vaccination entries.
 - For provider: only include if the healthcare provider name is explicitly written.
 - For date: only include if a specific date is written. Do NOT use today's date or approximate.
 - Set confidence to "high" if the vaccine name and date are both clear, "medium" if one is unclear, "low" if the record is very uncertain
 - Include "missing_fields" array listing which important fields (date, dose_number, provider, country_given) were NOT found
 - If no vaccination data is found at all, return empty vaccinations array with a summary of what the document actually contains
-- Include lot/batch numbers in notes if present`;
+- Include lot/batch numbers in notes if present
+- For document_origin: USE ALL available clues (language, addresses, provider names, vaccine brands, government identifiers, formatting) to determine the country. This is an inference — you ARE allowed to reason about where the document is from.`;
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
@@ -209,6 +217,11 @@ Return a JSON object with this exact structure:
     "full_name": "Patient name if found",
     "date_of_birth": "YYYY-MM-DD if found",
     "id_number": "Any patient ID if found"
+  },
+  "document_origin": {
+    "country": "The country this document originates from. Determine from explicit mentions, or infer from: clinic/hospital addresses, healthcare system identifiers (NHS = UK, SUS = Brazil, Medicare = Australia), provider names, government stamps, phone number formats, vaccine brand names, document language, and formatting conventions. null only if absolutely no clues exist.",
+    "confidence": "high | medium | low",
+    "evidence": "Brief explanation of how the country was determined"
   },
   "document_type": "doctor_note | medical_letter | lab_result | titer_report | exemption_form | clinical_record | other",
   "summary": "Brief 2-3 sentence summary of the document, noting key exemptions/immunity evidence found"

@@ -319,15 +319,21 @@ export function registerRoutes(app: Express) {
       try {
         const result = await processDocument(doc.filePath, doc.mimeType || "application/pdf");
 
+        const detectedCountry = result.parsedData?.document_origin?.country || null;
+        const updateData: Record<string, any> = {
+          extractedText: result.extractedText,
+          translatedText: result.translatedText,
+          originalLanguage: result.originalLanguage,
+          parsedData: JSON.stringify(result.parsedData),
+          processingStatus: "completed",
+        };
+        if (detectedCountry) {
+          updateData.country = detectedCountry;
+        }
+
         const [updated] = await db
           .update(documents)
-          .set({
-            extractedText: result.extractedText,
-            translatedText: result.translatedText,
-            originalLanguage: result.originalLanguage,
-            parsedData: JSON.stringify(result.parsedData),
-            processingStatus: "completed",
-          })
+          .set(updateData)
           .where(eq(documents.id, id))
           .returning();
 
@@ -513,13 +519,18 @@ export function registerRoutes(app: Express) {
 
       const result = await processDoctorNotesDocument(doc.filePath, doc.mimeType || "application/pdf");
 
-      await db.update(documents).set({
+      const detectedCountryDN = result.parsedData?.document_origin?.country || null;
+      const dnUpdateData: Record<string, any> = {
         extractedText: result.extractedText,
         translatedText: result.translatedText,
         originalLanguage: result.originalLanguage,
         parsedData: JSON.stringify(result.parsedData),
         processingStatus: "completed",
-      }).where(eq(documents.id, id));
+      };
+      if (detectedCountryDN) {
+        dnUpdateData.country = detectedCountryDN;
+      }
+      await db.update(documents).set(dnUpdateData).where(eq(documents.id, id));
 
       let autoImportedVacc = 0;
       let autoImportedExempt = 0;
