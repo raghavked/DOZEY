@@ -350,7 +350,13 @@ export function registerRoutes(app: Express) {
         return res.status(400).json({ message: "Document has no parsed data" });
       }
 
-      const parsed = JSON.parse(doc.parsedData);
+      let parsed: any;
+      try {
+        parsed = typeof doc.parsedData === 'object' ? doc.parsedData : JSON.parse(doc.parsedData);
+      } catch (parseErr: any) {
+        console.error("Failed to parse stored document data:", parseErr.message);
+        return res.status(400).json({ message: "Document data is corrupted. Please re-process the document." });
+      }
       const vaccs = parsed.vaccinations || [];
 
       if (vaccs.length === 0) {

@@ -163,7 +163,7 @@ export function Alerts({ vaccinations, countryHistory, profile }: AlertsProps) {
 
         {alerts.length === 0 ? (
           <div className="text-center py-12">
-            <CheckCircle className="w-16 h-16 text-gray-200 mx-auto mb-4" />
+            <CheckCircle className="w-16 h-16 text-[#1d1d1f]/10 mx-auto mb-4" />
             <h3 className="text-[#1d1d1f] font-semibold mb-2">All Clear!</h3>
             <p className="text-[#86868b]">
               No alerts at this time. Your records look good.

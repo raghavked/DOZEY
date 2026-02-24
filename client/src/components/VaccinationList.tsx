@@ -10,10 +10,10 @@ interface VaccinationListProps {
 export function VaccinationList({ vaccinations, onDelete }: VaccinationListProps) {
   if (vaccinations.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-lg p-12 text-center">
-        <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-        <h3 className="text-gray-500 mb-2">No vaccination records yet</h3>
-        <p className="text-gray-400">
+      <div className="bg-white rounded-2xl p-12 text-center">
+        <FileText className="w-16 h-16 text-[#1d1d1f]/10 mx-auto mb-4" />
+        <h3 className="text-[#1d1d1f] mb-2">No vaccination records yet</h3>
+        <p className="text-[#86868b]">
           Add your first vaccination record to get started
         </p>
       </div>
@@ -23,8 +23,8 @@ export function VaccinationList({ vaccinations, onDelete }: VaccinationListProps
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-gray-700">Your Vaccination Records</h2>
-        <span className="bg-indigo-100 text-indigo-700 px-4 py-1 rounded-full">
+        <h2 className="text-[#1d1d1f]">Your Vaccination Records</h2>
+        <span className="bg-[#4a7fb5]/10 text-[#4a7fb5] px-4 py-1 rounded-full text-sm font-medium">
           {vaccinations.length} {vaccinations.length === 1 ? 'record' : 'records'}
         </span>
       </div>

@@ -296,7 +296,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
           />
           <label htmlFor="file-upload" className="cursor-pointer">
             <div className="flex flex-col items-center">
-              <Upload className="w-16 h-16 text-gray-300 mb-4" />
+              <Upload className="w-16 h-16 text-[#1d1d1f]/10 mb-4" />
               {uploading ? (
                 <p className="text-[#4a7fb5] mb-2 font-medium">Uploading...</p>
               ) : (
@@ -464,7 +464,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                             </button>
                             <button
                               onClick={() => setEditingId(null)}
-                              className="text-[#86868b] hover:text-gray-600"
+                              className="text-[#86868b] hover:text-[#1d1d1f]"
                             >
                               <X className="w-4 h-4" />
                             </button>

@@ -67,6 +67,35 @@ export async function detectAndTranslateText(text: string): Promise<{ translated
   return { translatedText: translated, detectedLanguage: detected };
 }
 
+function safeParseJSON(content: string): any {
+  let cleaned = content.trim();
+  if (cleaned.startsWith("```json")) {
+    cleaned = cleaned.slice(7);
+  } else if (cleaned.startsWith("```")) {
+    cleaned = cleaned.slice(3);
+  }
+  if (cleaned.endsWith("```")) {
+    cleaned = cleaned.slice(0, -3);
+  }
+  cleaned = cleaned.trim();
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (e) {
+    const vaccMatch = cleaned.match(/"vaccinations"\s*:\s*\[[\s\S]*?\]/);
+    const summaryMatch = cleaned.match(/"summary"\s*:\s*"([^"]*)"/);
+    if (vaccMatch) {
+      try {
+        const partialJson = `{${vaccMatch[0]}, "patient_info": null, "document_type": "other", "summary": "${summaryMatch ? summaryMatch[1] : 'Partially parsed document'}"}`;
+        return JSON.parse(partialJson);
+      } catch {
+        // fall through
+      }
+    }
+    throw new Error(`Failed to parse AI response as JSON: ${(e as Error).message}. Response preview: ${cleaned.substring(0, 200)}...`);
+  }
+}
+
 export async function parseVaccinationData(text: string): Promise<any> {
   const openai = getOpenAIClient();
 
@@ -108,7 +137,7 @@ Rules:
       { role: "system", content: systemPrompt },
       { role: "user", content: `Parse the following medical document text and extract vaccination records:\n\n${text}` },
     ],
-    max_tokens: 2000,
+    max_tokens: 4096,
     temperature: 0.1,
     response_format: { type: "json_object" },
   });
@@ -118,7 +147,7 @@ Rules:
     throw new Error("No response from parsing model");
   }
 
-  return JSON.parse(content);
+  return safeParseJSON(content);
 }
 
 export async function parseDoctorNotes(text: string): Promise<any> {
@@ -193,14 +222,14 @@ Rules:
       { role: "system", content: systemPrompt },
       { role: "user", content: `Parse the following doctor's note/medical document (may be from handwriting OCR) and extract all vaccination records AND medical exemptions/immunity evidence:\n\n${text}` },
     ],
-    max_tokens: 3000,
+    max_tokens: 4096,
     temperature: 0.1,
     response_format: { type: "json_object" },
   });
 
   const content = completion.choices[0]?.message?.content;
   if (!content) throw new Error("No response from parsing model");
-  return JSON.parse(content);
+  return safeParseJSON(content);
 }
 
 export async function processDoctorNotesDocument(filePath: string, mimeType: string): Promise<{

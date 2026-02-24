@@ -1,10 +1,63 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { VaccinationRecord, UserProfile, ComplianceResult } from '@/types';
 import { Search, Target, CheckCircle2, AlertCircle, XCircle, Download, Loader2, Building2, MapPin, FileText, ClipboardList, Info, GraduationCap, Briefcase, Globe } from 'lucide-react';
 import { getSupabase } from '@/lib/supabase';
 import { Progress } from './ui/progress';
+import { INSTITUTIONS, EMPLOYERS, COUNTRIES } from '@/lib/autocomplete-data';
 
 type LookupType = 'institution' | 'employer' | 'country';
+
+function ComplianceSearchInput({ value, onChange, placeholder, suggestions }: { value: string; onChange: (v: string) => void; placeholder: string; suggestions: string[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const listRef = useRef<HTMLUListElement>(null);
+  const blurTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const filtered = value
+    ? suggestions.filter(s => s.toLowerCase().includes(value.toLowerCase())).slice(0, 8)
+    : suggestions.slice(0, 8);
+
+  useEffect(() => {
+    if (activeIndex >= 0 && listRef.current) {
+      const el = listRef.current.children[activeIndex] as HTMLElement;
+      el?.scrollIntoView({ block: 'nearest' });
+    }
+  }, [activeIndex]);
+
+  useEffect(() => () => { if (blurTimeout.current) clearTimeout(blurTimeout.current); }, []);
+
+  return (
+    <div className="relative flex-1">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b] z-10" />
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => { onChange(e.target.value); setIsOpen(true); setActiveIndex(-1); }}
+        onFocus={() => { if (blurTimeout.current) clearTimeout(blurTimeout.current); setIsOpen(true); setActiveIndex(-1); }}
+        onBlur={() => { blurTimeout.current = setTimeout(() => { setIsOpen(false); setActiveIndex(-1); }, 200); }}
+        onKeyDown={(e) => {
+          if (!isOpen || filtered.length === 0) { if (e.key === 'ArrowDown') { setIsOpen(true); setActiveIndex(0); e.preventDefault(); } return; }
+          if (e.key === 'ArrowDown') { e.preventDefault(); setActiveIndex(p => p < filtered.length - 1 ? p + 1 : 0); }
+          else if (e.key === 'ArrowUp') { e.preventDefault(); setActiveIndex(p => p > 0 ? p - 1 : filtered.length - 1); }
+          else if (e.key === 'Enter' && activeIndex >= 0) { e.preventDefault(); onChange(filtered[activeIndex]); setIsOpen(false); }
+          else if (e.key === 'Escape') { setIsOpen(false); setActiveIndex(-1); }
+        }}
+        placeholder={placeholder}
+        autoComplete="off"
+        className="w-full pl-11 pr-4 py-3 bg-[#f5f5f7] border-0 rounded-xl focus:ring-2 focus:ring-[#4a7fb5] focus:border-transparent outline-none"
+      />
+      {isOpen && filtered.length > 0 && (
+        <ul ref={listRef} className="absolute z-50 w-full mt-1 bg-white rounded-xl shadow-lg max-h-64 overflow-y-auto">
+          {filtered.map((item, i) => (
+            <li key={item} onMouseDown={(e) => { e.preventDefault(); onChange(item); setIsOpen(false); }} onMouseEnter={() => setActiveIndex(i)}
+              className={`px-4 py-2.5 cursor-pointer transition-colors text-sm ${i === activeIndex ? 'bg-[#4a7fb5] text-white' : 'hover:bg-[#f5f5f7] text-[#1d1d1f]'}`}
+            >{item}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 interface ComplianceReportProps {
   vaccinations: VaccinationRecord[];
@@ -241,16 +294,12 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
 
         <form onSubmit={handleSearch}>
           <div className="flex gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#86868b]" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={activeTab.placeholder}
-                className="w-full pl-11 pr-4 py-3 bg-[#f5f5f7] border-0 rounded-xl focus:ring-2 focus:ring-[#4a7fb5] focus:border-transparent outline-none"
-              />
-            </div>
+            <ComplianceSearchInput
+              value={searchQuery}
+              onChange={setSearchQuery}
+              placeholder={activeTab.placeholder}
+              suggestions={lookupType === 'institution' ? INSTITUTIONS : lookupType === 'employer' ? EMPLOYERS : COUNTRIES}
+            />
             <button
               type="submit"
               disabled={loading || !searchQuery.trim()}
@@ -281,7 +330,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                 <button
                   key={item}
                   onClick={() => setSearchQuery(item)}
-                  className="px-3 py-1.5 bg-[#f5f5f7] hover:bg-[#4a7fb5] hover:text-white text-gray-700 text-sm rounded-full transition-colors"
+                  className="px-3 py-1.5 bg-[#f5f5f7] hover:bg-[#4a7fb5] hover:text-white text-[#1d1d1f] text-sm rounded-full transition-colors"
                 >
                   {item}
                 </button>
@@ -362,7 +411,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                     <div className="flex items-center gap-3">
                       {statusIcon(item.status)}
                       <div>
-                        <h4 className="text-gray-900 font-medium">{item.vaccine_name}</h4>
+                        <h4 className="text-[#1d1d1f] font-medium">{item.vaccine_name}</h4>
                         <p className="text-sm text-[#86868b]">
                           {item.completed_doses} of {item.required_doses} dose{item.required_doses !== 1 ? 's' : ''} completed
                         </p>
@@ -405,7 +454,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
               </div>
               <ul className="space-y-2">
                 {result.institution.additional_requirements.map((req, idx) => (
-                  <li key={idx} className="flex items-start gap-2 text-gray-700">
+                  <li key={idx} className="flex items-start gap-2 text-[#1d1d1f]">
                     <span className="text-[#8aab45] mt-0.5">•</span>
                     {req}
                   </li>
@@ -423,7 +472,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
             {result.institution.submission_instructions && (
               <div className="mb-4">
                 <h4 className="text-xs text-[#86868b] font-medium uppercase mb-2">How to Submit</h4>
-                <p className="text-gray-700">{result.institution.submission_instructions}</p>
+                <p className="text-[#1d1d1f]">{result.institution.submission_instructions}</p>
               </div>
             )}
 
@@ -432,7 +481,7 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
                 <h4 className="text-xs text-[#86868b] font-medium uppercase mb-2">Forms Needed</h4>
                 <ul className="space-y-1">
                   {result.institution.forms_needed.map((form, idx) => (
-                    <li key={idx} className="text-gray-700 flex items-center gap-2">
+                    <li key={idx} className="text-[#1d1d1f] flex items-center gap-2">
                       <FileText className="w-4 h-4 text-[#86868b]" />
                       {form}
                     </li>
@@ -444,13 +493,13 @@ export function ComplianceReport({ vaccinations, profile }: ComplianceReportProp
             {result.institution.contact_info && (
               <div className="mb-4">
                 <h4 className="text-xs text-[#86868b] font-medium uppercase mb-2">Contact</h4>
-                <p className="text-gray-700">{result.institution.contact_info}</p>
+                <p className="text-[#1d1d1f]">{result.institution.contact_info}</p>
               </div>
             )}
 
             {result.institution.source_notes && (
               <div className="bg-[#f5f5f7] border-0 rounded-2xl p-3 mt-4">
-                <p className="text-sm text-gray-600">{result.institution.source_notes}</p>
+                <p className="text-sm text-[#86868b]">{result.institution.source_notes}</p>
               </div>
             )}
           </div>

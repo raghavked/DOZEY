@@ -256,7 +256,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
 
         {shareMethod === 'card' && (
           <div className="bg-[#f5f5f7] p-6 rounded-2xl">
-            <h3 className="text-gray-900 font-semibold mb-4">Vaccine Card Export</h3>
+            <h3 className="text-[#1d1d1f] font-semibold mb-4">Vaccine Card Export</h3>
             <p className="text-[#86868b] mb-6 text-sm">
               Download your vaccination records in a compact card format similar to COVID-19 vaccine cards.
               Lists each vaccine with dose numbers, dates, providers, and locations.
@@ -303,7 +303,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
 
         {shareMethod === 'link' && (
           <div className="bg-[#f5f5f7] p-6 rounded-2xl">
-            <h3 className="text-gray-900 font-semibold mb-4">Generate Secure Link</h3>
+            <h3 className="text-[#1d1d1f] font-semibold mb-4">Generate Secure Link</h3>
             
             <div className="space-y-4 mb-6">
               <CustomSelect
@@ -361,11 +361,11 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
 
         {shareMethod === 'email' && (
           <div className="bg-[#f5f5f7] p-6 rounded-2xl">
-            <h3 className="text-gray-900 font-semibold mb-4">Send via Email</h3>
+            <h3 className="text-[#1d1d1f] font-semibold mb-4">Send via Email</h3>
             
             <div className="space-y-4">
               <div>
-                <label htmlFor="recipientEmail" className="block text-gray-700 mb-2">
+                <label htmlFor="recipientEmail" className="block text-[#1d1d1f] mb-2">
                   Recipient Email *
                 </label>
                 <input
@@ -379,7 +379,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
               </div>
 
               <div>
-                <label htmlFor="emailMessage" className="block text-gray-700 mb-2">
+                <label htmlFor="emailMessage" className="block text-[#1d1d1f] mb-2">
                   Message (Optional)
                 </label>
                 <textarea
@@ -395,7 +395,7 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
               <button
                 onClick={handleSendEmail}
                 disabled={!email}
-                className="w-full bg-[#8aab45] hover:bg-[#6d8a35] disabled:bg-gray-300 disabled:cursor-not-allowed text-white py-3 rounded-full transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-[#8aab45] hover:bg-[#6d8a35] disabled:bg-[#f5f5f7] disabled:text-[#86868b] disabled:cursor-not-allowed text-white py-3 rounded-full transition-colors flex items-center justify-center gap-2"
               >
                 <Mail className="w-5 h-5" />
                 Send Email
@@ -406,10 +406,10 @@ export function ShareRecords({ vaccinations, profile, countryHistory }: ShareRec
 
         {shareMethod === 'pdf' && (
           <div className="bg-[#f5f5f7] p-6 rounded-2xl">
-            <h3 className="text-gray-900 font-semibold mb-4">Download Full Summary</h3>
+            <h3 className="text-[#1d1d1f] font-semibold mb-4">Download Full Summary</h3>
             
             <div className="bg-white p-6 rounded-2xl border-0 mb-4">
-              <h4 className="text-gray-900 font-semibold mb-3">What's included:</h4>
+              <h4 className="text-[#1d1d1f] font-semibold mb-3">What's included:</h4>
               <ul className="space-y-2 text-[#86868b]">
                 <li className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-500" />

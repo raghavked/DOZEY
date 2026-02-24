@@ -60,7 +60,7 @@ export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
-      <h2 className="text-indigo-900 mb-6">Add Vaccination Record</h2>
+      <h2 className="text-[#1d1d1f] font-semibold mb-6">Add Vaccination Record</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <AutocompleteInput
@@ -74,7 +74,7 @@ export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
           />
 
           <div>
-            <label htmlFor="date" className="block text-gray-700 mb-2">
+            <label htmlFor="date" className="block text-[#1d1d1f] mb-2">
               Date Administered *
             </label>
             <input
@@ -84,7 +84,7 @@ export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
               value={formData.date}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 bg-[#f5f5f7] rounded-xl focus:ring-2 focus:ring-[#4a7fb5]/20 focus:border-transparent outline-none"
             />
           </div>
 
@@ -130,7 +130,7 @@ export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
           </div>
 
           <div className="md:col-span-2">
-            <label htmlFor="notes" className="block text-gray-700 mb-2">
+            <label htmlFor="notes" className="block text-[#1d1d1f] mb-2">
               Notes (Optional)
             </label>
             <textarea
@@ -140,7 +140,7 @@ export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
               onChange={handleChange}
               rows={3}
               placeholder="Any additional information or reactions"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none"
+              className="w-full px-4 py-2 bg-[#f5f5f7] rounded-xl focus:ring-2 focus:ring-[#4a7fb5]/20 focus:border-transparent outline-none resize-none"
             />
           </div>
         </div>
@@ -155,7 +155,7 @@ export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
           <button
             type="button"
             onClick={() => setIsOpen(false)}
-            className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 py-3 rounded-lg transition-colors"
+            className="flex-1 bg-[#f5f5f7] hover:bg-[#e8e8ed] text-[#1d1d1f] py-3 rounded-xl transition-colors"
           >
             Cancel
           </button>
