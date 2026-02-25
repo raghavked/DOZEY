@@ -7,31 +7,7 @@ interface DozeyLogoProps {
 }
 
 export function DozeyLogo({ className = 'h-10', variant = 'full', theme = 'light' }: DozeyLogoProps) {
-  if (variant === 'mark') {
-    return (
-      <div className={`flex items-center ${className}`}>
-        <img
-          src={logoImage}
-          alt="Dozey"
-          className="h-full w-auto object-contain"
-          style={{ maxHeight: '100%' }}
-        />
-      </div>
-    );
-  }
-
-  if (variant === 'wordmark') {
-    return (
-      <div className={`flex items-center ${className}`}>
-        <img
-          src={logoImage}
-          alt="Dozey Vaccine Records"
-          className="h-full w-auto object-contain"
-          style={{ maxHeight: '100%' }}
-        />
-      </div>
-    );
-  }
+  const blendStyle = theme === 'dark' ? { mixBlendMode: 'multiply' as const } : {};
 
   return (
     <div className={`flex items-center ${className}`}>
@@ -39,7 +15,7 @@ export function DozeyLogo({ className = 'h-10', variant = 'full', theme = 'light
         src={logoImage}
         alt="Dozey Vaccine Records"
         className="h-full w-auto object-contain"
-        style={{ maxHeight: '100%' }}
+        style={{ maxHeight: '100%', ...blendStyle }}
       />
     </div>
   );
