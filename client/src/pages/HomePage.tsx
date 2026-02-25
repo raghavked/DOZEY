@@ -72,7 +72,7 @@ export function HomePage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-16">
             {[
               { value: '5', label: 'Countries Validated', color: '#4a7fb5' },
-              { value: '150+', label: 'Interviews Conducted', color: '#4d9068' },
+              { value: '200+', label: 'Interviews Conducted', color: '#4d9068' },
               { value: '86%', label: 'Validate Our Problem', color: '#1d1d1f' },
               { value: '10+', label: 'Healthcare Experts', color: '#4a7fb5' },
             ].map((stat, i) => (
