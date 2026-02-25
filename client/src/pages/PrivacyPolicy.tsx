@@ -10,7 +10,7 @@ export function PrivacyPolicy() {
           <Link to="/" className="text-[#4a7fb5] hover:text-[#3a6a9a] transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <DozeyLogo className="h-10" />
+          <DozeyLogo className="h-16" />
         </div>
 
         <div className="bg-white rounded-2xl shadow-xl border border-[#f5f5f7] p-8 md:p-12">
