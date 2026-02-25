@@ -9,7 +9,31 @@ import { processDocument, processDoctorNotesDocument } from "./ai-pipeline";
 import { lookupInstitutionRequirements, lookupEmployerRequirements, lookupCountryRequirements, checkCompliance, generateFormattedReport, type ComplianceLookupType } from "./compliance-engine";
 import { sanitizeString, sanitizeLongString, validateDate, validateId, validateDoseNumber, sanitizeProfileData } from "./validation";
 
+import { asc } from "drizzle-orm";
 import crypto from "crypto";
+
+async function recalculateDoseNumbers(userId: string, vaccineName: string) {
+  const normalizedName = vaccineName.toLowerCase().trim();
+  const allDoses = await db
+    .select()
+    .from(vaccinations)
+    .where(and(eq(vaccinations.userId, userId)))
+    .orderBy(asc(vaccinations.date), asc(vaccinations.createdAt));
+
+  const matching = allDoses.filter(
+    (v) => (v.vaccineName || '').toLowerCase().trim() === normalizedName
+  );
+
+  for (let i = 0; i < matching.length; i++) {
+    const correctDose = i + 1;
+    if (matching[i].doseNumber !== correctDose) {
+      await db
+        .update(vaccinations)
+        .set({ doseNumber: correctDose })
+        .where(eq(vaccinations.id, matching[i].id));
+    }
+  }
+}
 
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
@@ -225,7 +249,9 @@ export function registerRoutes(app: Express) {
         documentId: sanitizeString(req.body.documentId),
       };
       const [record] = await db.insert(vaccinations).values(vaccData).returning();
-      res.json(record);
+      await recalculateDoseNumbers(userId, vaccineName);
+      const [updated] = await db.select().from(vaccinations).where(eq(vaccinations.id, record.id));
+      res.json(updated || record);
     } catch (error) {
       console.error("Error creating vaccination:", error);
       res.status(500).json({ message: "Failed to create vaccination" });
@@ -252,7 +278,10 @@ export function registerRoutes(app: Express) {
     try {
       const userId = (req as AuthRequest).userId;
       const id = parseInt(req.params.id as string);
+      const [toDelete] = await db.select().from(vaccinations).where(and(eq(vaccinations.id, id), eq(vaccinations.userId, userId)));
+      if (!toDelete) return res.json({ success: true });
       await db.delete(vaccinations).where(and(eq(vaccinations.id, id), eq(vaccinations.userId, userId)));
+      await recalculateDoseNumbers(userId, toDelete.vaccineName);
       res.json({ success: true });
     } catch (error) {
       console.error("Error deleting vaccination:", error);
@@ -586,6 +615,17 @@ export function registerRoutes(app: Express) {
             }
           }
 
+          if (autoImported > 0) {
+            const importedNames = new Set(
+              parsedVaccs
+                .filter((v: any) => v.vaccine_name && v.date)
+                .map((v: any) => v.vaccine_name)
+            );
+            for (const name of importedNames) {
+              await recalculateDoseNumbers(userId, name);
+            }
+          }
+
           if (result.parsedData?.vaccinations) {
             const updateParsed = { ...result.parsedData };
             await db.update(documents).set({ parsedData: JSON.stringify(updateParsed) }).where(eq(documents.id, id));
@@ -664,7 +704,7 @@ export function registerRoutes(app: Express) {
             userId,
             vaccineName: v.vaccine_name,
             date: v.date,
-            doseNumber: v.dose_number || null,
+            doseNumber: v.dose_number || 1,
             location: v.location || null,
             countryGiven: v.country_given || null,
             provider: v.provider || null,
@@ -676,7 +716,17 @@ export function registerRoutes(app: Express) {
         inserted.push(record);
       }
 
-      res.json({ success: true, imported: inserted.length, skipped: skipped.length, skippedRecords: skipped, vaccinations: inserted });
+      const importedNames = new Set(inserted.map((r: any) => r.vaccineName));
+      for (const name of importedNames) {
+        await recalculateDoseNumbers(userId, name);
+      }
+
+      const updatedRecords = await db
+        .select()
+        .from(vaccinations)
+        .where(and(eq(vaccinations.userId, userId), eq(vaccinations.documentId, String(doc.id))));
+
+      res.json({ success: true, imported: inserted.length, skipped: skipped.length, skippedRecords: skipped, vaccinations: updatedRecords });
     } catch (error) {
       console.error("Error importing vaccinations:", error);
       res.status(500).json({ message: "Failed to import vaccinations" });
@@ -706,7 +756,7 @@ export function registerRoutes(app: Express) {
           userId,
           vaccineName: vaccine_name,
           date,
-          doseNumber: dose_number || null,
+          doseNumber: dose_number || 1,
           location: location || null,
           countryGiven: country_given || null,
           provider: provider || null,
@@ -716,7 +766,9 @@ export function registerRoutes(app: Express) {
         })
         .returning();
 
-      res.json({ success: true, vaccination: record });
+      await recalculateDoseNumbers(userId, vaccine_name);
+      const [updated] = await db.select().from(vaccinations).where(eq(vaccinations.id, record.id));
+      res.json({ success: true, vaccination: updated || record });
     } catch (error) {
       console.error("Error importing single vaccination:", error);
       res.status(500).json({ message: "Failed to import vaccination" });
