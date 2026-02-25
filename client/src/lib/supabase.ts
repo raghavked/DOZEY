@@ -5,6 +5,9 @@ let initPromise: Promise<SupabaseClient> | null = null;
 
 async function initSupabase(): Promise<SupabaseClient> {
   const res = await fetch('/api/config');
+  if (!res.ok) {
+    throw new Error(`Config endpoint returned ${res.status}`);
+  }
   const config = await res.json();
 
   if (!config.supabaseUrl || !config.supabaseAnonKey) {
@@ -18,7 +21,10 @@ async function initSupabase(): Promise<SupabaseClient> {
 export async function getSupabase(): Promise<SupabaseClient> {
   if (supabaseInstance) return supabaseInstance;
   if (!initPromise) {
-    initPromise = initSupabase();
+    initPromise = initSupabase().catch((err) => {
+      initPromise = null;
+      throw err;
+    });
   }
   return initPromise;
 }

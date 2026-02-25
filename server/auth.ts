@@ -31,13 +31,21 @@ export async function isAuthenticated(req: Request, res: Response, next: NextFun
 
     const [existingUser] = await db.select().from(users).where(eq(users.id, user.id));
     if (!existingUser) {
-      await db.insert(users).values({
-        id: user.id,
-        email: user.email || '',
-        emailVerified: !!user.email_confirmed_at,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+      try {
+        await db.insert(users).values({
+          id: user.id,
+          email: user.email || '',
+          emailVerified: !!user.email_confirmed_at,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+      } catch (insertErr: any) {
+        const isDuplicate = insertErr?.cause?.code === '23505' ||
+          String(insertErr?.message || '').includes('duplicate key');
+        if (!isDuplicate) {
+          throw insertErr;
+        }
+      }
     }
 
     auditLog(req, "PHI_ACCESS");
