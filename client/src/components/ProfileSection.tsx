@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { UserProfile, UploadedDocument } from '@/types';
 import { User, Save, AlertCircle, Sparkles, X } from 'lucide-react';
 import { AutocompleteInput } from '@/components/AutocompleteInput';
@@ -15,22 +15,58 @@ interface ProfileSectionProps {
 
 export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: ProfileSectionProps) {
   const { t } = useI18n();
-  const [formData, setFormData] = useState<UserProfile>(
-    profile || {
-      fullName: '',
-      dateOfBirth: '',
-      currentCountry: '',
-      currentState: '',
-      countryOfOrigin: '',
-      citizenships: [],
-      languages: [],
-      primaryProvider: '',
-      providerDetails: '',
-      targetCountry: '',
-      targetInstitution: '',
-      targetEmployment: '',
+  const defaultProfile: UserProfile = {
+    fullName: '',
+    dateOfBirth: '',
+    currentCountry: '',
+    currentState: '',
+    countryOfOrigin: '',
+    citizenships: [],
+    languages: [],
+    primaryProvider: '',
+    providerDetails: '',
+    targetCountry: '',
+    targetInstitution: '',
+    targetEmployment: '',
+  };
+  const [formData, setFormData] = useState<UserProfile>(profile || defaultProfile);
+  const [isDirty, setIsDirty] = useState(false);
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (profile && !isDirty) {
+      setFormData(profile);
     }
-  );
+  }, [profile, isDirty]);
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
+
+  useEffect(() => {
+    return () => {
+      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    };
+  }, []);
+
+  const trackChange = useCallback((updater: (prev: UserProfile) => UserProfile) => {
+    setFormData(prev => {
+      const next = updater(prev);
+      setIsDirty(true);
+      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+      autoSaveTimerRef.current = setTimeout(() => {
+        onSave(next);
+        setIsDirty(false);
+      }, 3000);
+      return next;
+    });
+  }, [onSave]);
 
   const [citizenshipInput, setCitizenshipInput] = useState('');
   const [languageInput, setLanguageInput] = useState('');
@@ -42,7 +78,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
   );
 
   const applySuggestion = (suggestion: ProfileSuggestion) => {
-    setFormData(prev => ({ ...prev, [suggestion.field]: suggestion.value }));
+    trackChange(prev => ({ ...prev, [suggestion.field]: suggestion.value }));
     setDismissedSuggestions(prev => new Set([...prev, suggestion.field]));
   };
 
@@ -55,15 +91,9 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
     suggestions.forEach(s => {
       (updates as any)[s.field] = s.value;
     });
-    setFormData(prev => ({ ...prev, ...updates }));
+    trackChange(prev => ({ ...prev, ...updates }));
     setDismissedSuggestions(prev => new Set([...prev, ...suggestions.map(s => s.field)]));
   };
-
-  useEffect(() => {
-    if (profile) {
-      setFormData(profile);
-    }
-  }, [profile]);
 
   interface ProviderField {
     key: string;
@@ -210,28 +240,30 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
     if (updated.fields.legacyNotes !== undefined && key !== 'legacyNotes') {
       delete updated.fields.legacyNotes;
     }
-    setFormData(prev => ({ ...prev, providerDetails: JSON.stringify(updated) }));
+    trackChange(prev => ({ ...prev, providerDetails: JSON.stringify(updated) }));
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
     onSave(formData);
+    setIsDirty(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    trackChange(prev => ({ ...prev, [name]: value }));
   };
 
   const handleFieldChange = (name: string) => (value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+    trackChange(prev => ({ ...prev, [name]: value }));
   };
 
   const addCitizenship = () => {
     if (citizenshipInput.trim() && !formData.citizenships.includes(citizenshipInput.trim())) {
-      setFormData(prev => ({
+      trackChange(prev => ({
         ...prev,
         citizenships: [...prev.citizenships, citizenshipInput.trim()],
       }));
@@ -240,7 +272,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
   };
 
   const removeCitizenship = (citizenship: string) => {
-    setFormData(prev => ({
+    trackChange(prev => ({
       ...prev,
       citizenships: prev.citizenships.filter(c => c !== citizenship),
     }));
@@ -248,7 +280,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
 
   const addLanguage = () => {
     if (languageInput.trim() && !formData.languages.includes(languageInput.trim())) {
-      setFormData(prev => ({
+      trackChange(prev => ({
         ...prev,
         languages: [...prev.languages, languageInput.trim()],
       }));
@@ -257,7 +289,7 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
   };
 
   const removeLanguage = (language: string) => {
-    setFormData(prev => ({
+    trackChange(prev => ({
       ...prev,
       languages: prev.languages.filter(l => l !== language),
     }));
@@ -562,17 +594,24 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
             </div>
           </div>
 
-          <button
-            type="submit"
-            className={`w-full py-3 rounded-full transition-colors flex items-center justify-center gap-2 ${
-              saved
-                ? 'bg-[#4d9068] text-white'
-                : 'bg-[#4a7fb5] hover:bg-[#3d6d9e] text-white'
-            }`}
-          >
-            <Save className="w-5 h-5" />
-            {saved ? t('profileSaved') : t('saveProfile')}
-          </button>
+          <div className="space-y-2">
+            <button
+              type="submit"
+              className={`w-full py-3 rounded-full transition-colors flex items-center justify-center gap-2 ${
+                saved
+                  ? 'bg-[#4d9068] text-white'
+                  : 'bg-[#4a7fb5] hover:bg-[#3d6d9e] text-white'
+              }`}
+            >
+              <Save className="w-5 h-5" />
+              {saved ? t('profileSaved') : t('saveProfile')}
+            </button>
+            {isDirty && (
+              <p className="text-center text-xs text-[#86868b]">
+                Changes will auto-save in a few seconds
+              </p>
+            )}
+          </div>
         </form>
       </div>
     </div>

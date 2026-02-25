@@ -20,6 +20,7 @@ The application uses a full-stack architecture with React 18 and TypeScript for 
 - **UI/UX Design:** Inspired by Apple iPhone 17 Pro, featuring a muted color palette (blues, greens, grays), light theme with no dark backgrounds, borderless cards, rounded inputs, massive typography for hero sections, and generous spacing.
 - **HIPAA Compliance:** Comprehensive security measures including detailed Terms of Service and Privacy Policy, mandatory acceptance during registration, security headers (HSTS, CSP), PHI cache control, rate limiting, audit logging, session auto-timeout, strong password requirements, database encryption, input validation, and secure file handling.
 - **Data Flow:** Processed document data (patient info, countries, providers) can auto-fill user profiles and suggest insights.
+- **Profile Auto-Save:** Profile form auto-saves after 3 seconds of inactivity, with unsaved changes warning on page unload. React Query cache clears on sign-out and invalidates on sign-in.
 - **Dashboard:** Features an interactive immunization globe, chronological timeline, and comprehensive filtering for vaccination records.
 
 **Project Structure:**

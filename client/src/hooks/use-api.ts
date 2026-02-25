@@ -253,7 +253,9 @@ export function useCountryHistory() {
         country: p.country,
         state: p.state,
         startYear: p.startYear,
+        startMonth: p.startMonth ?? null,
         endYear: p.endYear === 'Present' ? 'Present' : parseInt(p.endYear),
+        endMonth: p.endMonth ?? null,
       }))
     ),
   });

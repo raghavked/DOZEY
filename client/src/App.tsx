@@ -1,4 +1,6 @@
+import { useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/use-auth';
 import { PublicLayout } from '@/pages/PublicLayout';
 import { HomePage } from '@/pages/HomePage';
@@ -14,6 +16,18 @@ import { PrivacyPolicy } from '@/pages/PrivacyPolicy';
 
 export default function App() {
   const { isLoading, isAuthenticated } = useAuth();
+  const queryClient = useQueryClient();
+  const prevAuthRef = useRef(isAuthenticated);
+
+  useEffect(() => {
+    if (prevAuthRef.current && !isAuthenticated) {
+      queryClient.clear();
+    }
+    if (!prevAuthRef.current && isAuthenticated) {
+      queryClient.invalidateQueries();
+    }
+    prevAuthRef.current = isAuthenticated;
+  }, [isAuthenticated, queryClient]);
 
   if (isLoading) {
     return (
