@@ -91,7 +91,7 @@ export function ProgressPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-16 mb-24">
             {[
-              { value: '200+', label: 'Customer Interviews', color: '#4a7fb5' },
+              { value: '150+', label: 'Customer Interviews', color: '#4a7fb5' },
               { value: '10+', label: 'Healthcare Experts', color: '#4d9068' },
               { value: '86%', label: 'Validate Problem', color: '#1d1d1f' },
               { value: '5', label: 'Countries Validated', color: '#4a7fb5' },
@@ -258,7 +258,7 @@ export function ProgressPage() {
               this problem daily.
             </p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
-              {['EIR at UC Davis', 'Hult Prize Winner', '5 Countries', '200+ Interviews'].map((badge) => (
+              {['EIR at UC Davis', 'Hult Prize Winner', '5 Countries', '150+ Interviews'].map((badge) => (
                 <div key={badge} className="flex items-center gap-2 bg-white rounded-full px-4 py-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-[#8aab45]" />
                   <span className="text-sm text-[#86868b]">{badge}</span>
