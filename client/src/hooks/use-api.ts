@@ -85,6 +85,7 @@ export function useProfile() {
   const queryClient = useQueryClient();
   const query = useQuery<UserProfile | null>({
     queryKey: ['profile'],
+    retry: false,
     queryFn: () => fetchJson<any>('/api/profile').then(p => {
       if (!p) return null;
       let citizenships: string[] = [];
@@ -130,6 +131,7 @@ export function useVaccinations() {
   const queryClient = useQueryClient();
   const query = useQuery<VaccinationRecord[]>({
     queryKey: ['vaccinations'],
+    retry: false,
     queryFn: () => fetchJson<any[]>('/api/vaccinations').then(records =>
       records.map(r => ({
         id: String(r.id),
@@ -195,6 +197,7 @@ export function useDocuments() {
   const queryClient = useQueryClient();
   const query = useQuery<UploadedDocument[]>({
     queryKey: ['documents'],
+    retry: false,
     queryFn: () => fetchJson<any[]>('/api/documents').then(docs =>
       docs.map(d => ({
         id: String(d.id),
@@ -266,6 +269,7 @@ export function useExemptions() {
   const queryClient = useQueryClient();
   const query = useQuery<MedicalExemption[]>({
     queryKey: ['exemptions'],
+    retry: false,
     queryFn: () => fetchJson<any[]>('/api/exemptions').then(records =>
       records.map(r => ({
         id: String(r.id),
@@ -317,6 +321,7 @@ export function useCountryHistory() {
   const queryClient = useQueryClient();
   const query = useQuery<CountryPeriod[]>({
     queryKey: ['countryHistory'],
+    retry: false,
     queryFn: () => fetchJson<any[]>('/api/country-history').then(periods =>
       periods.map(p => ({
         id: String(p.id),

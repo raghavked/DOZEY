@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useI18n } from '@/lib/i18n';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { DozeyLogo } from '@/components/DozeyLogo';
+import { flushAllPendingSaves } from '@/lib/pending-saves';
 
 interface NavigationProps {
   currentPage: string;
@@ -27,6 +28,7 @@ export function Navigation({ currentPage, onNavigate, userName }: NavigationProp
 
   const handleSignOut = async () => {
     try {
+      flushAllPendingSaves();
       await signOut();
     } catch (err) {
       console.error('Sign out error:', err);

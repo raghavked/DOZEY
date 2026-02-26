@@ -5,6 +5,7 @@ import { AutocompleteInput } from '@/components/AutocompleteInput';
 import { COUNTRIES, LANGUAGES_LIST, HEALTHCARE_PROVIDERS, GLOBAL_PROVINCES, INSTITUTIONS, EMPLOYERS } from '@/lib/autocomplete-data';
 import { extractProfileSuggestions, type ProfileSuggestion } from '@/lib/document-suggestions';
 import { useI18n } from '@/lib/i18n';
+import { registerPendingFlush, unregisterPendingFlush } from '@/lib/pending-saves';
 
 interface ProfileSectionProps {
   profile: UserProfile | null;
@@ -49,9 +50,31 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
     return () => window.removeEventListener('beforeunload', handler);
   }, [isDirty]);
 
+  const latestFormRef = useRef<UserProfile>(formData);
+  latestFormRef.current = formData;
+  const isDirtyRef = useRef(isDirty);
+  isDirtyRef.current = isDirty;
+  const onSaveRef = useRef(onSave);
+  onSaveRef.current = onSave;
+
   useEffect(() => {
+    registerPendingFlush('profile', () => {
+      if (isDirtyRef.current) {
+        if (autoSaveTimerRef.current) {
+          clearTimeout(autoSaveTimerRef.current);
+          autoSaveTimerRef.current = null;
+        }
+        onSaveRef.current(latestFormRef.current);
+      }
+    });
     return () => {
-      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+      if (isDirtyRef.current) {
+        onSaveRef.current(latestFormRef.current);
+      }
+      unregisterPendingFlush('profile');
     };
   }, []);
 
@@ -61,12 +84,12 @@ export function ProfileSection({ profile, onSave, isNewUser, documents = [] }: P
       setIsDirty(true);
       if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
       autoSaveTimerRef.current = setTimeout(() => {
-        onSave(next);
+        onSaveRef.current(next);
         setIsDirty(false);
       }, 3000);
       return next;
     });
-  }, [onSave]);
+  }, []);
 
   const [citizenshipInput, setCitizenshipInput] = useState('');
   const [languageInput, setLanguageInput] = useState('');

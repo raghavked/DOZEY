@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { getSupabase } from "@/lib/supabase";
 import type { User as SupabaseUser, Session, SupabaseClient } from "@supabase/supabase-js";
+import { flushAllPendingSaves } from "@/lib/pending-saves";
 
 const SESSION_TIMEOUT_MS = 15 * 60 * 1000;
 
@@ -26,6 +27,7 @@ export function useAuth() {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(async () => {
       if (sbRef.current) {
+        flushAllPendingSaves();
         await sbRef.current.auth.signOut();
       }
     }, SESSION_TIMEOUT_MS);
