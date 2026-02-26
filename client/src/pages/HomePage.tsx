@@ -242,6 +242,28 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <section className="py-24 lg:py-32 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-semibold text-[#1d1d1f] mb-4">
+              See DOZEY in action
+            </h2>
+            <p className="text-lg text-[#86868b] font-light">
+              Watch how we're making healthcare records simple for everyone.
+            </p>
+          </div>
+          <div className="relative w-full rounded-2xl overflow-hidden shadow-lg" style={{ paddingBottom: '56.25%' }}>
+            <iframe
+              className="absolute inset-0 w-full h-full"
+              src="https://www.youtube.com/embed/uvSSrl9Dqao"
+              title="DOZEY — Healthcare that moves with you"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

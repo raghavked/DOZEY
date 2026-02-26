@@ -145,6 +145,28 @@ export function TeamPage() {
           </div>
         </div>
       </section>
+
+      <section className="py-24 lg:py-32 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-semibold text-[#1d1d1f] mb-4">
+              Our story
+            </h2>
+            <p className="text-base text-[#86868b] font-light">
+              Learn more about the team and what drives us.
+            </p>
+          </div>
+          <div className="relative w-full rounded-2xl overflow-hidden shadow-lg" style={{ paddingBottom: '56.25%' }}>
+            <iframe
+              className="absolute inset-0 w-full h-full"
+              src="https://www.youtube.com/embed/uvSSrl9Dqao"
+              title="DOZEY — Our Story"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
