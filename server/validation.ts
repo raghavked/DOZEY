@@ -38,14 +38,21 @@ export function validateDoseNumber(dose: unknown): number | null {
 export function sanitizeProfileData(data: Record<string, unknown>): Record<string, unknown> {
   const sanitized: Record<string, unknown> = {};
   const stringFields = [
-    'fullName', 'dateOfBirth', 'nationality', 'currentCountry',
-    'primaryLanguage', 'primaryProvider', 'bloodType',
-    'targetInstitution', 'targetEmployment', 'targetCountry'
+    'fullName', 'dateOfBirth', 'nationality', 'currentCountry', 'currentState',
+    'countryOfOrigin', 'primaryLanguage', 'primaryProvider', 'providerDetails',
+    'bloodType', 'targetInstitution', 'targetEmployment', 'targetCountry'
   ];
 
   for (const field of stringFields) {
     if (data[field] !== undefined) {
       sanitized[field] = sanitizeString(data[field]);
+    }
+  }
+
+  const jsonStringFields = ['citizenships', 'languages'];
+  for (const field of jsonStringFields) {
+    if (data[field] !== undefined) {
+      sanitized[field] = sanitizeLongString(data[field]);
     }
   }
 

@@ -236,10 +236,17 @@ export function registerRoutes(app: Express) {
       if (!vaccineName) {
         return res.status(400).json({ message: "Vaccine name is required" });
       }
+      const date = sanitizeString(req.body.date);
+      if (!date || !validateDate(date)) {
+        return res.status(400).json({ message: "A valid date is required" });
+      }
+      if (new Date(date) > new Date()) {
+        return res.status(400).json({ message: "Date cannot be in the future" });
+      }
       const vaccData: any = {
         userId,
         vaccineName,
-        date: sanitizeString(req.body.date),
+        date,
         doseNumber: validateDoseNumber(req.body.doseNumber),
         location: sanitizeString(req.body.location),
         countryGiven: sanitizeString(req.body.countryGiven),

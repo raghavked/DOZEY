@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Plus } from 'lucide-react';
 import { VaccinationRecord } from '@/types';
-import { CustomSelect } from '@/components/CustomSelect';
 import { AutocompleteInput } from '@/components/AutocompleteInput';
 import { VACCINES, COUNTRIES, HEALTHCARE_PROVIDERS } from '@/lib/autocomplete-data';
 
@@ -11,10 +10,10 @@ interface VaccinationFormProps {
 
 export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const today = useMemo(() => new Date().toISOString().split('T')[0], []);
   const [formData, setFormData] = useState({
     vaccineName: '',
     date: '',
-    doseNumber: 1,
     location: '',
     provider: '',
     notes: '',
@@ -24,11 +23,10 @@ export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit({ ...formData, doseNumber: 1 });
     setFormData({
       vaccineName: '',
       date: '',
-      doseNumber: 1,
       location: '',
       provider: '',
       notes: '',
@@ -82,20 +80,19 @@ export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
               id="date"
               name="date"
               value={formData.date}
+              max={today}
               onChange={handleChange}
               required
               className="w-full px-4 py-2 bg-[#f5f5f7] rounded-xl focus:ring-2 focus:ring-[#4a7fb5]/20 focus:border-transparent outline-none"
             />
           </div>
 
-          <CustomSelect
-            id="doseNumber"
-            label="Dose Number"
-            value={String(formData.doseNumber)}
-            onChange={(val) => setFormData(prev => ({ ...prev, doseNumber: parseInt(val) }))}
-            options={[1, 2, 3, 4, 5].map(n => ({ value: String(n), label: `Dose ${n}` }))}
-            required
-          />
+          <div>
+            <label className="block text-[#1d1d1f] mb-2">Dose Number</label>
+            <div className="w-full px-4 py-2 bg-[#f5f5f7] rounded-xl text-[#86868b] text-sm">
+              Automatically assigned based on date
+            </div>
+          </div>
 
           <AutocompleteInput
             id="countryGiven"

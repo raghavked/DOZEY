@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
+import { Toaster } from 'sonner';
 import { useAuth } from '@/hooks/use-auth';
 import { PublicLayout } from '@/pages/PublicLayout';
 import { HomePage } from '@/pages/HomePage';
@@ -41,30 +42,33 @@ export default function App() {
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/terms" element={<TermsOfService />} />
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        {isAuthenticated ? (
-          <>
-            <Route path="/app/*" element={<DashboardLayout />} />
-            <Route path="*" element={<Navigate to="/app" replace />} />
-          </>
-        ) : (
-          <>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route element={<PublicLayout />}>
-              <Route index element={<HomePage />} />
-              <Route path="features" element={<FeaturesPage />} />
-              <Route path="progress" element={<ProgressPage />} />
-              <Route path="team" element={<TeamPage />} />
-              <Route path="contact" element={<ContactPage />} />
-            </Route>
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </>
-        )}
-      </Routes>
-    </BrowserRouter>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          {isAuthenticated ? (
+            <>
+              <Route path="/app/*" element={<DashboardLayout />} />
+              <Route path="*" element={<Navigate to="/app" replace />} />
+            </>
+          ) : (
+            <>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route element={<PublicLayout />}>
+                <Route index element={<HomePage />} />
+                <Route path="features" element={<FeaturesPage />} />
+                <Route path="progress" element={<ProgressPage />} />
+                <Route path="team" element={<TeamPage />} />
+                <Route path="contact" element={<ContactPage />} />
+              </Route>
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </>
+          )}
+        </Routes>
+      </BrowserRouter>
+      <Toaster position="top-right" richColors theme="light" />
+    </>
   );
 }

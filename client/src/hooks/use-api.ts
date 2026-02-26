@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { VaccinationRecord, UserProfile, CountryPeriod, UploadedDocument, MedicalExemption } from '@/types';
 import { getSupabase } from '@/lib/supabase';
+import { toast } from 'sonner';
 
 async function getToken(): Promise<string> {
   const sb = await getSupabase();
@@ -9,12 +10,21 @@ async function getToken(): Promise<string> {
   return session.access_token;
 }
 
+async function extractError(res: Response): Promise<string> {
+  try {
+    const body = await res.json();
+    return body.message || body.error || `${res.status}: ${res.statusText}`;
+  } catch {
+    return `${res.status}: ${res.statusText}`;
+  }
+}
+
 async function fetchJson<T>(url: string): Promise<T> {
   const token = await getToken();
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+  if (!res.ok) throw new Error(await extractError(res));
   return res.json();
 }
 
@@ -25,7 +35,7 @@ async function postJson<T>(url: string, data: any): Promise<T> {
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+  if (!res.ok) throw new Error(await extractError(res));
   return res.json();
 }
 
@@ -36,7 +46,7 @@ async function putJson<T>(url: string, data: any): Promise<T> {
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+  if (!res.ok) throw new Error(await extractError(res));
   return res.json();
 }
 
@@ -47,7 +57,7 @@ async function patchJson<T>(url: string, data: any): Promise<T> {
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+  if (!res.ok) throw new Error(await extractError(res));
   return res.json();
 }
 
@@ -57,7 +67,7 @@ async function deleteJson(url: string): Promise<void> {
     method: 'DELETE',
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+  if (!res.ok) throw new Error(await extractError(res));
 }
 
 async function uploadFile(url: string, formData: FormData): Promise<any> {
@@ -67,7 +77,7 @@ async function uploadFile(url: string, formData: FormData): Promise<any> {
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
   });
-  if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+  if (!res.ok) throw new Error(await extractError(res));
   return res.json();
 }
 
@@ -77,14 +87,18 @@ export function useProfile() {
     queryKey: ['profile'],
     queryFn: () => fetchJson<any>('/api/profile').then(p => {
       if (!p) return null;
+      let citizenships: string[] = [];
+      let languages: string[] = [];
+      try { citizenships = p.citizenships ? JSON.parse(p.citizenships) : []; } catch { citizenships = []; }
+      try { languages = p.languages ? JSON.parse(p.languages) : []; } catch { languages = []; }
       return {
         fullName: p.fullName || '',
         dateOfBirth: p.dateOfBirth || '',
         currentCountry: p.currentCountry || '',
         currentState: p.currentState || '',
         countryOfOrigin: p.countryOfOrigin || '',
-        citizenships: p.citizenships ? JSON.parse(p.citizenships) : [],
-        languages: p.languages ? JSON.parse(p.languages) : [],
+        citizenships,
+        languages,
         primaryProvider: p.primaryProvider || '',
         providerDetails: p.providerDetails || '',
         targetCountry: p.targetCountry || '',
@@ -100,10 +114,16 @@ export function useProfile() {
       citizenships: JSON.stringify(data.citizenships),
       languages: JSON.stringify(data.languages),
     }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['profile'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      toast.success('Profile saved');
+    },
+    onError: (err: Error) => {
+      toast.error('Failed to save profile', { description: err.message });
+    },
   });
 
-  return { profile: query.data, isLoading: query.isLoading, saveProfile: save.mutate };
+  return { profile: query.data, isLoading: query.isLoading, saveProfile: save.mutate, isSaving: save.isPending };
 }
 
 export function useVaccinations() {
@@ -128,24 +148,44 @@ export function useVaccinations() {
 
   const add = useMutation({
     mutationFn: (data: Omit<VaccinationRecord, 'id'>) => postJson('/api/vaccinations', data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vaccinations'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vaccinations'] });
+      toast.success('Vaccination record added');
+    },
+    onError: (err: Error) => {
+      toast.error('Failed to add vaccination', { description: err.message });
+    },
   });
 
   const update = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<VaccinationRecord> }) =>
       patchJson(`/api/vaccinations/${id}`, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vaccinations'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vaccinations'] });
+      toast.success('Vaccination record updated');
+    },
+    onError: (err: Error) => {
+      toast.error('Failed to update vaccination', { description: err.message });
+    },
   });
 
   const remove = useMutation({
     mutationFn: (id: string) => deleteJson(`/api/vaccinations/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vaccinations'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vaccinations'] });
+      toast.success('Vaccination record deleted');
+    },
+    onError: (err: Error) => {
+      toast.error('Failed to delete vaccination', { description: err.message });
+    },
   });
 
   return {
     vaccinations: query.data || [],
     isLoading: query.isLoading,
     addVaccination: add.mutate,
+    addVaccinationAsync: add.mutateAsync,
+    isAdding: add.isPending,
     updateVaccination: update.mutate,
     deleteVaccination: remove.mutate,
   };
@@ -176,18 +216,35 @@ export function useDocuments() {
 
   const add = useMutation({
     mutationFn: (formData: FormData) => uploadFile('/api/documents', formData),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['documents'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documents'] });
+      toast.success('Document uploaded');
+    },
+    onError: (err: Error) => {
+      toast.error('Failed to upload document', { description: err.message });
+    },
   });
 
   const update = useMutation({
     mutationFn: ({ id, data }: { id: string; data: { name?: string; type?: string; country?: string } }) =>
       patchJson(`/api/documents/${id}`, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['documents'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documents'] });
+    },
+    onError: (err: Error) => {
+      toast.error('Failed to update document', { description: err.message });
+    },
   });
 
   const remove = useMutation({
     mutationFn: (id: string) => deleteJson(`/api/documents/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['documents'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documents'] });
+      toast.success('Document deleted');
+    },
+    onError: (err: Error) => {
+      toast.error('Failed to delete document', { description: err.message });
+    },
   });
 
   const refreshDocuments = () => queryClient.invalidateQueries({ queryKey: ['documents'] });
@@ -197,6 +254,7 @@ export function useDocuments() {
     documents: query.data || [],
     isLoading: query.isLoading,
     addDocument: add.mutate,
+    isUploading: add.isPending,
     updateDocument: update.mutate,
     deleteDocument: remove.mutate,
     refreshDocuments,
@@ -226,12 +284,24 @@ export function useExemptions() {
 
   const add = useMutation({
     mutationFn: (data: Omit<MedicalExemption, 'id'>) => postJson('/api/exemptions', data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['exemptions'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['exemptions'] });
+      toast.success('Exemption added');
+    },
+    onError: (err: Error) => {
+      toast.error('Failed to add exemption', { description: err.message });
+    },
   });
 
   const remove = useMutation({
     mutationFn: (id: string) => deleteJson(`/api/exemptions/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['exemptions'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['exemptions'] });
+      toast.success('Exemption removed');
+    },
+    onError: (err: Error) => {
+      toast.error('Failed to remove exemption', { description: err.message });
+    },
   });
 
   return {
@@ -265,12 +335,24 @@ export function useCountryHistory() {
       ...data,
       endYear: String(data.endYear),
     }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['countryHistory'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['countryHistory'] });
+      toast.success('Residence period added');
+    },
+    onError: (err: Error) => {
+      toast.error('Failed to add residence period', { description: err.message });
+    },
   });
 
   const remove = useMutation({
     mutationFn: (id: string) => deleteJson(`/api/country-history/${id}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['countryHistory'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['countryHistory'] });
+      toast.success('Residence period removed');
+    },
+    onError: (err: Error) => {
+      toast.error('Failed to remove residence period', { description: err.message });
+    },
   });
 
   return {
