@@ -92,6 +92,7 @@ export function DashboardLayout() {
             onDelete={(id) => deleteCountryPeriod(String(id))}
             vaccinations={vaccinations}
             documents={documents}
+            profile={defaultProfile}
           />
         );
       case 'upload':
@@ -105,6 +106,7 @@ export function DashboardLayout() {
             onRefresh={() => { refreshAll(); refreshExemptions(); }}
             exemptions={exemptions}
             vaccinations={vaccinations}
+            profile={defaultProfile}
           />
         );
       case 'timeline':
@@ -115,6 +117,7 @@ export function DashboardLayout() {
             onAdd={(v) => addVaccination(v)}
             onDelete={(id) => deleteVaccination(String(id))}
             onUpdate={(id, data) => updateVaccination({ id, data })}
+            profile={defaultProfile}
           />
         );
       case 'compliance':

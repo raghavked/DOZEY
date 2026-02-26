@@ -12,9 +12,10 @@ interface VaccinationTimelineProps {
   onAdd: (vaccination: Omit<VaccinationRecord, 'id'>) => void;
   onDelete: (id: string) => void;
   onUpdate?: (id: string, data: Partial<VaccinationRecord>) => void;
+  profile?: import('@/types').UserProfile | null;
 }
 
-export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDelete, onUpdate }: VaccinationTimelineProps) {
+export function VaccinationTimeline({ vaccinations, documents = [], onAdd, onDelete, onUpdate, profile }: VaccinationTimelineProps) {
   const { t } = useI18n();
   const [filterCountry, setFilterCountry] = useState<string>('all');
   const [filterVerified, setFilterVerified] = useState<string>('all');

@@ -1,38 +1,48 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Plus } from 'lucide-react';
-import { VaccinationRecord } from '@/types';
+import { VaccinationRecord, UserProfile } from '@/types';
 import { AutocompleteInput } from '@/components/AutocompleteInput';
 import { VACCINES, COUNTRIES, HEALTHCARE_PROVIDERS } from '@/lib/autocomplete-data';
 
 interface VaccinationFormProps {
   onSubmit: (vaccination: Omit<VaccinationRecord, 'id'>) => void;
+  profile?: UserProfile | null;
 }
 
-export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
+export function VaccinationForm({ onSubmit, profile }: VaccinationFormProps) {
   const [isOpen, setIsOpen] = useState(false);
   const today = useMemo(() => new Date().toISOString().split('T')[0], []);
-  const [formData, setFormData] = useState({
+
+  const getDefaults = () => ({
     vaccineName: '',
     date: '',
-    location: '',
-    provider: '',
+    location: profile?.currentState && profile?.currentCountry
+      ? `${profile.currentState}, ${profile.currentCountry}`
+      : profile?.currentCountry || '',
+    provider: profile?.primaryProvider || '',
     notes: '',
-    countryGiven: '',
+    countryGiven: profile?.currentCountry || '',
     verified: false,
   });
+
+  const [formData, setFormData] = useState(getDefaults);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setFormData(prev => ({
+      ...prev,
+      countryGiven: prev.countryGiven || profile?.currentCountry || '',
+      provider: prev.provider || profile?.primaryProvider || '',
+      location: prev.location || (profile?.currentState && profile?.currentCountry
+        ? `${profile.currentState}, ${profile.currentCountry}`
+        : profile?.currentCountry || ''),
+    }));
+  }, [profile, isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({ ...formData, doseNumber: 1 });
-    setFormData({
-      vaccineName: '',
-      date: '',
-      location: '',
-      provider: '',
-      notes: '',
-      countryGiven: '',
-      verified: false,
-    });
+    setFormData(getDefaults());
     setIsOpen(false);
   };
 
@@ -40,14 +50,14 @@ export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'doseNumber' ? parseInt(value) : value,
+      [name]: value,
     }));
   };
 
   if (!isOpen) {
     return (
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={() => { setFormData(getDefaults()); setIsOpen(true); }}
         className="w-full bg-[#4a7fb5] hover:bg-[#3a6a9a] text-white py-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg"
       >
         <Plus className="w-5 h-5" />
@@ -106,7 +116,7 @@ export function VaccinationForm({ onSubmit }: VaccinationFormProps) {
 
           <AutocompleteInput
             id="location"
-            label="Location / Country"
+            label="Location"
             value={formData.location}
             onChange={(val) => setFormData(prev => ({ ...prev, location: val }))}
             suggestions={COUNTRIES}

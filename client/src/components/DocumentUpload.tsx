@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { UploadedDocument, VaccinationRecord, ParsedVaccinationData, MedicalExemption } from '@/types';
 import { Upload, FileText, Image, Trash2, Plus, Download, Pencil, Check, X, Sparkles, Loader2, ChevronDown, ChevronUp, Import, AlertCircle, CheckCircle2, Globe, Stethoscope, ShieldCheck } from 'lucide-react';
 import { getSupabase } from '@/lib/supabase';
@@ -16,6 +16,7 @@ interface DocumentUploadProps {
   onRefresh?: () => void;
   exemptions?: MedicalExemption[];
   vaccinations?: VaccinationRecord[];
+  profile?: import('@/types').UserProfile | null;
 }
 
 function ProcessingStatusBadge({ status }: { status: string | null | undefined }) {
@@ -36,7 +37,7 @@ function ProcessingStatusBadge({ status }: { status: string | null | undefined }
   );
 }
 
-export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddVaccination, onRefresh, exemptions = [], vaccinations = [] }: DocumentUploadProps) {
+export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddVaccination, onRefresh, exemptions = [], vaccinations = [], profile }: DocumentUploadProps) {
   const { t } = useI18n();
   const [dragActive, setDragActive] = useState(false);
   const [showManualEntry, setShowManualEntry] = useState(false);
@@ -321,30 +322,37 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
     }
   };
 
-  const [manualForm, setManualForm] = useState({
+  const getManualDefaults = () => ({
     vaccineName: '',
     date: '',
     doseNumber: 1,
-    location: '',
-    countryGiven: '',
-    provider: '',
+    location: profile?.currentState && profile?.currentCountry
+      ? `${profile.currentState}, ${profile.currentCountry}`
+      : profile?.currentCountry || '',
+    countryGiven: profile?.currentCountry || '',
+    provider: profile?.primaryProvider || '',
     notes: '',
     verified: false,
   });
 
+  const [manualForm, setManualForm] = useState(getManualDefaults);
+
+  useEffect(() => {
+    if (!showManualEntry) return;
+    setManualForm(prev => ({
+      ...prev,
+      countryGiven: prev.countryGiven || profile?.currentCountry || '',
+      provider: prev.provider || profile?.primaryProvider || '',
+      location: prev.location || (profile?.currentState && profile?.currentCountry
+        ? `${profile.currentState}, ${profile.currentCountry}`
+        : profile?.currentCountry || ''),
+    }));
+  }, [profile, showManualEntry]);
+
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onAddVaccination(manualForm);
-    setManualForm({
-      vaccineName: '',
-      date: '',
-      doseNumber: 1,
-      location: '',
-      countryGiven: '',
-      provider: '',
-      notes: '',
-      verified: false,
-    });
+    setManualForm(getManualDefaults());
     setShowManualEntry(false);
   };
 
@@ -405,7 +413,7 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
 
         <div className="mt-6">
           <button
-            onClick={() => setShowManualEntry(!showManualEntry)}
+            onClick={() => { if (!showManualEntry) setManualForm(getManualDefaults()); setShowManualEntry(!showManualEntry); }}
             className="w-full bg-[#4a7fb5] hover:bg-[#3a6a9a] text-white py-3 rounded-full flex items-center justify-center gap-2 transition-colors"
           >
             <Plus className="w-5 h-5" />

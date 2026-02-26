@@ -12,9 +12,10 @@ interface CountryHistoryProps {
   onDelete: (id: string) => void;
   vaccinations?: VaccinationRecord[];
   documents?: UploadedDocument[];
+  profile?: import('@/types').UserProfile | null;
 }
 
-export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], documents = [] }: CountryHistoryProps) {
+export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], documents = [], profile }: CountryHistoryProps) {
   const { t } = useI18n();
   const [showForm, setShowForm] = useState(false);
   const [dismissedCountries, setDismissedCountries] = useState<Set<string>>(new Set());
@@ -34,7 +35,7 @@ export function CountryHistory({ periods, onAdd, onDelete, vaccinations = [], do
     { value: 10, label: t('oct') }, { value: 11, label: t('nov') }, { value: 12, label: t('dec') },
   ];
 
-  const countrySuggestions = extractCountrySuggestions(vaccinations, documents, periods)
+  const countrySuggestions = extractCountrySuggestions(vaccinations, documents, periods, profile)
     .filter(s => !dismissedCountries.has(s.country.toLowerCase()));
 
   const addSuggestedCountry = (suggestion: { country: string; earliestYear: number; latestYear: number }) => {

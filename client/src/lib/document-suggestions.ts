@@ -93,40 +93,55 @@ export function extractProfileSuggestions(
 export function extractCountrySuggestions(
   vaccinations: VaccinationRecord[],
   documents: UploadedDocument[],
-  existingHistory: CountryPeriod[]
+  existingHistory: CountryPeriod[],
+  profile?: UserProfile | null
 ): CountrySuggestion[] {
   const countriesInHistory = new Set(existingHistory.map(p => p.country.toLowerCase().trim()));
-  const countryData: Record<string, { count: number; years: number[] }> = {};
+  const countryData: Record<string, { displayName: string; count: number; years: number[] }> = {};
+
+  const addCountry = (name: string, year?: number | null) => {
+    const key = name.trim().toLowerCase();
+    if (countriesInHistory.has(key)) return;
+    if (!countryData[key]) {
+      countryData[key] = { displayName: name.trim(), count: 0, years: [] };
+    }
+    if (year && !isNaN(year)) {
+      countryData[key].years.push(year);
+    }
+  };
+
+  if (profile) {
+    const profileCountries = [profile.currentCountry, profile.countryOfOrigin].filter(
+      (c): c is string => !!c && c.trim().length > 0
+    );
+    for (const country of profileCountries) {
+      addCountry(country, new Date().getFullYear());
+    }
+  }
 
   for (const v of vaccinations) {
     if (!v.countryGiven || !v.countryGiven.trim()) continue;
-    const country = v.countryGiven.trim();
-    const key = country.toLowerCase();
+    const key = v.countryGiven.trim().toLowerCase();
     if (countriesInHistory.has(key)) continue;
-
-    if (!countryData[country]) {
-      countryData[country] = { count: 0, years: [] };
+    if (!countryData[key]) {
+      countryData[key] = { displayName: v.countryGiven.trim(), count: 0, years: [] };
     }
-    countryData[country].count++;
+    countryData[key].count++;
     const year = v.date ? new Date(v.date).getFullYear() : null;
     if (year && !isNaN(year)) {
-      countryData[country].years.push(year);
+      countryData[key].years.push(year);
     }
   }
 
   for (const doc of documents) {
     if (doc.country && doc.country.trim()) {
-      const country = doc.country.trim();
-      const key = country.toLowerCase();
-      if (!countriesInHistory.has(key) && !countryData[country]) {
-        countryData[country] = { count: 0, years: [] };
-      }
+      addCountry(doc.country);
     }
   }
 
-  return Object.entries(countryData)
-    .map(([country, data]) => ({
-      country,
+  return Object.values(countryData)
+    .map((data) => ({
+      country: data.displayName,
       vaccinationCount: data.count,
       earliestYear: data.years.length > 0 ? Math.min(...data.years) : new Date().getFullYear(),
       latestYear: data.years.length > 0 ? Math.max(...data.years) : new Date().getFullYear(),
@@ -152,7 +167,7 @@ export function generateDashboardInsights(
     });
   }
 
-  const countrySuggestions = extractCountrySuggestions(vaccinations, documents, countryHistory);
+  const countrySuggestions = extractCountrySuggestions(vaccinations, documents, countryHistory, profile);
   if (countrySuggestions.length > 0) {
     const countryNames = countrySuggestions.slice(0, 3).map(s => s.country).join(', ');
     insights.push({
