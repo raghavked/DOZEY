@@ -22,7 +22,7 @@ The application uses a full-stack architecture with React 18 and TypeScript for 
 - **Data Flow:** Processed document data (patient info, countries, providers) can auto-fill user profiles and suggest insights. Profile data (currentCountry, primaryProvider, currentState) auto-fills vaccination forms and manual entry fields. Country history suggestions are generated from profile countries, vaccination records, and document metadata.
 - **Cross-Component Autofill:** VaccinationForm and DocumentUpload manual entry pre-fill country, location, and provider from the user's profile. CountryHistory suggests adding profile's currentCountry and countryOfOrigin. Country suggestions are deduplicated using case-insensitive normalization.
 - **Profile Auto-Save:** Profile form auto-saves after 3 seconds of inactivity, with unsaved changes warning on page unload. React Query cache clears on sign-out and invalidates on sign-in.
-- **Dashboard:** Features an interactive immunization globe, chronological timeline, and comprehensive filtering for vaccination records.
+- **Dashboard:** Features an interactive immunization globe, chronological timeline, and comprehensive filtering for vaccination records. The compliance progress bar uses the AI-powered compliance engine to check the user's real vaccination records and exemptions against their profile target (institution, employer, or country/visa). Results are cached server-side for 10 minutes per user+target. Falls back gracefully if the AI service is unavailable.
 
 **Project Structure:**
 - `client/`: React frontend.

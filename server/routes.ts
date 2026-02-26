@@ -971,6 +971,104 @@ export function registerRoutes(app: Express) {
     }
   });
 
+  const complianceCache = new Map<string, { data: any; timestamp: number }>();
+  const COMPLIANCE_CACHE_TTL = 10 * 60 * 1000;
+
+  app.get("/api/compliance/summary", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+
+      const [profile] = await db.select().from(profiles).where(eq(profiles.userId, userId));
+      if (!profile) {
+        return res.json({ hasTarget: false });
+      }
+
+      const targetName = profile.targetInstitution || profile.targetEmployment || profile.targetCountry;
+      if (!targetName || !targetName.trim()) {
+        return res.json({ hasTarget: false });
+      }
+
+      let lookupType: ComplianceLookupType = "institution";
+      let targetLabel = "Institution";
+      if (profile.targetInstitution && profile.targetInstitution.trim()) {
+        lookupType = "institution";
+        targetLabel = profile.targetInstitution.trim();
+      } else if (profile.targetEmployment && profile.targetEmployment.trim()) {
+        lookupType = "employer";
+        targetLabel = profile.targetEmployment.trim();
+      } else if (profile.targetCountry && profile.targetCountry.trim()) {
+        lookupType = "country";
+        targetLabel = profile.targetCountry.trim();
+      }
+
+      const cacheKey = `${userId}:${lookupType}:${targetLabel.toLowerCase()}`;
+      const cached = complianceCache.get(cacheKey);
+      if (cached && Date.now() - cached.timestamp < COMPLIANCE_CACHE_TTL) {
+        return res.json(cached.data);
+      }
+
+      let requirements;
+      try {
+        switch (lookupType) {
+          case "employer":
+            requirements = await lookupEmployerRequirements(targetLabel);
+            break;
+          case "country":
+            requirements = await lookupCountryRequirements(targetLabel);
+            break;
+          case "institution":
+          default:
+            requirements = await lookupInstitutionRequirements(targetLabel);
+            break;
+        }
+      } catch (aiError: any) {
+        console.error("Compliance summary AI lookup failed:", aiError.message);
+        return res.json({ hasTarget: true, targetLabel, lookupType, aiUnavailable: true });
+      }
+
+      const userVaccinations = await db
+        .select()
+        .from(vaccinations)
+        .where(eq(vaccinations.userId, userId));
+
+      const userExemptions = await db
+        .select()
+        .from(medicalExemptions)
+        .where(eq(medicalExemptions.userId, userId));
+
+      const { compliance, overallPercentage, totalRequired, totalCompleted } = checkCompliance(
+        requirements,
+        userVaccinations,
+        userExemptions
+      );
+
+      const missing = compliance
+        .filter(c => c.status !== "complete")
+        .map(c => ({
+          name: c.vaccine_name,
+          needed: c.required_doses - c.completed_doses,
+          status: c.status,
+        }));
+
+      const result = {
+        hasTarget: true,
+        targetLabel,
+        lookupType,
+        percentage: overallPercentage,
+        totalCompleted,
+        totalRequired,
+        missing,
+        requirements: compliance,
+      };
+
+      complianceCache.set(cacheKey, { data: result, timestamp: Date.now() });
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching compliance summary:", error);
+      res.status(500).json({ message: "Failed to fetch compliance summary" });
+    }
+  });
+
   app.post("/api/compliance/lookup", isAuthenticated, async (req, res) => {
     try {
       const userId = (req as AuthRequest).userId;

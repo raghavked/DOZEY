@@ -9,7 +9,7 @@ import { ComplianceReport } from '@/components/ComplianceReport';
 import { ShareRecords } from '@/components/ShareRecords';
 import { Alerts } from '@/components/Alerts';
 import { DozeChat } from '@/components/DozeChat';
-import { useProfile, useVaccinations, useDocuments, useCountryHistory, useExemptions } from '@/hooks/use-api';
+import { useProfile, useVaccinations, useDocuments, useCountryHistory, useExemptions, useComplianceSummary } from '@/hooks/use-api';
 import { useAuth } from '@/hooks/use-auth';
 import { useI18n } from '@/lib/i18n';
 
@@ -24,6 +24,7 @@ export function DashboardLayout() {
   const { documents, isLoading: docsLoading, addDocument, updateDocument, deleteDocument, refreshAll } = useDocuments();
   const { countryHistory, isLoading: historyLoading, addCountryPeriod, deleteCountryPeriod } = useCountryHistory();
   const { exemptions, isLoading: exemptionsLoading, refreshExemptions } = useExemptions();
+  const { summary: complianceSummary } = useComplianceSummary();
 
   const isLoading = profileLoading || vaccLoading || docsLoading || historyLoading || exemptionsLoading;
 
@@ -80,6 +81,7 @@ export function DashboardLayout() {
             countryHistory={countryHistory}
             documents={documents}
             onNavigate={setCurrentPage}
+            complianceSummary={complianceSummary}
           />
         );
       case 'profile':

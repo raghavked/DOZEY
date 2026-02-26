@@ -1,8 +1,9 @@
 import { VaccinationRecord, UserProfile, CountryPeriod, UploadedDocument } from '@/types';
-import { User, Globe, FileText, Syringe, AlertCircle, CheckCircle, Target, ArrowRight, Upload, Shield, Share2, Bell, Sparkles } from 'lucide-react';
+import { User, Globe, FileText, Syringe, AlertCircle, CheckCircle, Target, ArrowRight, Upload, Shield, Share2, Bell, Sparkles, Loader2 } from 'lucide-react';
 import { Progress } from './ui/progress';
 import { generateDashboardInsights } from '@/lib/document-suggestions';
 import { useI18n } from '@/lib/i18n';
+import type { ComplianceSummary } from '@/hooks/use-api';
 
 interface DashboardProps {
   vaccinations: VaccinationRecord[];
@@ -10,50 +11,22 @@ interface DashboardProps {
   countryHistory: CountryPeriod[];
   documents: UploadedDocument[];
   onNavigate: (page: 'dashboard' | 'profile' | 'countries' | 'upload' | 'timeline' | 'compliance' | 'share' | 'alerts') => void;
+  complianceSummary?: ComplianceSummary | null;
 }
 
-const US_VACCINE_REQUIREMENTS = [
-  { name: 'MMR (Measles, Mumps, Rubella)', requiredDoses: 2 },
-  { name: 'Hepatitis B', requiredDoses: 3 },
-  { name: 'Varicella (Chickenpox)', requiredDoses: 2 },
-  { name: 'Tdap (Tetanus, Diphtheria, Pertussis)', requiredDoses: 1 },
-  { name: 'Meningococcal (MenACWY)', requiredDoses: 1 },
-  { name: 'COVID-19', requiredDoses: 2 },
-  { name: 'Polio (IPV)', requiredDoses: 4 },
-  { name: 'Hepatitis A', requiredDoses: 2 },
-];
-
-function calculateCompliance(vaccinations: VaccinationRecord[]) {
-  let totalRequired = 0;
-  let totalCompleted = 0;
-  const missing: Array<{name: string, needed: number}> = [];
-
-  US_VACCINE_REQUIREMENTS.forEach(req => {
-    totalRequired += req.requiredDoses;
-    const doses = vaccinations.filter(v => 
-      v.vaccineName.toLowerCase().includes(req.name.toLowerCase().split('(')[0].trim().toLowerCase())
-    ).length;
-    
-    totalCompleted += Math.min(doses, req.requiredDoses);
-    
-    if (doses < req.requiredDoses) {
-      missing.push({
-        name: req.name,
-        needed: req.requiredDoses - doses,
-      });
-    }
-  });
-
-  const percentage = Math.round((totalCompleted / totalRequired) * 100);
-  return { percentage, totalCompleted, totalRequired, missing };
-}
-
-export function Dashboard({ vaccinations, profile, countryHistory, documents, onNavigate }: DashboardProps) {
+export function Dashboard({ vaccinations, profile, countryHistory, documents, onNavigate, complianceSummary }: DashboardProps) {
   const { t } = useI18n();
   const verifiedCount = vaccinations.filter(v => v.verified).length;
   const unverifiedCount = vaccinations.length - verifiedCount;
-  const compliance = calculateCompliance(vaccinations);
   const insights = generateDashboardInsights(documents, vaccinations, profile, countryHistory);
+
+  const processedDocs = documents.filter(d => d.processingStatus === 'completed').length;
+
+  const lookupTypeLabels: Record<string, string> = {
+    institution: 'Institution Compliance',
+    employer: 'Employer Compliance',
+    country: 'Country/Visa Compliance',
+  };
 
   return (
     <div className="space-y-6">
@@ -96,7 +69,7 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
         {[
           { id: 'timeline' as const, icon: Syringe, value: vaccinations.length, label: t('vaccines'), sub: `${verifiedCount} ${t('verified')}` },
           { id: 'countries' as const, icon: Globe, value: countryHistory.length, label: t('countries'), sub: t('residenceHistorySub') },
-          { id: 'upload' as const, icon: FileText, value: documents.length, label: t('documents'), sub: t('uploadedFiles') },
+          { id: 'upload' as const, icon: FileText, value: documents.length, label: t('documents'), sub: processedDocs > 0 ? `${processedDocs} processed` : t('uploadedFiles') },
           { id: 'profile' as const, icon: User, value: profile ? '100%' : '0%', label: t('profile'), sub: profile ? t('complete') : t('incomplete') },
         ].map((stat) => {
           const Icon = stat.icon;
@@ -122,38 +95,110 @@ export function Dashboard({ vaccinations, profile, countryHistory, documents, on
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <div className="lg:col-span-2 space-y-5">
-          {profile?.targetCountry === 'United States' && (
+          {complianceSummary?.hasTarget && !complianceSummary.aiUnavailable && complianceSummary.percentage !== undefined && (
             <div className="bg-white rounded-2xl overflow-hidden">
               <div className="p-6">
                 <div className="flex items-center gap-3 mb-5">
                   <div className="w-10 h-10 bg-[#f5f5f7] rounded-xl flex items-center justify-center">
                     <Target className="w-5 h-5 text-[#86868b]" />
                   </div>
-                  <div>
-                    <h2 className="text-lg font-semibold text-[#1d1d1f]">{t('usCollegeCompliance')}</h2>
-                    <p className="text-[#86868b] text-xs">{t('requiredForAdmission')}</p>
+                  <div className="min-w-0 flex-1">
+                    <h2 className="text-lg font-semibold text-[#1d1d1f] truncate">
+                      {lookupTypeLabels[complianceSummary.lookupType || 'institution']}
+                    </h2>
+                    <p className="text-[#86868b] text-xs truncate">{complianceSummary.targetLabel}</p>
                   </div>
-                  <div className="ml-auto text-3xl font-semibold text-[#4a7fb5]">{compliance.percentage}%</div>
+                  <div className="ml-auto text-3xl font-semibold text-[#4a7fb5]">{complianceSummary.percentage}%</div>
                 </div>
-                
-                <Progress value={compliance.percentage} className="h-2 bg-[#f5f5f7]" />
+
+                <Progress value={complianceSummary.percentage} className="h-2 bg-[#f5f5f7]" />
                 <p className="text-[#86868b] text-xs mt-2">
-                  {compliance.totalCompleted} of {compliance.totalRequired} {t('dosesCompleted')}
+                  {complianceSummary.totalCompleted} of {complianceSummary.totalRequired} {t('dosesCompleted')}
                 </p>
               </div>
 
-              {compliance.missing.length > 0 && (
+              {complianceSummary.missing && complianceSummary.missing.length > 0 && (
                 <div className="px-6 pb-6 pt-2">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {compliance.missing.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2 bg-amber-50 rounded-lg px-3 py-2 text-xs">
-                        <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                        <span className="text-amber-800">{item.name}: <strong>{item.needed} dose{item.needed > 1 ? 's' : ''}</strong></span>
+                    {complianceSummary.missing.map((item, idx) => (
+                      <div key={idx} className={`flex items-center gap-2 rounded-lg px-3 py-2 text-xs ${
+                        item.status === 'partial' ? 'bg-amber-50' : 'bg-red-50'
+                      }`}>
+                        <AlertCircle className={`w-3.5 h-3.5 shrink-0 ${
+                          item.status === 'partial' ? 'text-amber-500' : 'text-red-400'
+                        }`} />
+                        <span className={item.status === 'partial' ? 'text-amber-800' : 'text-red-700'}>
+                          {item.name}: <strong>{item.needed} dose{item.needed > 1 ? 's' : ''} needed</strong>
+                        </span>
                       </div>
                     ))}
                   </div>
+                  <button
+                    onClick={() => onNavigate('compliance')}
+                    className="mt-4 text-[#4a7fb5] hover:text-[#3a6a9a] text-sm font-medium flex items-center gap-1"
+                  >
+                    View full compliance report
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
                 </div>
               )}
+
+              {complianceSummary.percentage === 100 && (
+                <div className="px-6 pb-6 pt-2">
+                  <div className="flex items-center gap-2 bg-[#4d9068]/10 rounded-lg px-4 py-3">
+                    <CheckCircle className="w-4 h-4 text-[#4d9068]" />
+                    <span className="text-sm text-[#4d9068] font-medium">All requirements met for {complianceSummary.targetLabel}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {complianceSummary?.hasTarget && complianceSummary.aiUnavailable && (
+            <div className="bg-white rounded-2xl p-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#f5f5f7] rounded-xl flex items-center justify-center">
+                  <Target className="w-5 h-5 text-[#86868b]" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-[#1d1d1f]">Compliance Check</h2>
+                  <p className="text-[#86868b] text-xs">Target: {complianceSummary.targetLabel}</p>
+                </div>
+              </div>
+              <p className="text-sm text-[#86868b] mt-4">
+                Compliance data is being prepared. Visit the compliance page to run a full check.
+              </p>
+              <button
+                onClick={() => onNavigate('compliance')}
+                className="mt-3 text-[#4a7fb5] hover:text-[#3a6a9a] text-sm font-medium flex items-center gap-1"
+              >
+                Check Compliance
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
+          {!complianceSummary?.hasTarget && (
+            <div className="bg-white rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-[#f5f5f7] rounded-xl flex items-center justify-center">
+                  <Target className="w-5 h-5 text-[#86868b]" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-[#1d1d1f]">Compliance Tracking</h2>
+                  <p className="text-[#86868b] text-xs">Set a target to track your progress</p>
+                </div>
+              </div>
+              <p className="text-sm text-[#86868b] mb-4">
+                Add a target country, institution, or employer in your profile to see your compliance progress here.
+              </p>
+              <button
+                onClick={() => onNavigate('profile')}
+                className="inline-flex items-center gap-2 bg-[#4a7fb5] hover:bg-[#3d6d9e] text-white px-5 py-2.5 rounded-full font-medium transition-colors text-sm"
+              >
+                Set Up Target
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
           )}
 

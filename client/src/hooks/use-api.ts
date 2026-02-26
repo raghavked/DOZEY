@@ -367,3 +367,30 @@ export function useCountryHistory() {
     deleteCountryPeriod: remove.mutate,
   };
 }
+
+export interface ComplianceSummary {
+  hasTarget: boolean;
+  targetLabel?: string;
+  lookupType?: string;
+  percentage?: number;
+  totalCompleted?: number;
+  totalRequired?: number;
+  missing?: Array<{ name: string; needed: number; status: string }>;
+  requirements?: Array<{ vaccine_name: string; required_doses: number; completed_doses: number; status: string }>;
+  aiUnavailable?: boolean;
+}
+
+export function useComplianceSummary() {
+  const query = useQuery<ComplianceSummary>({
+    queryKey: ['complianceSummary'],
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    queryFn: () => fetchJson<ComplianceSummary>('/api/compliance/summary'),
+  });
+
+  return {
+    summary: query.data || null,
+    isLoading: query.isLoading,
+    refetch: query.refetch,
+  };
+}
