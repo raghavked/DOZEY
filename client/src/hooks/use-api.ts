@@ -117,6 +117,7 @@ export function useProfile() {
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
+      queryClient.invalidateQueries({ queryKey: ['complianceSummary'] });
       toast.success('Profile saved');
     },
     onError: (err: Error) => {
@@ -152,6 +153,7 @@ export function useVaccinations() {
     mutationFn: (data: Omit<VaccinationRecord, 'id'>) => postJson('/api/vaccinations', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vaccinations'] });
+      queryClient.invalidateQueries({ queryKey: ['complianceSummary'] });
       toast.success('Vaccination record added');
     },
     onError: (err: Error) => {
@@ -164,6 +166,7 @@ export function useVaccinations() {
       patchJson(`/api/vaccinations/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vaccinations'] });
+      queryClient.invalidateQueries({ queryKey: ['complianceSummary'] });
       toast.success('Vaccination record updated');
     },
     onError: (err: Error) => {
@@ -175,6 +178,7 @@ export function useVaccinations() {
     mutationFn: (id: string) => deleteJson(`/api/vaccinations/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vaccinations'] });
+      queryClient.invalidateQueries({ queryKey: ['complianceSummary'] });
       toast.success('Vaccination record deleted');
     },
     onError: (err: Error) => {
@@ -290,6 +294,7 @@ export function useExemptions() {
     mutationFn: (data: Omit<MedicalExemption, 'id'>) => postJson('/api/exemptions', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['exemptions'] });
+      queryClient.invalidateQueries({ queryKey: ['complianceSummary'] });
       toast.success('Exemption added');
     },
     onError: (err: Error) => {
@@ -301,6 +306,7 @@ export function useExemptions() {
     mutationFn: (id: string) => deleteJson(`/api/exemptions/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['exemptions'] });
+      queryClient.invalidateQueries({ queryKey: ['complianceSummary'] });
       toast.success('Exemption removed');
     },
     onError: (err: Error) => {

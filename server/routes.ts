@@ -35,6 +35,9 @@ async function recalculateDoseNumbers(userId: string, vaccineName: string) {
   }
 }
 
+const complianceCache = new Map<string, { data: any; timestamp: number }>();
+const COMPLIANCE_CACHE_TTL = 10 * 60 * 1000;
+
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
     cb(null, path.resolve(__dirname, "../uploads"));
@@ -207,9 +210,11 @@ export function registerRoutes(app: Express) {
       const [existing] = await db.select().from(profiles).where(eq(profiles.userId, userId));
       if (existing) {
         const [updated] = await db.update(profiles).set(data).where(eq(profiles.userId, userId)).returning();
+        clearComplianceCacheForUser(userId);
         res.json(updated);
       } else {
         const [created] = await db.insert(profiles).values(data).returning();
+        clearComplianceCacheForUser(userId);
         res.json(created);
       }
     } catch (error) {
@@ -257,6 +262,7 @@ export function registerRoutes(app: Express) {
       };
       const [record] = await db.insert(vaccinations).values(vaccData).returning();
       await recalculateDoseNumbers(userId, vaccineName);
+      clearComplianceCacheForUser(userId);
       const [updated] = await db.select().from(vaccinations).where(eq(vaccinations.id, record.id));
       res.json(updated || record);
     } catch (error) {
@@ -274,6 +280,7 @@ export function registerRoutes(app: Express) {
         .set({ verified: !!verified })
         .where(and(eq(vaccinations.id, id), eq(vaccinations.userId, userId)))
         .returning();
+      clearComplianceCacheForUser(userId);
       res.json(updated);
     } catch (error) {
       console.error("Error updating vaccination:", error);
@@ -289,6 +296,7 @@ export function registerRoutes(app: Express) {
       if (!toDelete) return res.json({ success: true });
       await db.delete(vaccinations).where(and(eq(vaccinations.id, id), eq(vaccinations.userId, userId)));
       await recalculateDoseNumbers(userId, toDelete.vaccineName);
+      clearComplianceCacheForUser(userId);
       res.json({ success: true });
     } catch (error) {
       console.error("Error deleting vaccination:", error);
@@ -631,6 +639,7 @@ export function registerRoutes(app: Express) {
             for (const name of importedNames) {
               await recalculateDoseNumbers(userId, name);
             }
+            clearComplianceCacheForUser(userId);
           }
 
           if (result.parsedData?.vaccinations) {
@@ -774,6 +783,7 @@ export function registerRoutes(app: Express) {
         .returning();
 
       await recalculateDoseNumbers(userId, vaccine_name);
+      clearComplianceCacheForUser(userId);
       const [updated] = await db.select().from(vaccinations).where(eq(vaccinations.id, record.id));
       res.json({ success: true, vaccination: updated || record });
     } catch (error) {
@@ -881,6 +891,9 @@ export function registerRoutes(app: Express) {
         }
       }
 
+      if (autoImportedVacc > 0 || autoImportedExempt > 0) {
+        clearComplianceCacheForUser(userId);
+      }
       res.json({ success: true, parsedData: result.parsedData, autoImportedVacc, autoImportedExempt, needsReviewVacc, needsReviewExempt });
     } catch (error: any) {
       const id = parseInt(req.params.id as string);
@@ -930,6 +943,7 @@ export function registerRoutes(app: Express) {
         inserted.push(record);
       }
 
+      clearComplianceCacheForUser(userId);
       res.json({ success: true, imported: inserted.length, exemptions: inserted });
     } catch (error) {
       console.error("Error importing exemptions:", error);
@@ -1000,6 +1014,7 @@ export function registerRoutes(app: Express) {
     try {
       const userId = (req as AuthRequest).userId;
       const [record] = await db.insert(medicalExemptions).values({ ...req.body, userId }).returning();
+      clearComplianceCacheForUser(userId);
       res.json(record);
     } catch (error) {
       console.error("Error creating exemption:", error);
@@ -1012,6 +1027,7 @@ export function registerRoutes(app: Express) {
       const userId = (req as AuthRequest).userId;
       const id = parseInt(req.params.id as string);
       await db.delete(medicalExemptions).where(and(eq(medicalExemptions.id, id), eq(medicalExemptions.userId, userId)));
+      clearComplianceCacheForUser(userId);
       res.json({ success: true });
     } catch (error) {
       console.error("Error deleting exemption:", error);
@@ -1019,8 +1035,13 @@ export function registerRoutes(app: Express) {
     }
   });
 
-  const complianceCache = new Map<string, { data: any; timestamp: number }>();
-  const COMPLIANCE_CACHE_TTL = 10 * 60 * 1000;
+  function clearComplianceCacheForUser(userId: string) {
+    for (const key of complianceCache.keys()) {
+      if (key.startsWith(userId + ':')) {
+        complianceCache.delete(key);
+      }
+    }
+  }
 
   app.get("/api/compliance/summary", isAuthenticated, async (req, res) => {
     try {

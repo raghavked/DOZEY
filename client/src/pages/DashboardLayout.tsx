@@ -24,7 +24,7 @@ export function DashboardLayout() {
   const { documents, isLoading: docsLoading, addDocument, updateDocument, deleteDocument, refreshAll } = useDocuments();
   const { countryHistory, isLoading: historyLoading, addCountryPeriod, deleteCountryPeriod } = useCountryHistory();
   const { exemptions, isLoading: exemptionsLoading, refreshExemptions } = useExemptions();
-  const { summary: complianceSummary } = useComplianceSummary();
+  const { summary: complianceSummary, refetch: refetchCompliance } = useComplianceSummary();
 
   const isLoading = profileLoading || vaccLoading || docsLoading || historyLoading || exemptionsLoading;
 
@@ -105,7 +105,7 @@ export function DashboardLayout() {
             onUpdate={(id, data) => updateDocument({ id, data })}
             onDelete={(id) => deleteDocument(String(id))}
             onAddVaccination={(v) => addVaccination(v)}
-            onRefresh={() => { refreshAll(); refreshExemptions(); }}
+            onRefresh={() => { refreshAll(); refreshExemptions(); refetchCompliance(); }}
             exemptions={exemptions}
             vaccinations={vaccinations}
             profile={defaultProfile}

@@ -990,10 +990,19 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
 
                       {doc.processingStatus === 'completed' && (
                       <div className="bg-white rounded-2xl p-4 border-0">
-                        <div className="flex items-center gap-2 mb-3">
+                        <div className="flex items-center gap-2 mb-1">
                           <Languages className="w-4 h-4 text-[#4a7fb5]" />
                           <h5 className="text-xs font-semibold text-[#1d1d1f] uppercase">Translate Document</h5>
                         </div>
+                        <p className="text-xs text-[#86868b] mb-3">
+                          {doc.originalLanguage && doc.originalLanguage !== 'en'
+                            ? `Original: ${(() => {
+                                const langNames: Record<string, string> = { es: 'Spanish', fr: 'French', de: 'German', pt: 'Portuguese', zh: 'Chinese', ja: 'Japanese', ko: 'Korean', ar: 'Arabic', hi: 'Hindi', ru: 'Russian', it: 'Italian', nl: 'Dutch', pl: 'Polish', tr: 'Turkish', uk: 'Ukrainian', sv: 'Swedish', da: 'Danish', fi: 'Finnish', nb: 'Norwegian', cs: 'Czech', ro: 'Romanian', hu: 'Hungarian', el: 'Greek', bg: 'Bulgarian', sk: 'Slovak', sl: 'Slovenian', et: 'Estonian', lv: 'Latvian', lt: 'Lithuanian', id: 'Indonesian' };
+                                return langNames[doc.originalLanguage?.toLowerCase() || ''] || doc.originalLanguage;
+                              })()}. Translated to English during processing. Choose another language below to translate further.`
+                            : 'Translate this document into any supported language. Useful for visa applications, school enrollment, or sharing records internationally.'
+                          }
+                        </p>
                         <div className="flex items-center gap-2 flex-wrap">
                           <select
                             value={translatingDocId === doc.id ? translateLang : ''}
