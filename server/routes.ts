@@ -5,7 +5,7 @@ import { isAuthenticated, type AuthRequest } from "./auth";
 import { db } from "./db";
 import { users, profiles, vaccinations, documents, countryHistory, medicalExemptions } from "../shared/schema";
 import { eq, and, count, sql } from "drizzle-orm";
-import { processDocument, processDoctorNotesDocument } from "./ai-pipeline";
+import { processDocument, processDoctorNotesDocument, translateToLanguage, getSupportedTargetLanguages } from "./ai-pipeline";
 import { lookupInstitutionRequirements, lookupEmployerRequirements, lookupCountryRequirements, checkCompliance, generateFormattedReport, type ComplianceLookupType } from "./compliance-engine";
 import { sanitizeString, sanitizeLongString, validateDate, validateId, validateDoseNumber, sanitizeProfileData } from "./validation";
 
@@ -934,6 +934,54 @@ export function registerRoutes(app: Express) {
     } catch (error) {
       console.error("Error importing exemptions:", error);
       res.status(500).json({ message: "Failed to import exemptions" });
+    }
+  });
+
+  app.get("/api/translate/languages", isAuthenticated, (req, res) => {
+    res.json(getSupportedTargetLanguages());
+  });
+
+  app.post("/api/documents/:id/translate", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as AuthRequest).userId;
+      const id = parseInt(req.params.id as string);
+      const { targetLanguage } = req.body;
+
+      if (!targetLanguage || typeof targetLanguage !== "string") {
+        return res.status(400).json({ message: "Target language is required" });
+      }
+
+      const supportedLangs = getSupportedTargetLanguages();
+      if (!supportedLangs[targetLanguage]) {
+        return res.status(400).json({ message: "Unsupported target language" });
+      }
+
+      const [doc] = await db
+        .select()
+        .from(documents)
+        .where(and(eq(documents.id, id), eq(documents.userId, userId)));
+
+      if (!doc) return res.status(404).json({ message: "Document not found" });
+
+      const sourceText = doc.translatedText || doc.extractedText;
+      if (!sourceText || sourceText.trim().length === 0) {
+        return res.status(400).json({ message: "No extracted text available for this document. Process the document first." });
+      }
+
+      const result = await translateToLanguage(sourceText, targetLanguage);
+
+      res.json({
+        translatedText: result.translatedText,
+        targetLanguage: result.targetLanguage,
+        targetLanguageName: supportedLangs[targetLanguage],
+        sourceLanguage: doc.originalLanguage || "en",
+      });
+    } catch (error: any) {
+      console.error("Error translating document:", error);
+      if (error.message?.includes("DEEPL_API_KEY")) {
+        return res.status(503).json({ message: "Translation service is not configured" });
+      }
+      res.status(500).json({ message: "Failed to translate document" });
     }
   });
 

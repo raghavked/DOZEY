@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { UploadedDocument, VaccinationRecord, ParsedVaccinationData, MedicalExemption } from '@/types';
-import { Upload, FileText, Image, Trash2, Plus, Download, Pencil, Check, X, Sparkles, Loader2, ChevronDown, ChevronUp, Import, AlertCircle, CheckCircle2, Globe, Stethoscope, ShieldCheck } from 'lucide-react';
+import { Upload, FileText, Image, Trash2, Plus, Download, Pencil, Check, X, Sparkles, Loader2, ChevronDown, ChevronUp, Import, AlertCircle, CheckCircle2, Globe, Stethoscope, ShieldCheck, Languages, Copy, FileDown } from 'lucide-react';
 import { getSupabase } from '@/lib/supabase';
 import { CustomSelect } from '@/components/CustomSelect';
 import { AutocompleteInput } from '@/components/AutocompleteInput';
@@ -51,7 +51,40 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
   const [editingVaccIdx, setEditingVaccIdx] = useState<{ docId: string; idx: number } | null>(null);
   const [editVaccForm, setEditVaccForm] = useState<{ vaccine_name: string; date: string; dose_number: string; provider: string; country_given: string; location: string; notes: string }>({ vaccine_name: '', date: '', dose_number: '', provider: '', country_given: '', location: '', notes: '' });
   const [importingSingle, setImportingSingle] = useState(false);
+  const [translatingDocId, setTranslatingDocId] = useState<string | null>(null);
+  const [translateLang, setTranslateLang] = useState<string>('');
+  const [translatedResult, setTranslatedResult] = useState<{ docId: string; text: string; langName: string; langCode: string } | null>(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translateError, setTranslateError] = useState<string | null>(null);
+  const [copiedTranslation, setCopiedTranslation] = useState(false);
+  const [supportedLanguages, setSupportedLanguages] = useState<Record<string, string>>({});
+  const [languagesLoaded, setLanguagesLoaded] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadLanguages = async () => {
+      try {
+        const sb = await getSupabase();
+        const { data: { session } } = await sb.auth.getSession();
+        if (!session) return;
+        const res = await fetch('/api/translate/languages', {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
+        if (res.ok && !cancelled) {
+          const data = await res.json();
+          const sorted = Object.fromEntries(
+            Object.entries(data as Record<string, string>).sort(([, a], [, b]) => a.localeCompare(b))
+          );
+          setSupportedLanguages(sorted);
+          setLanguagesLoaded(true);
+        }
+      } catch { /* silent — translate panel will show fallback */ }
+    };
+    loadLanguages();
+    return () => { cancelled = true; };
+  }, []);
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -115,6 +148,62 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
     } catch (err) {
       console.error('Download error:', err);
     }
+  };
+
+  const handleTranslateDocument = async (docId: string, targetLang: string) => {
+    if (!targetLang) return;
+    setIsTranslating(true);
+    setTranslateError(null);
+    setTranslatedResult(null);
+    try {
+      const sb = await getSupabase();
+      const { data: { session } } = await sb.auth.getSession();
+      const res = await fetch(`/api/documents/${docId}/translate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ targetLanguage: targetLang }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Translation failed');
+      }
+      const data = await res.json();
+      setTranslatedResult({
+        docId,
+        text: data.translatedText,
+        langName: data.targetLanguageName,
+        langCode: data.targetLanguage,
+      });
+    } catch (err: any) {
+      setTranslateError(err.message || 'Translation failed');
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  const handleCopyTranslation = async () => {
+    if (!translatedResult?.text) return;
+    try {
+      await navigator.clipboard.writeText(translatedResult.text);
+      setCopiedTranslation(true);
+      setTimeout(() => setCopiedTranslation(false), 2000);
+    } catch { /* fallback */ }
+  };
+
+  const handleDownloadTranslation = () => {
+    if (!translatedResult) return;
+    const blob = new Blob([translatedResult.text], { type: 'text/plain;charset=utf-8' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `translation_${translatedResult.langCode}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   };
 
   const handleProcess = async (docId: string) => {
@@ -897,6 +986,82 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
                         <div className="text-sm text-[#86868b] text-center py-2">
                           {t('noDocuments')}
                         </div>
+                      )}
+
+                      {doc.processingStatus === 'completed' && (
+                      <div className="bg-white rounded-2xl p-4 border-0">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Languages className="w-4 h-4 text-[#4a7fb5]" />
+                          <h5 className="text-xs font-semibold text-[#1d1d1f] uppercase">Translate Document</h5>
+                        </div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <select
+                            value={translatingDocId === doc.id ? translateLang : ''}
+                            onChange={(e) => {
+                              setTranslatingDocId(doc.id);
+                              setTranslateLang(e.target.value);
+                              setTranslatedResult(null);
+                              setTranslateError(null);
+                            }}
+                            className="bg-[#f5f5f7] border-0 rounded-xl px-3 py-2 text-sm text-[#1d1d1f] flex-1 min-w-[180px] focus:outline-none focus:ring-2 focus:ring-[#4a7fb5]/30"
+                          >
+                            <option value="">{languagesLoaded ? 'Select target language...' : 'Loading languages...'}</option>
+                            {Object.entries(supportedLanguages).map(([code, name]) => (
+                              <option key={code} value={code}>{name}</option>
+                            ))}
+                          </select>
+                          <button
+                            onClick={() => handleTranslateDocument(doc.id, translateLang)}
+                            disabled={isTranslating || !translateLang || translatingDocId !== doc.id}
+                            className="flex items-center gap-1.5 px-4 py-2 bg-[#4a7fb5] hover:bg-[#3d6d9e] text-white text-sm font-medium rounded-xl transition-colors disabled:opacity-50"
+                          >
+                            {isTranslating && translatingDocId === doc.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Languages className="w-4 h-4" />
+                            )}
+                            {isTranslating && translatingDocId === doc.id ? 'Translating...' : 'Translate'}
+                          </button>
+                        </div>
+
+                        {translateError && translatingDocId === doc.id && (
+                          <div className="mt-3 flex items-center gap-2 text-sm text-red-600 bg-red-50 rounded-xl px-3 py-2">
+                            <AlertCircle className="w-4 h-4 shrink-0" />
+                            {translateError}
+                          </div>
+                        )}
+
+                        {translatedResult && translatedResult.docId === doc.id && (
+                          <div className="mt-3 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-medium text-[#4a7fb5]">
+                                Translated to {translatedResult.langName}
+                              </span>
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={handleCopyTranslation}
+                                  className="flex items-center gap-1 px-2.5 py-1 text-xs text-[#86868b] hover:text-[#1d1d1f] bg-[#f5f5f7] hover:bg-[#e8e8ed] rounded-lg transition-colors"
+                                  title="Copy translation"
+                                >
+                                  {copiedTranslation ? <Check className="w-3 h-3 text-[#4d9068]" /> : <Copy className="w-3 h-3" />}
+                                  {copiedTranslation ? 'Copied' : 'Copy'}
+                                </button>
+                                <button
+                                  onClick={handleDownloadTranslation}
+                                  className="flex items-center gap-1 px-2.5 py-1 text-xs text-[#86868b] hover:text-[#1d1d1f] bg-[#f5f5f7] hover:bg-[#e8e8ed] rounded-lg transition-colors"
+                                  title="Download as text file"
+                                >
+                                  <FileDown className="w-3 h-3" />
+                                  Download
+                                </button>
+                              </div>
+                            </div>
+                            <div className="bg-[#f5f5f7] rounded-xl p-4 max-h-64 overflow-y-auto">
+                              <pre className="text-sm text-[#1d1d1f] whitespace-pre-wrap font-sans leading-relaxed">{translatedResult.text}</pre>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                       )}
                     </div>
                   )}

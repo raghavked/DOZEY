@@ -67,6 +67,69 @@ export async function detectAndTranslateText(text: string): Promise<{ translated
   return { translatedText: translated, detectedLanguage: detected };
 }
 
+const SUPPORTED_TARGET_LANGUAGES: Record<string, string> = {
+  "bg": "Bulgarian",
+  "cs": "Czech",
+  "da": "Danish",
+  "de": "German",
+  "el": "Greek",
+  "en-US": "English (US)",
+  "en-GB": "English (UK)",
+  "es": "Spanish",
+  "et": "Estonian",
+  "fi": "Finnish",
+  "fr": "French",
+  "hu": "Hungarian",
+  "id": "Indonesian",
+  "it": "Italian",
+  "ja": "Japanese",
+  "ko": "Korean",
+  "lt": "Lithuanian",
+  "lv": "Latvian",
+  "nb": "Norwegian",
+  "nl": "Dutch",
+  "pl": "Polish",
+  "pt-BR": "Portuguese (Brazil)",
+  "pt-PT": "Portuguese (Portugal)",
+  "ro": "Romanian",
+  "ru": "Russian",
+  "sk": "Slovak",
+  "sl": "Slovenian",
+  "sv": "Swedish",
+  "tr": "Turkish",
+  "uk": "Ukrainian",
+  "zh-Hans": "Chinese (Simplified)",
+  "zh-Hant": "Chinese (Traditional)",
+  "ar": "Arabic",
+  "hi": "Hindi",
+};
+
+export function getSupportedTargetLanguages(): Record<string, string> {
+  return { ...SUPPORTED_TARGET_LANGUAGES };
+}
+
+export async function translateToLanguage(
+  text: string,
+  targetLang: string
+): Promise<{ translatedText: string; targetLanguage: string }> {
+  if (!text || text.trim().length === 0) {
+    return { translatedText: "", targetLanguage: targetLang };
+  }
+
+  if (!SUPPORTED_TARGET_LANGUAGES[targetLang]) {
+    throw new Error(`Unsupported target language: ${targetLang}`);
+  }
+
+  const translator = getDeepLClient();
+  const deepLTarget = targetLang as deepl.TargetLanguageCode;
+  const result = await translator.translateText(text, null, deepLTarget);
+  const translated = Array.isArray(result)
+    ? result.map((r) => r.text).join("\n")
+    : result.text;
+
+  return { translatedText: translated, targetLanguage: targetLang };
+}
+
 function safeParseJSON(content: string): any {
   let cleaned = content.trim();
   if (cleaned.startsWith("```json")) {
