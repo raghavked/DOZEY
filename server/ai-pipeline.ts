@@ -357,11 +357,117 @@ CRITICAL RULES:
   return safeParseJSON(content);
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// DOCUMENT AUTHENTICITY VERIFICATION
+// Uses OpenAI GPT-4o-mini to analyse document text for signs of tampering,
+// digital fabrication, or medical inconsistency before accepting it.
+// ─────────────────────────────────────────────────────────────────────────────
+export interface DocumentVerificationResult {
+  isAuthentic: boolean;
+  confidenceScore: number;          // 0–100
+  riskLevel: "low" | "medium" | "high" | "critical";
+  flags: string[];                  // specific concerns found
+  summary: string;                  // human-readable verdict
+  allowProcessing: boolean;         // false = reject document
+}
+
+export async function verifyDocumentAuthenticity(
+  filePath: string,
+  mimeType: string,
+  extractedText: string
+): Promise<DocumentVerificationResult> {
+  const openai = getOpenAIClient();
+
+  // Optionally attach the raw image for visual analysis
+  const uploadsDir = path.resolve(__dirname, "../uploads");
+  const absolutePath = path.resolve(uploadsDir, path.basename(filePath));
+  const isImage = mimeType.startsWith("image/");
+
+  let imageContent: any = null;
+  if (isImage && fs.existsSync(absolutePath)) {
+    const fileBuffer = fs.readFileSync(absolutePath);
+    const base64 = fileBuffer.toString("base64");
+    imageContent = {
+      type: "image_url",
+      image_url: { url: `data:${mimeType};base64,${base64}`, detail: "high" }
+    };
+  }
+
+  const verificationPrompt = `You are a medical document authenticity expert. Analyse this document for signs of fraud, tampering, or digital fabrication.
+
+Extracted text from the document:
+${extractedText.slice(0, 3000)}
+
+Analyse for these specific fraud indicators:
+1. DATE CONSISTENCY: Are dates logical (no future dates for past events, no impossible sequences)?
+2. CONTENT COHERENCE: Is the medical content internally consistent? Do vaccine names, doses, and schedules match known medical standards?
+3. PROVIDER LEGITIMACY: Does the issuing provider (hospital, clinic, government health authority) appear legitimate?
+4. COMPLETENESS: Are required fields present (patient name, DOB, provider name/signature, dates)?
+5. DIGITAL MANIPULATION SIGNS: Inconsistent formatting, impossible dose counts, dates that don't match vaccine availability timelines, or contradictory information.
+
+Return a JSON object:
+{
+  "isAuthentic": true or false,
+  "confidenceScore": 0-100,
+  "riskLevel": "low" or "medium" or "high" or "critical",
+  "flags": ["list of specific concerns, empty array if none"],
+  "summary": "1-2 sentence verdict",
+  "allowProcessing": true or false
+}
+
+Scoring guide:
+- 85-100: Likely authentic → allowProcessing: true
+- 60-84: Uncertain → allowProcessing: true, note flags
+- 30-59: Suspicious → allowProcessing: false
+- 0-29: Likely fraudulent → allowProcessing: false
+- riskLevel "critical" always sets allowProcessing: false
+
+IMPORTANT: Be conservative. Only flag as fraudulent if there is clear evidence. Handwritten documents and older records may look imperfect — this is normal. Documents from developing countries may have non-standard formatting — this is NOT a fraud indicator.`;
+
+  const messages: any[] = [
+    { role: "system", content: "You are a medical document authenticity verification system. Return only valid JSON." },
+    {
+      role: "user",
+      content: imageContent
+        ? [{ type: "text", text: verificationPrompt }, imageContent]
+        : verificationPrompt
+    }
+  ];
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages,
+      max_tokens: 800,
+      temperature: 0.1,
+      response_format: { type: "json_object" },
+    });
+    const content = completion.choices[0]?.message?.content;
+    if (!content) throw new Error("No response from verification model");
+    const result = JSON.parse(content) as DocumentVerificationResult;
+    if (typeof result.allowProcessing !== "boolean") {
+      result.allowProcessing = (result.confidenceScore ?? 50) >= 30;
+    }
+    return result;
+  } catch (err) {
+    console.warn("Document verification failed, defaulting to allow with warning:", err);
+    return {
+      isAuthentic: true,
+      confidenceScore: 50,
+      riskLevel: "medium",
+      flags: ["Automated verification could not be completed — manual review recommended"],
+      summary: "Verification service unavailable. Document accepted with advisory flag.",
+      allowProcessing: true,
+    };
+  }
+}
+
 export async function processDoctorNotesDocument(filePath: string, mimeType: string, residenceHistory?: ResidenceHistoryEntry[]): Promise<{
   extractedText: string;
   translatedText: string;
   originalLanguage: string;
   parsedData: any;
+  verification: DocumentVerificationResult;
 }> {
   const { text } = await extractTextFromDocument(filePath, mimeType);
 
@@ -380,22 +486,26 @@ export async function processDoctorNotesDocument(filePath: string, mimeType: str
     console.warn("Translation failed, proceeding with original text:", translationError);
   }
 
-  const textForParsing = translatedText || text;
-  const parsedData = await parseDoctorNotes(textForParsing, residenceHistory);
-
+    const textForParsing = translatedText || text;
+  // Run parsing and verification in parallel for efficiency
+  const [parsedData, verification] = await Promise.all([
+    parseDoctorNotes(textForParsing, residenceHistory),
+    verifyDocumentAuthenticity(filePath, mimeType, textForParsing),
+  ]);
   return {
     extractedText: text,
     translatedText: detectedLanguage.toLowerCase() === "en" ? text : translatedText,
     originalLanguage: detectedLanguage,
     parsedData,
+    verification,
   };
 }
-
 export async function processDocument(filePath: string, mimeType: string, residenceHistory?: ResidenceHistoryEntry[]): Promise<{
   extractedText: string;
   translatedText: string;
   originalLanguage: string;
   parsedData: any;
+  verification: DocumentVerificationResult;
 }> {
   const { text } = await extractTextFromDocument(filePath, mimeType);
 
@@ -414,13 +524,17 @@ export async function processDocument(filePath: string, mimeType: string, reside
     console.warn("Translation failed, proceeding with original text:", translationError);
   }
 
-  const textForParsing = translatedText || text;
-  const parsedData = await parseVaccinationData(textForParsing, residenceHistory);
-
+   const textForParsing = translatedText || text;
+  // Run parsing and verification in parallel for efficiency
+  const [parsedData, verification] = await Promise.all([
+    parseVaccinationData(textForParsing, residenceHistory),
+    verifyDocumentAuthenticity(filePath, mimeType, textForParsing),
+  ]);
   return {
     extractedText: text,
     translatedText: detectedLanguage.toLowerCase() === "en" ? text : translatedText,
     originalLanguage: detectedLanguage,
     parsedData,
+    verification,
   };
 }

@@ -222,6 +222,18 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
 
       if (!res.ok) {
         const err = await res.json();
+        // Handle document authenticity rejection (HTTP 422)
+        if (res.status === 422 && err.verification) {
+          const v = err.verification;
+          onRefresh?.();
+          const flags = v.flags?.length ? `\n\nFlags:\n${v.flags.map((f: string) => `• ${f}`).join('\n')}` : '';
+          throw new Error(
+            `⚠️ Document Rejected — Authenticity Check Failed\n\n` +
+            `Risk Level: ${(v.riskLevel || 'unknown').toUpperCase()}\n` +
+            `Confidence Score: ${v.confidenceScore ?? 'N/A'}/100\n\n` +
+            `Reason: ${v.summary || 'Document could not be verified.'}${flags}`
+          );
+        }
         throw new Error(err.message || 'Processing failed');
       }
 
@@ -229,12 +241,27 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
       setExpandedDoc(docId);
       onRefresh?.();
 
+      // Build verification note to append to success message
+      const verif = data.verification;
+      let verifNote = '';
+      if (verif) {
+        if (verif.riskLevel === 'low') {
+          verifNote = `\n\n✅ Authenticity verified (confidence: ${verif.confidenceScore}/100)`;
+        } else if (verif.riskLevel === 'medium') {
+          verifNote = `\n\n⚠️ Document accepted with advisory note (confidence: ${verif.confidenceScore}/100). ${verif.summary}`;
+        } else if (verif.riskLevel === 'high') {
+          verifNote = `\n\n⚠️ Document flagged for manual review (confidence: ${verif.confidenceScore}/100). ${verif.summary}`;
+        }
+      }
+
       if (data.autoImported > 0 && data.needsReview > 0) {
-        alert(`Document processed! ${data.autoImported} complete record${data.autoImported !== 1 ? 's' : ''} imported. ${data.needsReview} record${data.needsReview !== 1 ? 's' : ''} need${data.needsReview === 1 ? 's' : ''} your review — please fill in the missing details below.`);
+        alert(`Document processed! ${data.autoImported} complete record${data.autoImported !== 1 ? 's' : ''} imported. ${data.needsReview} record${data.needsReview !== 1 ? 's' : ''} need${data.needsReview === 1 ? 's' : ''} your review — please fill in the missing details below.${verifNote}`);
       } else if (data.autoImported > 0) {
-        alert(`Document processed! ${data.autoImported} vaccination${data.autoImported !== 1 ? 's' : ''} automatically added to your timeline.`);
+        alert(`Document processed! ${data.autoImported} vaccination${data.autoImported !== 1 ? 's' : ''} automatically added to your timeline.${verifNote}`);
       } else if (data.needsReview > 0) {
-        alert(`Document processed! ${data.needsReview} record${data.needsReview !== 1 ? 's' : ''} found but missing required details. Please fill in the missing information below to import.`);
+        alert(`Document processed! ${data.needsReview} record${data.needsReview !== 1 ? 's' : ''} found but missing required details. Please fill in the missing information below to import.${verifNote}`);
+      } else if (verifNote) {
+        alert(`Document processed.${verifNote}`);
       }
     } catch (err: any) {
       setProcessError(err.message || 'Failed to process document');
@@ -293,14 +320,38 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
         },
       });
 
-      if (!res.ok) {
+       if (!res.ok) {
         const err = await res.json();
+        // Handle document authenticity rejection (HTTP 422)
+        if (res.status === 422 && err.verification) {
+          const v = err.verification;
+          onRefresh?.();
+          const flags = v.flags?.length ? `\n\nFlags:\n${v.flags.map((f: string) => `• ${f}`).join('\n')}` : '';
+          throw new Error(
+            `⚠️ Document Rejected — Authenticity Check Failed\n\n` +
+            `Risk Level: ${(v.riskLevel || 'unknown').toUpperCase()}\n` +
+            `Confidence Score: ${v.confidenceScore ?? 'N/A'}/100\n\n` +
+            `Reason: ${v.summary || 'Document could not be verified.'}${flags}`
+          );
+        }
         throw new Error(err.message || 'Processing failed');
       }
-
       const data = await res.json();
       setExpandedDoc(docId);
       onRefresh?.();
+
+      // Build verification note
+      const dnVerif = data.verification;
+      let dnVerifNote = '';
+      if (dnVerif) {
+        if (dnVerif.riskLevel === 'low') {
+          dnVerifNote = `\n\n✅ Authenticity verified (confidence: ${dnVerif.confidenceScore}/100)`;
+        } else if (dnVerif.riskLevel === 'medium') {
+          dnVerifNote = `\n\n⚠️ Document accepted with advisory note (confidence: ${dnVerif.confidenceScore}/100). ${dnVerif.summary}`;
+        } else if (dnVerif.riskLevel === 'high') {
+          dnVerifNote = `\n\n⚠️ Document flagged for manual review (confidence: ${dnVerif.confidenceScore}/100). ${dnVerif.summary}`;
+        }
+      }
 
       const parts: string[] = [];
       if (data.autoImportedVacc > 0) parts.push(`${data.autoImportedVacc} vaccination${data.autoImportedVacc !== 1 ? 's' : ''}`);
@@ -309,11 +360,13 @@ export function DocumentUpload({ documents, onUpload, onUpdate, onDelete, onAddV
       if (data.needsReviewVacc > 0) reviewParts.push(`${data.needsReviewVacc} vaccination${data.needsReviewVacc !== 1 ? 's' : ''}`);
       if (data.needsReviewExempt > 0) reviewParts.push(`${data.needsReviewExempt} exemption${data.needsReviewExempt !== 1 ? 's' : ''}`);
       if (parts.length > 0 && reviewParts.length > 0) {
-        alert(`Document processed! ${parts.join(' and ')} imported. ${reviewParts.join(' and ')} need your review — please fill in missing details below.`);
+        alert(`Document processed! ${parts.join(' and ')} imported. ${reviewParts.join(' and ')} need your review — please fill in missing details below.${dnVerifNote}`);
       } else if (parts.length > 0) {
-        alert(`Document processed! ${parts.join(' and ')} automatically imported.`);
+        alert(`Document processed! ${parts.join(' and ')} automatically imported.${dnVerifNote}`);
       } else if (reviewParts.length > 0) {
-        alert(`Document processed! ${reviewParts.join(' and ')} found but need your review — please fill in missing details below.`);
+        alert(`Document processed! ${reviewParts.join(' and ')} found but need your review — please fill in missing details below.${dnVerifNote}`);
+      } else if (dnVerifNote) {
+        alert(`Document processed.${dnVerifNote}`);
       }
     } catch (err: any) {
       setProcessError(err.message || 'Failed to process doctor notes');

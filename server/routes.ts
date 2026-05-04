@@ -482,6 +482,26 @@ export function registerRoutes(app: Express) {
       try {
         const result = await processDocument(doc.filePath, doc.mimeType || "application/pdf", residenceHistory);
 
+        // ── Document Authenticity Gate ──────────────────────────────────────
+        // Reject documents flagged as fraudulent/tampered by the AI verifier.
+        const verification = result.verification;
+        if (!verification.allowProcessing) {
+          await db
+            .update(documents)
+            .set({ processingStatus: "rejected" })
+            .where(eq(documents.id, id));
+          return res.status(422).json({
+            message: "Document failed authenticity verification and cannot be processed.",
+            verification: {
+              riskLevel: verification.riskLevel,
+              confidenceScore: verification.confidenceScore,
+              flags: verification.flags,
+              summary: verification.summary,
+            },
+          });
+        }
+        // ───────────────────────────────────────────────────────────────────
+
         const detectedCountry = result.parsedData?.document_origin?.country || null;
         const updateData: Record<string, any> = {
           extractedText: result.extractedText,
@@ -654,6 +674,13 @@ export function registerRoutes(app: Express) {
           parsedData: result.parsedData,
           autoImported,
           needsReview,
+          verification: {
+            isAuthentic: verification.isAuthentic,
+            confidenceScore: verification.confidenceScore,
+            riskLevel: verification.riskLevel,
+            flags: verification.flags,
+            summary: verification.summary,
+          },
         });
       } catch (processingError: any) {
         await db
@@ -809,7 +836,26 @@ export function registerRoutes(app: Express) {
       const dnResidenceHistory = await db.select().from(countryHistory).where(eq(countryHistory.userId, userId));
       const result = await processDoctorNotesDocument(doc.filePath, doc.mimeType || "application/pdf", dnResidenceHistory);
 
-      const detectedCountryDN = result.parsedData?.document_origin?.country || null;
+      // ── Document Authenticity Gate ──────────────────────────────────────
+      const dnVerification = result.verification;
+      if (!dnVerification.allowProcessing) {
+        await db
+          .update(documents)
+          .set({ processingStatus: "rejected" })
+          .where(eq(documents.id, id));
+        return res.status(422).json({
+          message: "Document failed authenticity verification and cannot be processed.",
+          verification: {
+            riskLevel: dnVerification.riskLevel,
+            confidenceScore: dnVerification.confidenceScore,
+            flags: dnVerification.flags,
+            summary: dnVerification.summary,
+          },
+        });
+      }
+      // ───────────────────────────────────────────────────────────────────
+
+      const detectedCountryDN = result.parsedData?.document_origin?.country || null;;
       const dnUpdateData: Record<string, any> = {
         extractedText: result.extractedText,
         translatedText: result.translatedText,
@@ -894,7 +940,21 @@ export function registerRoutes(app: Express) {
       if (autoImportedVacc > 0 || autoImportedExempt > 0) {
         clearComplianceCacheForUser(userId);
       }
-      res.json({ success: true, parsedData: result.parsedData, autoImportedVacc, autoImportedExempt, needsReviewVacc, needsReviewExempt });
+      res.json({
+        success: true,
+        parsedData: result.parsedData,
+        autoImportedVacc,
+        autoImportedExempt,
+        needsReviewVacc,
+        needsReviewExempt,
+        verification: {
+          isAuthentic: dnVerification.isAuthentic,
+          confidenceScore: dnVerification.confidenceScore,
+          riskLevel: dnVerification.riskLevel,
+          flags: dnVerification.flags,
+          summary: dnVerification.summary,
+        },
+      });
     } catch (error: any) {
       const id = parseInt(req.params.id as string);
       await db.update(documents).set({ processingStatus: "error" }).where(eq(documents.id, id));

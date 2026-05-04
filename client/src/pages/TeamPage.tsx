@@ -84,11 +84,11 @@ export function TeamPage() {
                 key={name}
                 className="fade-in opacity-0 translate-y-6 transition-all duration-500 bg-[#F8F7F4] border border-[#E5E7EB] rounded-[8px] overflow-hidden hover:border-[#D1D5DB] transition-colors"
               >
-                <div className="aspect-[4/3] overflow-hidden bg-[#F3F4F6]">
+                <div className="aspect-[3/4] overflow-hidden bg-[#F3F4F6]">
                   <img
                     src={photo}
                     alt={`${name}, ${role}`}
-                    className="w-full h-full object-cover object-top"
+                    className="w-full h-full object-cover object-center"
                   />
                 </div>
                 <div className="p-6">
