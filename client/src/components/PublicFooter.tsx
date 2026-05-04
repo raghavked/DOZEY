@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Instagram } from 'lucide-react';
+import { DozeyLogo } from '@/components/DozeyLogo';
 
 const productLinks = [
   { to: '/features', label: 'Features' },
@@ -24,12 +25,9 @@ export function PublicFooter() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-[#10B981] rounded-[4px] flex items-center justify-center font-bold text-[#0A1428] text-sm">
-                D
-              </div>
-              <span className="text-white font-bold text-lg tracking-tight">DOZEY</span>
-            </div>
+            <Link to="/" aria-label="DOZEY Home" className="inline-block mb-4">
+              <DozeyLogo className="h-12" theme="dark" />
+            </Link>
             <p className="text-sm text-white/60 leading-relaxed">
               Healthcare that moves with you. Managing medical records across borders for
               immigrants, students, and global workers.
@@ -52,10 +50,7 @@ export function PublicFooter() {
             <ul className="space-y-3">
               {productLinks.map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-sm text-white/60 hover:text-white transition-colors"
-                  >
+                  <Link to={link.to} className="text-sm text-white/60 hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -69,10 +64,7 @@ export function PublicFooter() {
             <ul className="space-y-3">
               {companyLinks.map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-sm text-white/60 hover:text-white transition-colors"
-                  >
+                  <Link to={link.to} className="text-sm text-white/60 hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -86,10 +78,7 @@ export function PublicFooter() {
             <ul className="space-y-3">
               {legalLinks.map((link) => (
                 <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-sm text-white/60 hover:text-white transition-colors"
-                  >
+                  <Link to={link.to} className="text-sm text-white/60 hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
