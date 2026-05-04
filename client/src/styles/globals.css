@@ -298,3 +298,37 @@ html {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ── DOZEY Redesign: Humane Design System ── */
+
+/* Smooth fade-in on scroll (used by useScrollFade hook) */
+.fade-in {
+  transition-property: opacity, transform;
+  transition-duration: 500ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Inter font stack for headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', 'Helvetica Neue', sans-serif;
+  letter-spacing: -0.025em;
+}
+
+/* Body copy */
+body {
+  font-family: 'Inter', 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  background-color: #F8F7F4;
+  color: #0A1428;
+}
+
+/* Focus styles — accessible, no glow */
+*:focus-visible {
+  outline: 2px solid #0A1428;
+  outline-offset: 2px;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}

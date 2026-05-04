@@ -1,172 +1,162 @@
 import { useEffect, useRef } from 'react';
-import { Linkedin, GraduationCap, Award, ArrowRight, Trophy } from 'lucide-react';
+import { Linkedin, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import aashImg from '@/assets/aash-photo.png';
 import isaacImg from '@/assets/isaac-photo.png';
 import raghavImg from '@/assets/raghav-photo.png';
 
-function useScrollAnimation() {
+function useScrollFade() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add('animated');
+          if (entry.isIntersecting) {
+            entry.target.classList.add('opacity-100', 'translate-y-0');
+            entry.target.classList.remove('opacity-0', 'translate-y-6');
+          }
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
     );
-    ref.current?.querySelectorAll('.animate-on-scroll').forEach((el) => observer.observe(el));
+    ref.current?.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
   return ref;
 }
 
-export function TeamPage() {
-  const scrollRef = useScrollAnimation();
+const team = [
+  {
+    name: 'Aashreeti Deo',
+    role: 'Co-Founder & CEO',
+    bio: 'UC Davis student passionate about bridging healthcare accessibility gaps through technology. Experienced the challenges of vaccine record management firsthand across multiple countries.',
+    photo: aashImg,
+    linkedin: 'https://www.linkedin.com/in/aashreeti-deo/',
+  },
+  {
+    name: 'Isaac Karottu',
+    role: 'Co-Founder & CRO',
+    bio: 'UC Davis Computer Science student with expertise in AI and secure systems. Leads revenue strategy and business development to bring DOZEY to users who need it most.',
+    photo: isaacImg,
+    linkedin: 'https://www.linkedin.com/in/isaac-karottu-95242b2b3/',
+  },
+  {
+    name: 'Raghav Kedia',
+    role: 'CTO',
+    bio: 'UC Davis Computer Science and Economics student with expertise in AI and computing systems. Leads the technical architecture and development of DOZEY\'s platform.',
+    photo: raghavImg,
+    linkedin: 'https://www.linkedin.com/in/raghav-kedia-169a42279/',
+  },
+];
 
-  const team = [
-    {
-      name: 'Aashreeti Deo',
-      role: 'Co-Founder & CEO',
-      bio: 'UC Davis student passionate about bridging healthcare accessibility gaps through technology. Experienced the challenges of vaccine record management firsthand across multiple countries.',
-      photo: aashImg,
-      social: { linkedin: 'https://www.linkedin.com/in/aashreeti-deo/' },
-    },
-    {
-      name: 'Isaac Karottu',
-      role: 'Co-Founder & CRO',
-      bio: 'UC Davis Computer Science student with expertise in AI and secure systems. Leads revenue strategy and business development to bring DOZEY to users who need it most.',
-      photo: isaacImg,
-      social: { linkedin: 'https://www.linkedin.com/in/isaac-karottu-95242b2b3/' },
-    },
-    {
-      name: 'Raghav Kedia',
-      role: 'CTO',
-      bio: 'UC Davis Computer Science and Economics student with expertise in AI and computing systems. Leads the technical architecture and development of DOZEY\'s platform.',
-      photo: raghavImg,
-      social: { linkedin: 'https://www.linkedin.com/in/raghav-kedia-169a42279/' },
-    },
-  ];
+export function TeamPage() {
+  const ref = useScrollFade();
 
   return (
-    <div ref={scrollRef} className="min-h-screen">
-      <section className="relative min-h-[70vh] flex items-center bg-gradient-to-b from-[#f5f5f7] to-[#fbfbfd] text-[#1d1d1f] overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-1/2 left-1/3 w-[500px] h-[500px] bg-[#4d9068]/5 rounded-full blur-[150px]" />
-        </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 pt-40 w-full">
-          <div className="max-w-3xl mx-auto text-center">
-            <p className="text-[#8aab45] text-xs font-semibold uppercase tracking-widest mb-6 animate-fade-in">
+    <div ref={ref} className="min-h-screen bg-[#F8F7F4] text-[#0A1428]">
+
+      {/* ── Hero ── */}
+      <section className="pt-32 pb-20 lg:pt-40 lg:pb-24">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-sm font-medium text-[#10B981] uppercase tracking-widest mb-4">
               Our Team
             </p>
-            <h1 className="animate-fade-in-up text-5xl lg:text-6xl xl:text-7xl font-semibold leading-[1.05] tracking-tight mb-6">
+            <h1 className="text-5xl lg:text-6xl font-semibold leading-[1.1] tracking-tight mb-6">
               Meet the people
               <br />
-              behind <span className="text-[#8aab45]">DOZEY</span>
+              behind DOZEY
             </h1>
-            <p className="animate-fade-in-up delay-200 text-base text-[#86868b] max-w-lg mx-auto font-light">
+            <p className="text-lg text-[#6B7280] leading-relaxed">
               Founded by UC Davis students who experienced the challenges of managing
               vaccination records across borders firsthand.
             </p>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#fbfbfd] to-transparent" />
       </section>
 
-      <section className="py-24 lg:py-32 bg-[#fbfbfd]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-10">
-            {team.map((member, index) => (
+      {/* ── Team grid ── */}
+      <section className="py-20 lg:py-28 bg-white border-y border-[#E5E7EB]">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-8">
+            {team.map(({ name, role, bio, photo, linkedin }, i) => (
               <div
-                key={index}
-                className={`animate-on-scroll delay-${(index + 1) * 100} group`}
+                key={name}
+                className="fade-in opacity-0 translate-y-6 transition-all duration-500 bg-[#F8F7F4] border border-[#E5E7EB] rounded-[8px] overflow-hidden hover:border-[#D1D5DB] transition-colors"
               >
-                <div className="aspect-[3/4] overflow-hidden rounded-2xl mb-6 bg-[#f5f5f7]">
+                <div className="aspect-[4/3] overflow-hidden bg-[#F3F4F6]">
                   <img
-                    src={member.photo}
-                    alt={member.name}
-                    className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
+                    src={photo}
+                    alt={`${name}, ${role}`}
+                    className="w-full h-full object-cover object-top"
                   />
                 </div>
-                <h2 className="text-lg font-semibold text-[#1d1d1f] mb-1">{member.name}</h2>
-                <p className="text-xs text-[#86868b] mb-3 uppercase tracking-wide">
-                  {member.role}
-                </p>
-                <p className="text-sm text-[#86868b] leading-relaxed mb-4">{member.bio}</p>
-                <a
-                  href={member.social.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs text-[#86868b] hover:text-[#4a7fb5] transition-colors"
-                >
-                  <Linkedin className="w-3.5 h-3.5" />
-                  LinkedIn
-                </a>
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-[#0A1428] mb-0.5">{name}</h3>
+                  <p className="text-sm font-medium text-[#10B981] mb-3">{role}</p>
+                  <p className="text-sm text-[#6B7280] leading-relaxed mb-4">{bio}</p>
+                  <a
+                    href={linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm font-medium text-[#0A1428] hover:text-[#1F2937] transition-colors"
+                    aria-label={`${name} on LinkedIn`}
+                  >
+                    <Linkedin className="w-4 h-4" />
+                    LinkedIn
+                  </a>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-24 lg:py-32 bg-[#f5f5f7]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="animate-on-scroll bg-white rounded-2xl p-8 text-center">
-              <GraduationCap className="w-6 h-6 text-[#1d1d1f]/30 mx-auto mb-4" />
-              <h3 className="text-base font-semibold text-[#1d1d1f] mb-1">UC Davis</h3>
-              <p className="text-sm text-[#86868b] leading-relaxed">Built at UC Davis with EIR mentorship, research resources, and a world-class innovation ecosystem.</p>
-            </div>
-            <div className="animate-on-scroll delay-200 bg-white rounded-2xl p-8 text-center">
-              <Trophy className="w-6 h-6 text-[#1d1d1f]/30 mx-auto mb-4" />
-              <h3 className="text-base font-semibold text-[#1d1d1f] mb-1">Award-Winning</h3>
-              <p className="text-sm text-[#86868b] leading-relaxed">Recognized at Hult Prize Regionals for our innovative approach to global healthcare challenges.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 lg:py-32 bg-[#fbfbfd]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-on-scroll">
-            <h2 className="text-3xl lg:text-4xl font-semibold text-[#1d1d1f] mb-4">
-              Want to join our mission?
+      {/* ── Mission ── */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="max-w-3xl fade-in opacity-0 translate-y-6 transition-all duration-500">
+            <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight mb-6">
+              Why we built DOZEY
             </h2>
-            <p className="text-base text-[#86868b] mb-10 font-light">
-              We're always looking for passionate people who want to make healthcare more accessible.
+            <p className="text-lg text-[#6B7280] leading-relaxed mb-6">
+              As international students ourselves, we know what it feels like to arrive in a
+              new country with records that nobody recognizes. We spent weeks chasing down
+              documents, paying for repeat tests, and navigating bureaucracy that assumed
+              everyone had the same healthcare background.
+            </p>
+            <p className="text-lg text-[#6B7280] leading-relaxed mb-8">
+              DOZEY exists because health records should follow the person, not the country.
+              We built the tool we wished existed.
             </p>
             <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 bg-[#4a7fb5] hover:bg-[#3d6a9e] text-white font-semibold px-8 py-4 rounded-full text-base transition-all active:scale-[0.98]"
+              to="/progress"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-[#0A1428] underline underline-offset-4 hover:text-[#1F2937] transition-colors"
             >
-              Get in Touch
-              <ArrowRight className="w-4 h-4" />
+              Read the stories that inspired us <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="py-24 lg:py-32 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-semibold text-[#1d1d1f] mb-4">
-              Our story
-            </h2>
-            <p className="text-base text-[#86868b] font-light">
-              Learn more about the team and what drives us.
-            </p>
-          </div>
-          <div className="relative w-full rounded-2xl overflow-hidden shadow-lg" style={{ paddingBottom: '56.25%' }}>
-            <iframe
-              className="absolute inset-0 w-full h-full"
-              src="https://www.youtube.com/embed/uvSSrl9Dqao"
-              title="DOZEY — Our Story"
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
+      {/* ── CTA ── */}
+      <section className="py-20 bg-[#0A1428]">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-semibold text-white tracking-tight mb-4">
+            Want to work with us?
+          </h2>
+          <p className="text-white/60 mb-8 max-w-md mx-auto">
+            We&apos;re a small team with big ambitions. Get in touch.
+          </p>
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#10B981] text-[#0A1428] font-semibold rounded-[4px] hover:bg-[#0ea572] transition-colors active:scale-[0.98]"
+          >
+            Contact Us <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
+
     </div>
   );
 }
