@@ -636,7 +636,7 @@ export function registerRoutes(app: Express) {
                 .filter((v: any) => v.vaccine_name && v.date)
                 .map((v: any) => v.vaccine_name)
             );
-            for (const name of importedNames) {
+            for (const name of importedNames as Set<string>) {
               await recalculateDoseNumbers(userId, name);
             }
             clearComplianceCacheForUser(userId);
