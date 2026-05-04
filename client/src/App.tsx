@@ -32,10 +32,10 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#fbfbfd]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F7F4]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-[#4a7fb5] border-t-transparent rounded-full animate-spin" />
-          <p className="text-[#1d1d1f] text-lg">Loading DOZEY...</p>
+          <div className="w-12 h-12 border-4 border-[#10B981] border-t-transparent rounded-full animate-spin" />
+          <p className="text-[#0A1428] text-lg">Loading DOZEY...</p>
         </div>
       </div>
     );

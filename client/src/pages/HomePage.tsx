@@ -74,7 +74,7 @@ export function HomePage() {
     <div ref={ref} className="min-h-screen bg-[#F8F7F4] text-[#0A1428]">
 
       {/* ── Hero ── */}
-      <section className="pt-32 pb-20 lg:pt-40 lg:pb-28">
+      <section className="pt-36 pb-20 lg:pt-44 lg:pb-28">
         <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Text */}

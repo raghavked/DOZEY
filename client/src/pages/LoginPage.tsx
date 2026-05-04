@@ -29,88 +29,98 @@ export function LoginPage() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#4a7fb5] to-[#4d9068] text-white relative overflow-hidden">
+      {/* Left panel — brand */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[#0A1428] text-white relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-white/10 rounded-full blur-[100px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-white/5 rounded-full blur-[80px]" />
+          <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-[#10B981]/10 rounded-full blur-[100px]" />
+          <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-[#10B981]/5 rounded-full blur-[80px]" />
         </div>
         <div className="relative flex flex-col justify-center px-16 max-w-lg">
-          <DozeyLogo className="h-20 mb-12" theme="dark" />
-          <h2 className="text-4xl font-extrabold mb-6 leading-[1.05]">
+          <DozeyLogo className="h-16 mb-12" theme="dark" />
+          <h2 className="text-4xl font-bold mb-6 leading-[1.1] tracking-tight">
             Healthcare that
             <br />moves with you
           </h2>
-          <p className="text-white/70 text-lg leading-relaxed mb-10">
+          <p className="text-white/60 text-lg leading-relaxed mb-10">
             Securely manage your vaccination records across borders. Upload, translate, and verify.
           </p>
           <div className="space-y-3">
             {['HIPAA Compliant', '256-bit Encryption', 'AI-Powered Translation'].map((feature) => (
               <div key={feature} className="flex items-center gap-3">
-                <div className="w-1.5 h-1.5 bg-[#8aab45] rounded-full" />
-                <span className="text-white/70 text-sm font-medium">{feature}</span>
+                <div className="w-1.5 h-1.5 bg-[#10B981] rounded-full" />
+                <span className="text-white/60 text-sm font-medium">{feature}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center px-6 bg-[#fbfbfd]">
+      {/* Right panel — form */}
+      <div className="flex-1 flex items-center justify-center px-6 bg-[#F8F7F4]">
         <div className="w-full max-w-sm">
+          {/* Mobile logo */}
           <div className="text-center mb-8 lg:hidden">
             <Link to="/">
-              <DozeyLogo className="h-16 mx-auto mb-4" />
+              <DozeyLogo className="h-14 mx-auto mb-4" />
             </Link>
           </div>
 
           <Link
             to="/"
-            className="inline-flex items-center gap-1.5 text-sm text-[#86868b] hover:text-[#1d1d1f] transition-colors mb-6"
+            className="inline-flex items-center gap-1.5 text-sm text-[#6B7280] hover:text-[#0A1428] transition-colors mb-6"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Back to Home
           </Link>
 
-          <h1 className="text-3xl font-extrabold text-[#1d1d1f] mb-2">Welcome Back</h1>
-          <p className="text-[#86868b] mb-8 text-sm">Sign in to access your health records</p>
+          <h1 className="text-3xl font-bold text-[#0A1428] mb-2 tracking-tight">Welcome back</h1>
+          <p className="text-[#6B7280] mb-8 text-sm">Sign in to access your health records</p>
 
           {error && (
-            <div className="bg-red-50 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-[4px] mb-6 text-sm">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-medium text-[#86868b] mb-2 uppercase tracking-wide">Email</label>
+              <label className="block text-sm font-medium text-[#0A1428] mb-1.5" htmlFor="email">
+                Email
+              </label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#86868b]" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280]" />
                 <input
+                  id="email"
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  placeholder="your@email.com"
+                  placeholder="you@example.com"
                   required
-                  className="w-full pl-11 pr-4 py-3.5 bg-[#f5f5f7] border-0 rounded-xl focus:ring-2 focus:ring-[#4a7fb5]/20 outline-none transition-all text-sm text-[#1d1d1f] placeholder:text-[#86868b]/60"
+                  className="w-full pl-10 pr-4 py-3 border border-[#D1D5DB] rounded-[4px] bg-white text-sm text-[#0A1428] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#0A1428] focus:ring-2 focus:ring-[#0A1428]/10 transition-colors"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#86868b] mb-2 uppercase tracking-wide">Password</label>
+              <label className="block text-sm font-medium text-[#0A1428] mb-1.5" htmlFor="password">
+                Password
+              </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#86868b]" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280]" />
                 <input
+                  id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   placeholder="Enter your password"
                   required
-                  className="w-full pl-11 pr-12 py-3.5 bg-[#f5f5f7] border-0 rounded-xl focus:ring-2 focus:ring-[#4a7fb5]/20 outline-none transition-all text-sm text-[#1d1d1f] placeholder:text-[#86868b]/60"
+                  className="w-full pl-10 pr-12 py-3 border border-[#D1D5DB] rounded-[4px] bg-white text-sm text-[#0A1428] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#0A1428] focus:ring-2 focus:ring-[#0A1428]/10 transition-colors"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#86868b] hover:text-[#1d1d1f]"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#0A1428] transition-colors"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -120,17 +130,17 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#4a7fb5] hover:bg-[#3d6a9e] text-white py-3.5 rounded-full font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-sm active:scale-[0.98]"
+              className="w-full bg-[#0A1428] hover:bg-[#1F2937] text-white py-3.5 rounded-[4px] font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-50 text-sm active:scale-[0.98]"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Signing in…' : 'Sign In'}
               {!loading && <ArrowRight className="w-4 h-4" />}
             </button>
           </form>
 
           <div className="mt-8 text-center">
-            <p className="text-[#86868b] text-sm">
-              Don't have an account?{' '}
-              <Link to="/register" className="text-[#4a7fb5] hover:underline font-semibold">
+            <p className="text-[#6B7280] text-sm">
+              Don&apos;t have an account?{' '}
+              <Link to="/register" className="text-[#0A1428] font-semibold underline underline-offset-4 hover:text-[#1F2937]">
                 Create one
               </Link>
             </p>

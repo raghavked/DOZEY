@@ -58,7 +58,7 @@ export function ProgressPage() {
     <div ref={ref} className="min-h-screen bg-[#F8F7F4] text-[#0A1428]">
 
       {/* ── Hero ── */}
-      <section className="pt-32 pb-20 lg:pt-40 lg:pb-24">
+      <section className="pt-36 pb-20 lg:pt-44 lg:pb-24">
         <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
           <div className="max-w-2xl">
             <p className="text-sm font-medium text-[#10B981] uppercase tracking-widest mb-4">

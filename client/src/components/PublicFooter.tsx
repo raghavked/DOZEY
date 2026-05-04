@@ -26,7 +26,7 @@ export function PublicFooter() {
           {/* Brand */}
           <div className="md:col-span-1">
             <Link to="/" aria-label="DOZEY Home" className="inline-block mb-4">
-              <DozeyLogo className="h-12" theme="dark" />
+              <DozeyLogo className="h-14" theme="dark" />
             </Link>
             <p className="text-sm text-white/60 leading-relaxed">
               Healthcare that moves with you. Managing medical records across borders for
