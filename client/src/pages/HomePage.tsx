@@ -96,7 +96,7 @@ export function HomePage() {
                   to="/login"
                   className="inline-flex items-center gap-2 px-8 py-3 bg-[#0A1428] text-white text-base font-semibold rounded-[4px] hover:bg-[#1F2937] transition-colors active:scale-[0.98]"
                 >
-                  Try Free for 14 Days
+                  Get Started
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
@@ -106,7 +106,7 @@ export function HomePage() {
                   See How It Works
                 </Link>
               </div>
-              <p className="mt-4 text-sm text-[#6B7280]">No credit card required &middot; Free 14-day trial</p>
+              
             </div>
 
             {/* Visual panel */}
@@ -306,10 +306,10 @@ export function HomePage() {
             to="/login"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#10B981] text-[#0A1428] text-base font-semibold rounded-[4px] hover:bg-[#0ea572] transition-colors active:scale-[0.98]"
           >
-            Get Started Free
+            Get Started
             <ArrowRight className="w-4 h-4" />
           </Link>
-          <p className="mt-4 text-sm text-white/40">No credit card required &middot; Free 14-day trial</p>
+          
         </div>
       </section>
 
