@@ -24,9 +24,19 @@ function getOpenAIClient() {
 
 export async function extractTextFromDocument(filePath: string, mimeType: string): Promise<{ text: string; language?: string }> {
   const mistral = getMistralClient();
-  const absolutePath = path.resolve(__dirname, "../uploads", filePath);
+  const sanitizedName = path.basename(filePath);
+  if (!sanitizedName || sanitizedName === "." || sanitizedName === "..") {
+    throw new Error("Invalid file path");
+  }
 
-  if (!fs.existsSync(absolutePath)) {
+  const uploadsDir = path.resolve(__dirname, "../uploads");
+  const absolutePath = path.resolve(uploadsDir, sanitizedName);
+
+  if (!absolutePath.startsWith(uploadsDir + path.sep)) {
+    throw new Error("Invalid file path");
+  }
+
+  if (!fs.existsSync(absolutePath) || !fs.lstatSync(absolutePath).isFile()) {
     throw new Error("File not found on server");
   }
 

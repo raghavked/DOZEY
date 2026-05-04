@@ -71,10 +71,9 @@ export function auditLog(req: Request, action?: string) {
   const timestamp = new Date().toISOString();
   const method = req.method;
   const reqPath = req.path;
-  const ip = req.ip || req.socket.remoteAddress || "unknown";
   const userId = (req as any).userId || "unauthenticated";
   const detail = action ? ` | Action: ${action}` : "";
-  console.log(`[AUDIT] ${timestamp} | ${method} ${reqPath} | IP: ${ip} | User: ${userId}${detail}`);
+  console.log(`[AUDIT] ${timestamp} | ${method} ${reqPath} | User: ${userId}${detail}`);
 }
 
 async function main() {
