@@ -9,64 +9,61 @@ interface DozeyLogoProps {
  * theme="dark"   → cream text (navy backgrounds)
  *
  * Icon: two open hands cradling a standing person with a heart.
- * Wordmark: bold DOZ + regular EY, matching the chosen logo.
+ * Wordmark: "DOZEY" as a single unified text block — bold DOZ, regular EY.
+ * Uses a single <text> with <tspan> children so all glyphs share one
+ * baseline and there is no visible gap between DOZ and EY.
  */
 export function DozeyLogo({ className = 'h-12', theme = 'light' }: DozeyLogoProps) {
   const green = '#10B981';
-  const text  = theme === 'dark' ? '#F8F7F4' : '#0A1428';
+  const textColor = theme === 'dark' ? '#F8F7F4' : '#0A1428';
 
   return (
     <svg
-      viewBox="0 0 260 72"
+      viewBox="0 0 280 72"
       xmlns="http://www.w3.org/2000/svg"
       className={`w-auto ${className}`}
       aria-label="DOZEY"
       role="img"
       fill="none"
     >
-      {/* ── Icon (left, 56×56 centred in 0-64 column) ── */}
+      {/* ── Icon: hands + person + heart (left column 0–56px) ── */}
 
-      {/* Person — head */}
+      {/* Person head */}
       <circle cx="28" cy="10" r="5" stroke={green} strokeWidth="2.4" />
 
-      {/* Left hand / arm */}
+      {/* Left arm / hand */}
       <path
-        d="M10 56 C6 46 6 34 12 24 C14 20 18 18 20 22 C22 18 26 18 26 24"
+        d="M10 58 C6 47 6 34 12 24 C14 20 18 18 20 22 C22 18 26 18 26 24"
         stroke={green} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"
       />
 
-      {/* Right hand / arm */}
+      {/* Right arm / hand */}
       <path
-        d="M46 56 C50 46 50 34 44 24 C42 20 38 18 36 22 C34 18 30 18 30 24"
+        d="M46 58 C50 47 50 34 44 24 C42 20 38 18 36 22 C34 18 30 18 30 24"
         stroke={green} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"
       />
 
-      {/* Heart inside the hands */}
+      {/* Heart */}
       <path
-        d="M28 42 C28 42 20 36 20 31 C20 28 22.5 26 25 26 C26.5 26 27.5 27 28 28.2 C28.5 27 29.5 26 31 26 C33.5 26 36 28 36 31 C36 36 28 42 28 42 Z"
+        d="M28 43 C28 43 20 37 20 32 C20 29 22.5 27 25 27 C26.5 27 27.5 28 28 29.2 C28.5 28 29.5 27 31 27 C33.5 27 36 29 36 32 C36 37 28 43 28 43 Z"
         stroke={green} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
       />
 
-      {/* ── Wordmark ── */}
-      {/* Bold "DOZ" */}
+      {/* ── Wordmark: one <text> element, tspan for weight variation ──
+          Keeping DOZ and EY in a single text run ensures they sit on the
+          same baseline with no gap — the browser handles glyph advances
+          correctly when they are in the same text flow.
+      */}
       <text
-        x="60" y="50"
+        x="64"
+        y="51"
         fontFamily="'Inter', 'Helvetica Neue', Arial, sans-serif"
-        fontWeight="800"
-        fontSize="38"
-        fill={text}
+        fontSize="40"
+        fill={textColor}
         letterSpacing="-1"
-      >DOZ</text>
-
-      {/* Regular "EY" */}
-      <text
-        x="155" y="50"
-        fontFamily="'Inter', 'Helvetica Neue', Arial, sans-serif"
-        fontWeight="400"
-        fontSize="38"
-        fill={text}
-        letterSpacing="-1"
-      >EY</text>
+      >
+        <tspan fontWeight="800">DOZ</tspan><tspan fontWeight="400">EY</tspan>
+      </text>
     </svg>
   );
 }
