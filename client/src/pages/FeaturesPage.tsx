@@ -2,75 +2,114 @@ import { useEffect, useRef } from 'react';
 import { Upload, Brain, Shield, Share2, ArrowRight, Syringe, Lock, FileCheck, Globe, Languages, ClipboardCheck, Zap, FileText, Stethoscope } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-function useScrollAnimation() {
+function useScrollFade() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add('animated');
+          if (entry.isIntersecting) {
+            entry.target.classList.add('opacity-100', 'translate-y-0');
+            entry.target.classList.remove('opacity-0', 'translate-y-6');
+          }
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
     );
-    ref.current?.querySelectorAll('.animate-on-scroll').forEach((el) => observer.observe(el));
+    ref.current?.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
   return ref;
 }
 
+const pipeline = [
+  {
+    step: '01',
+    icon: Upload,
+    title: 'Upload your records',
+    desc: 'Upload vaccination cards, medical documents, or doctor\'s notes. We accept PDFs, images, and scanned documents in any language. Simply drag and drop or browse your files.',
+    align: 'left',
+  },
+  {
+    step: '02',
+    icon: Brain,
+    title: 'Smart extraction & translation',
+    desc: 'Our systems read handwritten and printed records with high accuracy. Language is detected automatically and everything is translated to English, preserving medical terminology.',
+    align: 'right',
+  },
+  {
+    step: '03',
+    icon: Syringe,
+    title: 'Records organized automatically',
+    desc: 'Vaccine names, dates, doses, and providers are parsed into structured data and added to your personal timeline. No manual entry required.',
+    align: 'left',
+  },
+  {
+    step: '04',
+    icon: ClipboardCheck,
+    title: 'Check compliance instantly',
+    desc: 'Compare your records against requirements for any institution, employer, or country. Generate downloadable compliance reports with gap analysis.',
+    align: 'right',
+  },
+];
+
+const featureGrid = [
+  { icon: Shield, title: 'HIPAA Compliant', desc: 'End-to-end encryption and full audit logs.' },
+  { icon: Languages, title: 'Multi-language OCR', desc: 'Reads records in 50+ languages accurately.' },
+  { icon: Globe, title: '40+ Countries', desc: 'Compliance data for institutions worldwide.' },
+  { icon: Share2, title: 'Secure sharing', desc: 'Share verified records with a time-limited link.' },
+  { icon: FileCheck, title: 'Gap analysis', desc: 'See exactly which vaccines you still need.' },
+  { icon: Lock, title: 'Zero-knowledge storage', desc: 'Your data is encrypted before it reaches us.' },
+  { icon: Zap, title: 'Instant processing', desc: 'Results in seconds, not days.' },
+  { icon: FileText, title: 'PDF export', desc: 'Download a clean, formatted record anytime.' },
+  { icon: Stethoscope, title: 'Provider verification', desc: 'Records verified against official databases.' },
+];
+
 export function FeaturesPage() {
-  const scrollRef = useScrollAnimation();
+  const ref = useScrollFade();
 
   return (
-    <div ref={scrollRef} className="min-h-screen">
-      <section className="relative min-h-[70vh] flex items-center bg-gradient-to-b from-[#f5f5f7] to-[#fbfbfd] text-[#1d1d1f] overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-[#8aab45]/10 rounded-full blur-[150px]" />
-        </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 pt-40 w-full">
-          <div className="max-w-3xl mx-auto text-center">
-            <p className="text-[#8aab45] text-xs font-medium uppercase tracking-widest mb-6 animate-fade-in">
+    <div ref={ref} className="min-h-screen bg-[#F8F7F4] text-[#0A1428]">
+
+      {/* ── Hero ── */}
+      <section className="pt-32 pb-20 lg:pt-40 lg:pb-24">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-sm font-medium text-[#10B981] uppercase tracking-widest mb-4">
               Features
             </p>
-            <h1 className="animate-fade-in-up text-6xl lg:text-7xl xl:text-8xl font-semibold leading-[1.05] tracking-tight mb-6">
-              How DOZEY <span className="text-[#8aab45]">works</span>
+            <h1 className="text-5xl lg:text-6xl font-semibold leading-[1.1] tracking-tight mb-6">
+              How DOZEY works
             </h1>
-            <p className="animate-fade-in-up delay-200 text-base text-[#86868b] max-w-lg mx-auto font-light">
+            <p className="text-lg text-[#6B7280] leading-relaxed">
               A complete platform for managing, translating, and sharing your vaccination
-              records across borders — powered by AI.
+              records across borders — powered by AI, built for humans.
             </p>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#fbfbfd] to-transparent" />
       </section>
 
-      <section className="py-24 lg:py-32 bg-[#fbfbfd]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="animate-on-scroll text-center mb-20">
-            <p className="text-[#4a7fb5] text-xs font-medium uppercase tracking-widest mb-4">
-              The Pipeline
-            </p>
-            <h2 className="text-5xl lg:text-6xl font-semibold text-[#1d1d1f] leading-[1.05] tracking-tight mb-3">The DOZEY Pipeline</h2>
-            <p className="text-base text-[#86868b] font-light">From upload to compliance in four simple steps</p>
+      {/* ── Pipeline ── */}
+      <section className="py-20 lg:py-28 bg-white border-y border-[#E5E7EB]">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="fade-in opacity-0 translate-y-6 transition-all duration-500 mb-16">
+            <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight mb-3">The DOZEY pipeline</h2>
+            <p className="text-[#6B7280] text-lg">From upload to compliance in four simple steps</p>
           </div>
-
-          <div className="space-y-24">
-            {[
-              { step: '01', icon: Upload, title: 'Upload Records', desc: 'Upload vaccination cards, medical documents, or doctor\'s notes. We accept PDFs, images, and scanned documents in any language. Simply drag and drop or browse your files.', align: 'left' },
-              { step: '02', icon: Brain, title: 'Smart Extraction & Translation', desc: 'Our systems read handwritten and printed records with high accuracy. Language is detected automatically and everything is translated to English, preserving medical terminology.', align: 'right' },
-              { step: '03', icon: Syringe, title: 'Records Organized', desc: 'Our systems parse the translated text into structured data — vaccine names, dates, doses, and providers are added to your personal timeline. No manual entry required.', align: 'left' },
-              { step: '04', icon: ClipboardCheck, title: 'Check Compliance', desc: 'Compare your records against requirements for any institution, employer, or country. Generate downloadable compliance reports with gap analysis.', align: 'right' },
-            ].map(({ step, icon: Icon, title, desc, align }, i) => (
-              <div key={step} className={`animate-on-scroll delay-${(i + 1) * 100} grid lg:grid-cols-2 gap-16 items-center`}>
-                <div className={`${align === 'right' ? 'lg:order-2' : ''}`}>
-                  <div className="text-7xl font-light text-[#1d1d1f]/10 mb-4 tabular-nums">{step}</div>
-                  <h3 className="text-2xl font-semibold text-[#1d1d1f] mb-4">{title}</h3>
-                  <p className="text-[#86868b] leading-relaxed">{desc}</p>
+          <div className="space-y-20">
+            {pipeline.map(({ step, icon: Icon, title, desc, align }, i) => (
+              <div
+                key={step}
+                className={`fade-in opacity-0 translate-y-6 transition-all duration-500 grid lg:grid-cols-2 gap-16 items-center`}
+              >
+                <div className={align === 'right' ? 'lg:order-2' : ''}>
+                  <span className="text-7xl font-light text-[#0A1428]/8 tabular-nums block mb-4">{step}</span>
+                  <h3 className="text-2xl font-semibold text-[#0A1428] mb-4">{title}</h3>
+                  <p className="text-[#6B7280] leading-relaxed">{desc}</p>
                 </div>
                 <div className={`${align === 'right' ? 'lg:order-1' : ''} flex items-center justify-center`}>
-                  <div className="w-32 h-32 rounded-3xl bg-[#f5f5f7] flex items-center justify-center">
-                    <Icon className="w-14 h-14 text-[#1d1d1f]/20" />
+                  <div className="w-full max-w-sm bg-[#F8F7F4] border border-[#E5E7EB] rounded-[8px] p-12 flex items-center justify-center">
+                    <Icon className="w-20 h-20 text-[#0A1428]/15" strokeWidth={1} />
                   </div>
                 </div>
               </div>
@@ -79,84 +118,48 @@ export function FeaturesPage() {
         </div>
       </section>
 
-      <section className="py-24 lg:py-32 bg-[#f5f5f7]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="animate-on-scroll text-center mb-16">
-            <p className="text-[#4a7fb5] text-xs font-medium uppercase tracking-widest mb-4">
-              Capabilities
-            </p>
-            <h2 className="text-5xl lg:text-6xl font-semibold text-[#1d1d1f] leading-[1.05] tracking-tight mb-3">
-              Everything you need
-            </h2>
-            <p className="text-[#86868b] font-light">For health record portability across borders</p>
+      {/* ── Feature grid ── */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="fade-in opacity-0 translate-y-6 transition-all duration-500 mb-12">
+            <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight mb-3">Everything you need</h2>
+            <p className="text-[#6B7280] text-lg">No complicated setups. No hidden features. Just the tools that matter.</p>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { icon: Languages, title: 'Multi-Language Support', desc: 'Records detected and translated from 7+ languages including Hindi, Chinese, Spanish, French, Portuguese, and Arabic.' },
-              { icon: Globe, title: 'Cross-Border Compliance', desc: 'Check vaccination requirements for any country, university, or employer. Stay compliant as you move.' },
-              { icon: FileText, title: 'Document Management', desc: 'Upload, organize, rename, and securely store all your medical documents with tamper-proof digital storage.' },
-              { icon: Stethoscope, title: 'Medical Exemptions', desc: 'AI extracts medical exemptions from doctor\'s notes and factors them into compliance checks.' },
-              { icon: Share2, title: 'Secure Sharing', desc: 'Share verified records with providers, schools, or employers with COVID-19 vaccine card format export.' },
-              { icon: Zap, title: 'AI Assistant', desc: 'Doze, our AI assistant, helps navigate the app, answer vaccination questions, and guide you through the process.' },
-            ].map(({ icon: Icon, title, desc }, i) => (
-              <div key={title} className={`animate-on-scroll delay-${(i % 3 + 1) * 100} bg-white rounded-2xl p-10`}>
-                <div className="w-10 h-10 bg-[#f5f5f7] rounded-2xl flex items-center justify-center mb-5">
-                  <Icon className="w-5 h-5 text-[#1d1d1f]" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {featureGrid.map(({ icon: Icon, title, desc }, i) => (
+              <div
+                key={title}
+                className="fade-in opacity-0 translate-y-6 transition-all duration-500 bg-white border border-[#E5E7EB] rounded-[8px] p-6 hover:border-[#D1D5DB] transition-colors"
+              >
+                <div className="w-9 h-9 bg-[#F3F4F6] rounded-[4px] flex items-center justify-center mb-4">
+                  <Icon className="w-4 h-4 text-[#0A1428]" strokeWidth={1.5} />
                 </div>
-                <h3 className="text-base font-semibold text-[#1d1d1f] mb-2">{title}</h3>
-                <p className="text-[#86868b] text-sm leading-relaxed">{desc}</p>
+                <h3 className="text-base font-semibold text-[#0A1428] mb-1.5">{title}</h3>
+                <p className="text-sm text-[#6B7280] leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-24 lg:py-32 bg-[#fbfbfd]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="animate-on-scroll text-center mb-16">
-            <p className="text-[#4a7fb5] text-xs font-medium uppercase tracking-widest mb-4">
-              Trust
-            </p>
-            <h2 className="text-5xl lg:text-6xl font-semibold text-[#1d1d1f] leading-[1.05] tracking-tight mb-3">Security & Privacy</h2>
-            <p className="text-[#86868b] font-light">Your health data deserves the highest level of protection</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-16 max-w-4xl mx-auto">
-            {[
-              { icon: Lock, title: 'HIPAA Compliant', desc: 'Following healthcare privacy standards with comprehensive Terms of Service and Privacy Policy.' },
-              { icon: Shield, title: '256-bit Encryption', desc: 'Bank-level AES encryption protects your data at rest and in transit.' },
-              { icon: FileCheck, title: 'Audit Trail', desc: 'Every access to your records is logged with timestamps for complete transparency.' },
-            ].map(({ icon: Icon, title, desc }, i) => (
-              <div key={title} className={`animate-on-scroll delay-${(i + 1) * 100} text-center`}>
-                <div className="w-12 h-12 bg-[#f5f5f7] rounded-2xl flex items-center justify-center mx-auto mb-5">
-                  <Icon className="w-6 h-6 text-[#1d1d1f]/40" />
-                </div>
-                <h3 className="text-base font-semibold text-[#1d1d1f] mb-2">{title}</h3>
-                <p className="text-[#86868b] text-sm leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
+      {/* ── CTA ── */}
+      <section className="py-20 bg-[#0A1428]">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-semibold text-white tracking-tight mb-4">
+            See it in action
+          </h2>
+          <p className="text-white/60 mb-8 max-w-md mx-auto">
+            Try DOZEY free for 14 days. No credit card required.
+          </p>
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#10B981] text-[#0A1428] font-semibold rounded-[4px] hover:bg-[#0ea572] transition-colors active:scale-[0.98]"
+          >
+            Get Started Free <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 
-      <section className="py-24 lg:py-32 bg-[#f5f5f7] text-[#1d1d1f]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-on-scroll">
-            <h2 className="text-5xl lg:text-6xl font-semibold mb-6 leading-[1.05] tracking-tight">Ready to get started?</h2>
-            <p className="text-[#86868b] text-lg mb-10 max-w-xl mx-auto font-light">
-              Create your free account and start managing your health records the smart way.
-            </p>
-            <Link
-              to="/register"
-              className="inline-flex items-center gap-2 bg-[#4a7fb5] hover:bg-[#5a8fc5] text-white font-semibold px-8 py-4 rounded-full text-base transition-all active:scale-[0.98]"
-            >
-              Create Free Account
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
