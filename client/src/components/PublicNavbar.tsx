@@ -26,16 +26,18 @@ export function PublicNavbar() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-[#F8F7F4]/95 backdrop-blur-md border-b border-[#E5E7EB]'
+          ? 'bg-[#F8F7F4]/95 backdrop-blur-md border-b border-[#E5E7EB] shadow-sm'
           : 'bg-[#F8F7F4] border-b border-transparent'
       }`}
     >
       <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex-shrink-0 flex items-center gap-2">
-            <DozeyLogo className="h-8" theme="light" />
+          {/* Logo */}
+          <Link to="/" className="flex-shrink-0 flex items-center" aria-label="DOZEY Home">
+            <DozeyLogo className="h-9" theme="light" />
           </Link>
 
+          {/* Desktop nav */}
           <div className="hidden lg:flex items-center gap-8">
             {links.map((link) => (
               <Link
@@ -57,12 +59,13 @@ export function PublicNavbar() {
             ))}
           </div>
 
+          {/* CTA + mobile toggle */}
           <div className="flex items-center gap-3">
             <Link
               to="/login"
-              className="hidden lg:inline-flex items-center px-6 py-2.5 rounded-[4px] text-sm font-semibold bg-[#0A1428] text-white transition-colors hover:bg-[#1F2937] active:scale-[0.98]"
+              className="hidden lg:inline-flex items-center px-5 py-2 rounded-[4px] text-sm font-semibold bg-[#0A1428] text-white transition-colors hover:bg-[#1F2937] active:scale-[0.98]"
             >
-              Get Started
+              Sign In
             </Link>
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -75,6 +78,7 @@ export function PublicNavbar() {
         </div>
       </div>
 
+      {/* Mobile menu */}
       {mobileOpen && (
         <div className="lg:hidden bg-[#F8F7F4] border-t border-[#E5E7EB]">
           <div className="px-6 py-4 space-y-1">
@@ -97,7 +101,7 @@ export function PublicNavbar() {
               onClick={() => setMobileOpen(false)}
               className="block w-full text-center mt-3 bg-[#0A1428] text-white font-semibold px-6 py-2.5 rounded-[4px] text-sm hover:bg-[#1F2937] transition-colors"
             >
-              Get Started
+              Sign In
             </Link>
           </div>
         </div>

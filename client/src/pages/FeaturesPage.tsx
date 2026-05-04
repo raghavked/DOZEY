@@ -149,13 +149,13 @@ export function FeaturesPage() {
             See it in action
           </h2>
           <p className="text-white/60 mb-8 max-w-md mx-auto">
-            Try DOZEY free for 14 days. No credit card required.
+            Join people in 40+ countries managing their health records with DOZEY.
           </p>
           <Link
             to="/login"
             className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#10B981] text-[#0A1428] font-semibold rounded-[4px] hover:bg-[#0ea572] transition-colors active:scale-[0.98]"
           >
-            Get Started Free <ArrowRight className="w-4 h-4" />
+            Get Started <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>
