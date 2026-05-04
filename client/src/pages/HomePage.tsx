@@ -1,269 +1,318 @@
 import { useEffect, useRef } from 'react';
-import { ArrowRight, Globe, Syringe, Shield, Lock, CheckCircle, FileText, ChevronRight, Users, Brain, Languages } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Shield, Zap, Users, ArrowRight, Upload, Brain, ClipboardCheck, Globe } from 'lucide-react';
 
-function useScrollAnimation() {
+function useScrollFade() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('animated');
+            entry.target.classList.add('opacity-100', 'translate-y-0');
+            entry.target.classList.remove('opacity-0', 'translate-y-6');
           }
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
     );
-    const elements = ref.current?.querySelectorAll('.animate-on-scroll');
-    elements?.forEach((el) => observer.observe(el));
+    ref.current?.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
   return ref;
 }
 
+const benefits = [
+  {
+    icon: Shield,
+    title: 'Enterprise-grade security',
+    desc: 'End-to-end encryption, HIPAA compliance, and full audit logs keep your health data private and protected.',
+  },
+  {
+    icon: Zap,
+    title: 'Instant record processing',
+    desc: 'Upload a document in any language and get a structured, verified record in seconds — no manual entry.',
+  },
+  {
+    icon: Users,
+    title: 'Real support, real people',
+    desc: 'Questions? Our team responds within 24 hours. No bots, no ticket queues — just humans helping humans.',
+  },
+];
+
+const steps = [
+  {
+    number: '01',
+    icon: Upload,
+    title: 'Upload your records',
+    desc: 'Drag and drop vaccination cards, medical documents, or doctor\'s notes. We accept PDFs and images in any language.',
+  },
+  {
+    number: '02',
+    icon: Brain,
+    title: 'AI reads and translates',
+    desc: 'Our system extracts and translates your records automatically — preserving medical terminology with high accuracy.',
+  },
+  {
+    number: '03',
+    icon: ClipboardCheck,
+    title: 'Check compliance instantly',
+    desc: 'Compare your records against requirements for any institution, employer, or country. Get a downloadable report.',
+  },
+  {
+    number: '04',
+    icon: Globe,
+    title: 'Share across borders',
+    desc: 'Generate verified, shareable records accepted by healthcare providers and institutions worldwide.',
+  },
+];
+
 export function HomePage() {
-  const scrollRef = useScrollAnimation();
+  const ref = useScrollFade();
 
   return (
-    <div ref={scrollRef} className="min-h-screen">
-      <section className="relative min-h-[100vh] flex items-center bg-gradient-to-b from-[#f5f5f7] to-[#fbfbfd] text-[#1d1d1f] overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-1/3 left-1/3 w-[800px] h-[800px] bg-[#8aab45]/10 rounded-full blur-[200px]" />
-          <div className="absolute bottom-1/3 right-1/4 w-[600px] h-[600px] bg-[#4d9068]/10 rounded-full blur-[160px]" />
-        </div>
+    <div ref={ref} className="min-h-screen bg-[#F8F7F4] text-[#0A1428]">
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="animate-fade-in-up text-6xl sm:text-7xl md:text-8xl font-semibold leading-[1.05] tracking-tight mb-8">
-              Healthcare that
-              <br />
-              moves <span className="text-[#8aab45]">with you</span>
-            </h1>
-
-            <p className="animate-fade-in-up delay-100 text-lg sm:text-xl text-[#86868b] mb-12 max-w-2xl mx-auto leading-relaxed font-light">
-              Upload and convert your vaccine records into a format accepted worldwide. No delays, no repeat vaccinations, no money lost.
-            </p>
-
-            <div className="animate-fade-in-up delay-200 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                to="/register"
-                className="inline-flex items-center gap-2 bg-[#4a7fb5] text-white font-semibold px-8 py-4 rounded-full text-base transition-all hover:bg-[#5a8fc5] active:scale-[0.98]"
-              >
-                Get Started Free
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                to="/features"
-                className="inline-flex items-center gap-2 text-[#86868b] hover:text-[#1d1d1f] font-medium px-6 py-4 text-base transition-colors"
-              >
-                How It Works
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#fbfbfd] to-transparent" />
-      </section>
-
-      <section className="py-24 lg:py-32 bg-[#fbfbfd]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-16">
-            {[
-              { value: '5', label: 'Countries Validated', color: '#4a7fb5' },
-              { value: '150+', label: 'Interviews Conducted', color: '#4d9068' },
-              { value: '86%', label: 'Validate Our Problem', color: '#1d1d1f' },
-              { value: '10+', label: 'Healthcare Experts', color: '#4a7fb5' },
-            ].map((stat, i) => (
-              <div key={stat.label} className={`animate-on-scroll text-center delay-${(i + 1) * 100}`}>
-                <div className="text-6xl lg:text-7xl font-semibold tracking-tight mb-3" style={{ color: stat.color }}>
-                  {stat.value}
-                </div>
-                <div className="text-[#86868b] text-xs font-medium uppercase tracking-widest">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 lg:py-32 bg-[#f5f5f7]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <div className="animate-on-scroll">
-              <p className="text-[#4a7fb5] text-xs font-medium uppercase tracking-widest mb-6">
-                Our Mission
+      {/* ── Hero ── */}
+      <section className="pt-32 pb-20 lg:pt-40 lg:pb-28">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Text */}
+            <div>
+              <p className="text-sm font-medium text-[#10B981] uppercase tracking-widest mb-6">
+                Healthcare that moves with you
               </p>
-              <h2 className="text-5xl lg:text-6xl font-semibold text-[#1d1d1f] leading-[1.05] tracking-tight mb-8">
-                Healthcare records
+              <h1 className="text-5xl lg:text-6xl font-semibold leading-[1.1] tracking-tight mb-6">
+                Your health records,
                 <br />
-                should have{' '}
-                <span className="text-[#4d9068]">no borders</span>
-              </h2>
-              <p className="text-base text-[#86868b] leading-relaxed mb-10 max-w-lg">
-                Millions of immigrants, refugees, and international workers face a fragmented
-                healthcare system every time they cross a border. Vaccination records get lost,
-                medical histories are untranslated, and critical health data remains trapped.
+                wherever life takes you
+              </h1>
+              <p className="text-lg text-[#6B7280] leading-relaxed mb-8 max-w-lg">
+                DOZEY makes it simple to manage, translate, and share your vaccination
+                records across borders. No more lost paperwork, no more costly re-tests.
               </p>
-              <div className="space-y-4">
-                {[
-                  'Bridging gaps in global health record portability',
-                  'Supporting immigrant and refugee health equity',
-                  'Making compliance tracking effortless across borders',
-                ].map((item) => (
-                  <div key={item} className="flex items-center gap-3">
-                    <CheckCircle className="w-4 h-4 text-[#4d9068] shrink-0" />
-                    <span className="text-[#1d1d1f] text-sm">{item}</span>
-                  </div>
-                ))}
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  to="/login"
+                  className="inline-flex items-center gap-2 px-8 py-3 bg-[#0A1428] text-white text-base font-semibold rounded-[4px] hover:bg-[#1F2937] transition-colors active:scale-[0.98]"
+                >
+                  Try Free for 14 Days
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  to="/features"
+                  className="inline-flex items-center gap-2 px-8 py-3 bg-white text-[#0A1428] text-base font-semibold rounded-[4px] border border-[#0A1428] hover:bg-[#F3F4F6] transition-colors"
+                >
+                  See How It Works
+                </Link>
               </div>
+              <p className="mt-4 text-sm text-[#6B7280]">No credit card required &middot; Free 14-day trial</p>
             </div>
 
-            <div className="animate-on-scroll delay-200 space-y-3">
-              {[
-                { icon: Globe, title: 'Records Lost in Translation', desc: 'Vaccine records from one country are not accepted in another due to language and format differences.' },
-                { icon: Syringe, title: 'Unnecessary Revaccinations', desc: 'Without proof, people are forced to repeat vaccinations they already received.' },
-                { icon: FileText, title: 'No Unified System', desc: 'There is no global standard for storing and sharing vaccination records across borders.' },
-                { icon: Users, title: 'Millions Affected', desc: 'Immigrants, students, healthcare workers, and refugees face these barriers daily.' },
-              ].map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="flex gap-4 p-5 rounded-2xl bg-white/80">
-                  <div className="w-10 h-10 bg-[#f5f5f7] rounded-xl flex items-center justify-center shrink-0">
-                    <Icon className="w-5 h-5 text-[#1d1d1f]" />
+            {/* Visual panel */}
+            <div className="relative hidden lg:block">
+              <div className="bg-white border border-[#E5E7EB] rounded-[8px] p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-8 h-8 bg-[#10B981]/10 rounded-full flex items-center justify-center">
+                    <Shield className="w-4 h-4 text-[#10B981]" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-[#1d1d1f] text-sm mb-1">{title}</h4>
-                    <p className="text-sm text-[#86868b] leading-relaxed">{desc}</p>
+                    <p className="text-sm font-semibold text-[#0A1428]">Record Verified</p>
+                    <p className="text-xs text-[#6B7280]">MMR Vaccine &mdash; Dose 2 of 2</p>
+                  </div>
+                  <span className="ml-auto text-xs font-medium text-[#10B981] bg-[#10B981]/10 px-2 py-0.5 rounded-full">
+                    Compliant
+                  </span>
+                </div>
+                <div className="space-y-3">
+                  {['Yellow Fever', 'Hepatitis B', 'Typhoid', 'MMR'].map((vaccine, i) => (
+                    <div key={vaccine} className="flex items-center justify-between py-2 border-b border-[#F3F4F6] last:border-0">
+                      <span className="text-sm text-[#0A1428]">{vaccine}</span>
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                        i < 3
+                          ? 'text-[#10B981] bg-[#10B981]/10'
+                          : 'text-[#F97316] bg-[#F97316]/10'
+                      }`}>
+                        {i < 3 ? 'Verified' : 'Due soon'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-6 pt-4 border-t border-[#F3F4F6]">
+                  <p className="text-xs text-[#6B7280]">Last synced &middot; just now</p>
+                </div>
+              </div>
+              {/* Floating trust badge */}
+              <div className="absolute -bottom-4 -left-4 bg-[#0A1428] text-white rounded-[8px] px-4 py-3 shadow-lg">
+                <p className="text-xs font-semibold">HIPAA Compliant</p>
+                <p className="text-xs text-white/60">End-to-end encrypted</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Trust bar ── */}
+      <section className="py-10 border-y border-[#E5E7EB] bg-white">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <p className="text-center text-sm text-[#6B7280] mb-6">
+            Trusted by immigrants, students, and global workers in 40+ countries
+          </p>
+          <div className="flex flex-wrap justify-center gap-8 text-sm font-medium text-[#0A1428]/40">
+            {['HIPAA Compliant', 'SOC 2 Type II', 'GDPR Ready', 'End-to-End Encrypted', '40+ Countries'].map((badge) => (
+              <span key={badge} className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                {badge}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Benefits ── */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="fade-in opacity-0 translate-y-6 transition-all duration-500 text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight mb-4">
+              Why people choose DOZEY
+            </h2>
+            <p className="text-[#6B7280] text-lg max-w-xl mx-auto">
+              We make healthcare records simple. No more sleepless nights over missing documents.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {benefits.map(({ icon: Icon, title, desc }, i) => (
+              <div
+                key={title}
+                className={`fade-in opacity-0 translate-y-6 transition-all duration-500 delay-${i * 100} bg-white border border-[#E5E7EB] rounded-[8px] p-8 hover:border-[#D1D5DB] transition-colors`}
+              >
+                <div className="w-10 h-10 bg-[#F3F4F6] rounded-[4px] flex items-center justify-center mb-5">
+                  <Icon className="w-5 h-5 text-[#0A1428]" strokeWidth={1.5} />
+                </div>
+                <h3 className="text-lg font-semibold text-[#0A1428] mb-3">{title}</h3>
+                <p className="text-[#6B7280] text-sm leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── How it works ── */}
+      <section className="py-20 lg:py-28 bg-white border-y border-[#E5E7EB]">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="fade-in opacity-0 translate-y-6 transition-all duration-500 mb-16">
+            <p className="text-sm font-medium text-[#10B981] uppercase tracking-widest mb-3">
+              The process
+            </p>
+            <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight max-w-lg">
+              From upload to compliance in four steps
+            </h2>
+          </div>
+          <div className="space-y-16">
+            {steps.map(({ number, icon: Icon, title, desc }, i) => (
+              <div
+                key={number}
+                className={`fade-in opacity-0 translate-y-6 transition-all duration-500 grid lg:grid-cols-2 gap-12 items-center ${
+                  i % 2 === 1 ? 'lg:flex-row-reverse' : ''
+                }`}
+              >
+                <div className={i % 2 === 1 ? 'lg:order-2' : ''}>
+                  <span className="text-6xl font-light text-[#0A1428]/8 tabular-nums block mb-3">{number}</span>
+                  <h3 className="text-2xl font-semibold text-[#0A1428] mb-3">{title}</h3>
+                  <p className="text-[#6B7280] leading-relaxed">{desc}</p>
+                  <Link
+                    to="/features"
+                    className="inline-flex items-center gap-1.5 mt-4 text-sm font-medium text-[#0A1428] underline underline-offset-4 hover:text-[#1F2937] transition-colors"
+                  >
+                    Learn more <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+                <div className={`${i % 2 === 1 ? 'lg:order-1' : ''} flex items-center justify-center`}>
+                  <div className="w-full max-w-sm bg-[#F8F7F4] border border-[#E5E7EB] rounded-[8px] p-10 flex items-center justify-center">
+                    <Icon className="w-16 h-16 text-[#0A1428]/20" strokeWidth={1} />
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 lg:py-32 bg-[#fbfbfd]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="animate-on-scroll text-center mb-20">
-            <p className="text-[#4a7fb5] text-xs font-medium uppercase tracking-widest mb-4">
-              How It Works
-            </p>
-            <h2 className="text-5xl lg:text-6xl font-semibold text-[#1d1d1f] leading-[1.05] tracking-tight">
-              From upload to compliance
-              <br />
-              <span className="text-[#4a7fb5]">in minutes</span>
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
-            {[
-              { step: '01', icon: FileText, title: 'Upload Documents', desc: 'Upload vaccination cards, medical records, or doctor\'s notes in any language.' },
-              { step: '02', icon: Brain, title: 'AI Extracts & Translates', desc: 'Our AI reads handwritten and printed records, detects the language, and translates to English.' },
-              { step: '03', icon: Syringe, title: 'Records Organized', desc: 'Vaccinations are automatically parsed and added to your timeline with dates and providers.' },
-              { step: '04', icon: Shield, title: 'Check Compliance', desc: 'Compare your records against requirements for any school, employer, or country.' },
-            ].map(({ step, icon: Icon, title, desc }, i) => (
-              <div key={step} className={`animate-on-scroll delay-${(i + 1) * 100}`}>
-                <div className="text-6xl font-light text-[#1d1d1f]/10 mb-6 tabular-nums">
-                  {step}
-                </div>
-                <div className="w-10 h-10 bg-[#f5f5f7] rounded-2xl flex items-center justify-center mb-5">
-                  <Icon className="w-5 h-5 text-[#1d1d1f]" />
-                </div>
-                <h3 className="text-base font-semibold text-[#1d1d1f] mb-2">{title}</h3>
-                <p className="text-sm text-[#86868b] leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="relative py-24 lg:py-32 bg-[#f5f5f7] text-[#1d1d1f] overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#4a7fb5]/10 rounded-full blur-[150px]" />
-        </div>
-
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="animate-on-scroll text-center mb-16">
-            <p className="text-[#8aab45] text-xs font-medium uppercase tracking-widest mb-4">
-              Security
-            </p>
-            <h2 className="text-5xl lg:text-6xl font-semibold mb-6 leading-[1.05] tracking-tight">
-              Built with privacy at the core
+      {/* ── Real stories ── */}
+      <section className="py-20 lg:py-28">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+          <div className="fade-in opacity-0 translate-y-6 transition-all duration-500 mb-12">
+            <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight mb-4">
+              Real problems, real people
             </h2>
-            <p className="text-lg text-[#86868b] max-w-2xl mx-auto font-light">
-              Your health data deserves the highest level of protection.
+            <p className="text-[#6B7280] text-lg max-w-xl">
+              Every feature in DOZEY was built because someone, somewhere, faced a real
+              barrier with their health records.
             </p>
           </div>
-
-          <div className="grid sm:grid-cols-3 gap-12 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6">
             {[
-              { icon: Lock, title: 'HIPAA Compliant', desc: 'Following healthcare privacy standards to protect your information.' },
-              { icon: Shield, title: '256-bit Encryption', desc: 'Bank-level encryption ensures your data remains private and secure.' },
-              { icon: Languages, title: 'Multi-Language', desc: '7+ languages supported including Hindi, Chinese, Spanish, and Arabic.' },
-            ].map(({ icon: Icon, title, desc }, i) => (
-              <div key={title} className={`animate-on-scroll delay-${(i + 1) * 100} text-center`}>
-                <div className="w-12 h-12 bg-[#fbfbfd] rounded-2xl flex items-center justify-center mx-auto mb-5">
-                  <Icon className="w-6 h-6 text-[#86868b]" />
+              {
+                quote: 'My children\'s vaccination booklets from Argentina were not recognized by the Italian school system. We had to get blood tests to prove immunity — over 600 euros.',
+                name: 'Sofia R.',
+                location: 'Argentina → Italy',
+                category: 'Education',
+              },
+              {
+                quote: 'My Korean vaccination records listed vaccine brand names that don\'t exist in Canada. The pharmacist had no idea which Canadian equivalent each one corresponded to.',
+                name: 'Lisa K.',
+                location: 'South Korea → Canada',
+                category: 'Immigration',
+              },
+            ].map(({ quote, name, location, category }) => (
+              <div
+                key={name}
+                className="fade-in opacity-0 translate-y-6 transition-all duration-500 bg-white border border-[#E5E7EB] rounded-[8px] p-8"
+              >
+                <span className="inline-block text-xs font-medium text-[#6B7280] bg-[#F3F4F6] px-2 py-0.5 rounded-full mb-4">
+                  {category}
+                </span>
+                <blockquote className="text-[#0A1428] text-base leading-relaxed mb-6">
+                  &ldquo;{quote}&rdquo;
+                </blockquote>
+                <div>
+                  <p className="text-sm font-semibold text-[#0A1428]">{name}</p>
+                  <p className="text-sm text-[#6B7280]">{location}</p>
                 </div>
-                <h3 className="text-sm font-semibold mb-2">{title}</h3>
-                <p className="text-[#86868b] text-sm leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="py-24 lg:py-32 bg-[#fbfbfd]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="animate-on-scroll">
-            <h2 className="text-5xl lg:text-6xl font-semibold text-[#1d1d1f] mb-6 leading-[1.05] tracking-tight">
-              Ready to take control of
-              <br />
-              your <span className="text-[#4a7fb5]">health records</span>?
-            </h2>
-            <p className="text-lg text-[#86868b] mb-12 max-w-xl mx-auto font-light">
-              Join immigrants, students, and global workers who manage their vaccination records the smart way.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                to="/register"
-                className="inline-flex items-center gap-2 bg-[#4a7fb5] hover:bg-[#5a8fc5] text-white font-semibold px-8 py-4 rounded-full text-base transition-all active:scale-[0.98]"
-              >
-                Create Free Account
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                to="/progress"
-                className="inline-flex items-center gap-2 text-[#4a7fb5] font-medium text-base hover:underline"
-              >
-                View Our Progress
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-            </div>
+          <div className="mt-8 text-center">
+            <Link
+              to="/progress"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-[#0A1428] underline underline-offset-4 hover:text-[#1F2937] transition-colors"
+            >
+              Read more stories <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
       </section>
 
-      <section className="py-24 lg:py-32 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-semibold text-[#1d1d1f] mb-4">
-              See DOZEY in action
-            </h2>
-            <p className="text-lg text-[#86868b] font-light">
-              Watch how we're making healthcare records simple for everyone.
-            </p>
-          </div>
-          <div className="relative w-full rounded-2xl overflow-hidden shadow-lg" style={{ paddingBottom: '56.25%' }}>
-            <iframe
-              className="absolute inset-0 w-full h-full"
-              src="https://www.youtube.com/embed/uvSSrl9Dqao"
-              title="DOZEY — Healthcare that moves with you"
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
+      {/* ── CTA ── */}
+      <section className="py-20 lg:py-28 bg-[#0A1428]">
+        <div className="max-w-[1280px] mx-auto px-6 lg:px-8 text-center">
+          <h2 className="text-3xl lg:text-4xl font-semibold text-white tracking-tight mb-4">
+            Ready to take control of your health records?
+          </h2>
+          <p className="text-white/60 text-lg mb-8 max-w-lg mx-auto">
+            Join people in 40+ countries who trust DOZEY to protect what matters most.
+          </p>
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#10B981] text-[#0A1428] text-base font-semibold rounded-[4px] hover:bg-[#0ea572] transition-colors active:scale-[0.98]"
+          >
+            Get Started Free
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+          <p className="mt-4 text-sm text-white/40">No credit card required &middot; Free 14-day trial</p>
         </div>
       </section>
+
     </div>
   );
 }

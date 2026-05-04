@@ -4,9 +4,11 @@ import { PublicFooter } from '@/components/PublicFooter';
 
 export function PublicLayout() {
   return (
-    <div className="min-h-screen bg-[#fbfbfd] text-[#1d1d1f]">
+    <div className="min-h-screen bg-[#F8F7F4] text-[#0A1428]">
       <PublicNavbar />
-      <Outlet />
+      <main>
+        <Outlet />
+      </main>
       <PublicFooter />
     </div>
   );
