@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { DozeyLogo } from '@/components/DozeyLogo';
@@ -14,27 +14,45 @@ const links = [
 export function PublicNavbar() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white/80 backdrop-blur-xl border-b border-black/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          <Link to="/" className="flex-shrink-0">
-            <DozeyLogo className="h-20" theme="light" />
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? 'bg-[#F8F7F4]/95 backdrop-blur-md border-b border-[#E5E7EB]'
+          : 'bg-[#F8F7F4] border-b border-transparent'
+      }`}
+    >
+      <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <Link to="/" className="flex-shrink-0 flex items-center gap-2">
+            <DozeyLogo className="h-8" theme="light" />
           </Link>
 
-          <div className="hidden lg:flex lg:items-center lg:gap-7">
+          <div className="hidden lg:flex items-center gap-8">
             {links.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className={`text-sm transition-colors ${
+                className={`text-sm font-medium transition-colors relative group ${
                   location.pathname === link.to
-                    ? 'text-[#1d1d1f]'
-                    : 'text-[#1d1d1f]/60 hover:text-[#1d1d1f]'
+                    ? 'text-[#0A1428]'
+                    : 'text-[#6B7280] hover:text-[#0A1428]'
                 }`}
               >
                 {link.label}
+                <span
+                  className={`absolute -bottom-0.5 left-0 h-px bg-[#0A1428] transition-all duration-200 ${
+                    location.pathname === link.to ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`}
+                />
               </Link>
             ))}
           </div>
@@ -42,14 +60,14 @@ export function PublicNavbar() {
           <div className="flex items-center gap-3">
             <Link
               to="/login"
-              className="hidden lg:inline-flex items-center px-5 py-1.5 rounded-full text-sm font-medium transition-all bg-[#4a7fb5] text-white hover:bg-[#3d6d9e]"
+              className="hidden lg:inline-flex items-center px-6 py-2.5 rounded-[4px] text-sm font-semibold bg-[#0A1428] text-white transition-colors hover:bg-[#1F2937] active:scale-[0.98]"
             >
-              Sign In
+              Get Started
             </Link>
-
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2 rounded-lg transition-colors text-[#1d1d1f] hover:bg-black/5"
+              className="lg:hidden p-2 rounded-md text-[#0A1428] hover:bg-[#F3F4F6] transition-colors"
+              aria-label="Toggle menu"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -58,17 +76,17 @@ export function PublicNavbar() {
       </div>
 
       {mobileOpen && (
-        <div className="lg:hidden bg-white/95 backdrop-blur-xl border-t border-black/5">
-          <div className="px-4 py-3 space-y-1">
+        <div className="lg:hidden bg-[#F8F7F4] border-t border-[#E5E7EB]">
+          <div className="px-6 py-4 space-y-1">
             {links.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
                 onClick={() => setMobileOpen(false)}
-                className={`block px-4 py-2.5 rounded-xl text-sm transition-colors ${
+                className={`block px-3 py-2.5 rounded-[4px] text-sm font-medium transition-colors ${
                   location.pathname === link.to
-                    ? 'text-[#1d1d1f] bg-[#f5f5f7]'
-                    : 'text-[#1d1d1f]/60 hover:bg-[#f5f5f7]'
+                    ? 'text-[#0A1428] bg-[#F3F4F6]'
+                    : 'text-[#6B7280] hover:text-[#0A1428] hover:bg-[#F3F4F6]'
                 }`}
               >
                 {link.label}
@@ -77,9 +95,9 @@ export function PublicNavbar() {
             <Link
               to="/login"
               onClick={() => setMobileOpen(false)}
-              className="block w-full text-center mt-2 bg-[#4a7fb5] text-white font-medium px-5 py-2.5 rounded-full text-sm"
+              className="block w-full text-center mt-3 bg-[#0A1428] text-white font-semibold px-6 py-2.5 rounded-[4px] text-sm hover:bg-[#1F2937] transition-colors"
             >
-              Sign In
+              Get Started
             </Link>
           </div>
         </div>
