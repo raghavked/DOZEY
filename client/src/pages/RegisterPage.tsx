@@ -84,7 +84,7 @@ export function RegisterPage() {
           </p>
           <Link
             to="/login"
-            className="inline-flex items-center gap-2 bg-[#0A1428] hover:bg-[#1F2937] text-white px-8 py-3.5 rounded-[4px] font-semibold transition-all text-sm"
+            className="inline-flex items-center gap-2 bg-[#00D9A3] hover:bg-[#00c494] text-[#0A1428] px-8 py-3.5 rounded-[4px] font-semibold transition-all text-sm"
           >
             Go to Sign In
           </Link>
@@ -210,7 +210,7 @@ export function RegisterPage() {
             <button
               type="submit"
               disabled={loading || !tosAccepted}
-              className="w-full bg-[#0A1428] hover:bg-[#1F2937] text-white py-3.5 rounded-[4px] font-semibold transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm active:scale-[0.98]"
+              className="w-full bg-[#00D9A3] hover:bg-[#00c494] text-[#0A1428] py-3.5 rounded-[4px] font-semibold transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm active:scale-[0.98]"
             >
               {loading ? 'Creating account...' : 'Create Account'}
               {!loading && <UserPlus className="w-4 h-4" />}

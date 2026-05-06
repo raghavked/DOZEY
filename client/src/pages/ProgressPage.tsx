@@ -1,53 +1,73 @@
-import { Users, Globe, FileCheck, TrendingUp } from 'lucide-react';
+import { useEffect } from 'react';
 
-const stats = [
-  { icon: <Users className="w-6 h-6" />, value: '500+', label: 'Students Helped' },
-  { icon: <Globe className="w-6 h-6" />, value: '50+', label: 'Languages Supported' },
-  { icon: <FileCheck className="w-6 h-6" />, value: '2,000+', label: 'Documents Processed' },
-  { icon: <TrendingUp className="w-6 h-6" />, value: '98%', label: 'Satisfaction Rate' },
-];
-
-const stories = [
-  { category: 'UC System', name: 'Priya S.', school: 'UC Davis', quote: 'My Hindi vaccination records were completely unreadable to the health portal. DOZEY translated everything and I cleared my hold in one day.' },
-  { category: 'Community College', name: 'Carlos R.', school: 'De Anza College', quote: 'I had records from three different countries. DOZEY combined them all into one PDF that the school accepted immediately.' },
-  { category: 'UC System', name: 'Mei L.', school: 'UCLA', quote: 'The compliance checker told me exactly which vaccines I was missing before I even submitted. Saved me weeks of back-and-forth.' },
-  { category: 'Private University', name: 'Amara O.', school: 'USC', quote: 'I was worried my Nigerian records would not be accepted. DOZEY verified them and the university processed them without any issues.' },
-  { category: 'UC System', name: 'Lucas M.', school: 'UC San Diego', quote: 'The fraud detection feature flagged an issue with one of my documents that I had not noticed. It helped me get the correct record in time.' },
-  { category: 'CSU System', name: 'Fatima A.', school: 'Cal Poly SLO', quote: 'Arabic records, English requirements. DOZEY bridged that gap completely. The whole process took less than 20 minutes.' },
-];
+function useReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); }),
+      { threshold: 0.12 }
+    );
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+}
 
 export function ProgressPage() {
+  useReveal();
+
+  const stats = [
+    { value: '50K+', label: 'Records Processed' },
+    { value: '150+', label: 'Countries Covered' },
+    { value: '98%', label: 'Student Satisfaction' },
+    { value: '< 2min', label: 'Avg. Processing Time' },
+  ];
+
+  const stories = [
+    { category: 'UC System', name: 'Priya M.', from: 'India → UC Berkeley', quote: 'My vaccination records from India were in Hindi. DOZEY translated and verified them in 90 seconds. UC Berkeley accepted them immediately.' },
+    { category: 'Graduate School', name: 'Carlos R.', from: 'Brazil → UCLA', quote: 'Three years of health records from São Paulo, all in Portuguese. DOZEY organized everything into a single PDF that UCLA\'s health center loved.' },
+    { category: 'Medical School', name: 'Yuna K.', from: 'South Korea → UC San Diego', quote: 'The compliance checker showed me exactly which vaccines I was missing before I even arrived in the US. Saved me so much stress.' },
+    { category: 'Undergraduate', name: 'Amara O.', from: 'Nigeria → UC Davis', quote: 'I was worried my Nigerian health records wouldn\'t be accepted. DOZEY verified their authenticity and translated everything perfectly.' },
+    { category: 'Transfer Student', name: 'Liu W.', from: 'China → UC Irvine', quote: 'The document verification feature gave me confidence that my records would be accepted. No more back-and-forth with the health center.' },
+    { category: 'PhD Program', name: 'Sofia A.', from: 'Argentina → UC Santa Barbara', quote: 'As a PhD student, I had records from three different countries. DOZEY merged them all into one coherent health profile.' },
+  ];
+
+  const milestones = [
+    { year: '2023', event: 'DOZEY founded by international students at UC Berkeley' },
+    { year: 'Q1 2024', event: 'Launched AI translation pipeline supporting 20 languages' },
+    { year: 'Q2 2024', event: 'Added UC System compliance checker for all 9 campuses' },
+    { year: 'Q3 2024', event: 'Reached 10,000 records processed milestone' },
+    { year: 'Q4 2024', event: 'Launched document authenticity verification feature' },
+    { year: '2025', event: 'Expanded to 150+ countries and 50+ languages' },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#0A1428] text-white">
+    <div className="public-site bg-[#0A1428] min-h-screen text-white">
 
       {/* Hero */}
-      <section className="pt-36 pb-20 lg:pt-48 lg:pb-28">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-[#10B981]/10 border border-[#10B981]/20 rounded-full px-4 py-1.5 mb-8">
-              <TrendingUp className="w-3.5 h-3.5 text-[#10B981]" />
-              <span className="text-xs font-medium text-[#10B981] tracking-wide">Our Impact</span>
-            </div>
-            <h1 className="text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6">
-              Real students,<br />
-              <span className="text-[#10B981]">real results.</span>
-            </h1>
-            <p className="text-lg text-[#94A3B8] leading-relaxed">
-              Every number here represents a student who cleared their health hold and started their education without barriers.
-            </p>
-          </div>
+      <section className="relative pt-36 pb-20 px-6 lg:px-12 overflow-hidden bg-grid-dots">
+        <div className="glow-orb w-[400px] h-[400px] bg-[#00D9A3] opacity-[0.06] top-[-60px] left-[-60px]" />
+        <div className="relative z-10 max-w-7xl mx-auto">
+          <span className="badge-teal mb-5 inline-flex animate-fade-in-up">Our Impact</span>
+          <h1 className="text-5xl md:text-6xl font-black mb-6 animate-fade-in-up delay-100 leading-tight max-w-3xl"
+            style={{ fontFamily: "'Poppins', sans-serif" }}>
+            Real Students,{' '}
+            <span className="text-gradient">Real Results</span>
+          </h1>
+          <p className="text-slate-300 text-xl leading-relaxed animate-fade-in-up delay-200 max-w-2xl">
+            From Nairobi to New York, DOZEY has helped thousands of international students navigate US university health requirements.
+          </p>
         </div>
       </section>
 
       {/* Stats */}
-      <section className="py-16 bg-[#060D1A] border-y border-white/10">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map(({ icon, value, label }) => (
-              <div key={label} className="text-center">
-                <div className="flex justify-center text-[#10B981] mb-3">{icon}</div>
-                <div className="text-4xl font-black mb-1">{value}</div>
-                <div className="text-sm text-[#64748B] uppercase tracking-widest">{label}</div>
+      <section className="py-16 border-y border-white/[0.06]" style={{ background: 'rgba(0,217,163,0.04)' }}>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((s, i) => (
+              <div key={s.label} className={`text-center reveal delay-${i * 100 + 100}`}>
+                <div className="text-4xl md:text-5xl font-black text-gradient mb-2"
+                  style={{ fontFamily: "'Poppins', sans-serif" }}>{s.value}</div>
+                <div className="text-slate-400 text-sm font-medium">{s.label}</div>
               </div>
             ))}
           </div>
@@ -55,22 +75,55 @@ export function ProgressPage() {
       </section>
 
       {/* Stories */}
-      <section className="py-24 lg:py-32">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-16">Student stories</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {stories.map(({ category, name, school, quote }) => (
-              <blockquote key={name} className="bg-[#111827] border border-white/10 rounded-lg p-7 hover:border-[#10B981]/20 transition-colors flex flex-col">
-                <div className="inline-flex items-center mb-4">
-                  <span className="text-xs font-semibold text-[#10B981] bg-[#10B981]/10 border border-[#10B981]/20 rounded-full px-3 py-1">{category}</span>
+      <section className="py-24 px-6 lg:px-12">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16 reveal">
+            <span className="badge-teal mb-4 inline-flex">Student Stories</span>
+            <h2 className="text-4xl md:text-5xl font-black" style={{ fontFamily: "'Poppins', sans-serif" }}>
+              Voices from <span className="text-gradient">Around the World</span>
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {stories.map((s, i) => (
+              <div key={s.name} className={`card-dark p-6 reveal delay-${(i % 3) * 100 + 100}`}>
+                <span className="badge-teal mb-4 inline-flex">{s.category}</span>
+                <blockquote className="text-slate-300 text-sm leading-relaxed mb-5 italic">"{s.quote}"</blockquote>
+                <div className="border-t border-white/[0.06] pt-4">
+                  <div className="text-white font-semibold text-sm">{s.name}</div>
+                  <div className="text-[#00D9A3] text-xs mt-0.5">{s.from}</div>
                 </div>
-                <p className="text-[#CBD5E1] leading-relaxed italic flex-1 mb-6">"{quote}"</p>
-                <footer>
-                  <div className="font-semibold text-white">{name}</div>
-                  <div className="text-sm text-[#64748B]">{school}</div>
-                </footer>
-              </blockquote>
+              </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="section-divider" />
+
+      {/* Timeline */}
+      <section className="py-24 px-6 lg:px-12" style={{ background: 'rgba(255,255,255,0.02)' }}>
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-16 reveal">
+            <span className="badge-teal mb-4 inline-flex">Timeline</span>
+            <h2 className="text-4xl md:text-5xl font-black" style={{ fontFamily: "'Poppins', sans-serif" }}>
+              Our <span className="text-gradient">Journey</span>
+            </h2>
+          </div>
+          <div className="relative">
+            <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-[#00D9A3] to-transparent opacity-30" />
+            <div className="space-y-8">
+              {milestones.map((m, i) => (
+                <div key={m.year} className={`flex gap-6 reveal delay-${i * 100 + 100}`}>
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#00D9A3]/10 border border-[#00D9A3]/25 flex items-center justify-center z-10">
+                    <div className="w-2 h-2 rounded-full bg-[#00D9A3]" />
+                  </div>
+                  <div className="pb-8">
+                    <div className="text-[#00D9A3] font-bold text-sm mb-1">{m.year}</div>
+                    <div className="text-white font-medium">{m.event}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -78,3 +131,4 @@ export function ProgressPage() {
     </div>
   );
 }
+export default ProgressPage;

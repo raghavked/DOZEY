@@ -67,3 +67,4 @@ export function DozeyLogo({ className = 'h-12' }: DozeyLogoProps) {
     </svg>
   );
 }
+export default DozeyLogo;
