@@ -3,122 +3,196 @@ import { Link, useLocation } from 'react-router-dom';
 import DozeyLogo from '@/components/DozeyLogo';
 
 const navLinks = [
-  { href: '/',         label: 'Home' },
+  { href: '/', label: 'Home' },
   { href: '/features', label: 'Features' },
   { href: '/progress', label: 'Progress' },
-  { href: '/team',     label: 'Team' },
-  { href: '/contact',  label: 'Contact' },
+  { href: '/team', label: 'Team' },
+  { href: '/contact', label: 'Contact' },
 ];
 
 export function PublicNavbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-  const [scrolled,   setScrolled]   = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 24);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => { setMobileOpen(false); }, [location.pathname]);
-
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [mobileOpen]);
+    setMenuOpen(false);
+  }, [location.pathname]);
 
   return (
     <>
       <nav
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
         style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 100,
           background: scrolled ? 'rgba(0,0,0,0.97)' : 'rgba(0,0,0,0.85)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: scrolled ? '1px solid rgba(56,212,184,0.15)' : '1px solid rgba(255,255,255,0.04)',
-          boxShadow: scrolled ? '0 4px 32px rgba(0,0,0,0.6)' : 'none',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: scrolled ? '1px solid rgba(255,255,255,0.07)' : '1px solid transparent',
+          transition: 'background 220ms ease, border-color 220ms ease',
         }}
-        role="navigation"
-        aria-label="Main navigation"
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
-          <Link to="/" aria-label="DOZEY home">
-            <span className="flex-shrink-0 hover:opacity-90 transition-opacity block">
-              <DozeyLogo className="h-11" theme="dark" />
-            </span>
+        <div
+          style={{
+            maxWidth: '1280px',
+            margin: '0 auto',
+            padding: '0 1.5rem',
+            height: '64px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          {/* Logo */}
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+            <DozeyLogo className="h-8" theme="dark" />
           </Link>
-          <div className="hidden md:flex items-center gap-8">
+
+          {/* Desktop nav */}
+          <div
+            className="hidden md:flex items-center"
+            style={{ gap: '2rem' }}
+          >
             {navLinks.map(({ href, label }) => {
               const active = location.pathname === href;
               return (
-                <Link key={href} to={href}>
+                <Link key={href} to={href} style={{ textDecoration: 'none' }}>
                   <span
-                    className="text-sm font-medium transition-colors relative group cursor-pointer"
-                    style={{ color: active ? '#38D4B8' : 'rgba(255,255,255,0.8)', fontFamily: "'Inter', sans-serif" }}
+                    style={{
+                      fontSize: '0.9rem',
+                      fontWeight: active ? '600' : '400',
+                      color: active ? '#38D4B8' : 'rgba(255,255,255,0.65)',
+                      transition: 'color 180ms ease',
+                      cursor: 'pointer',
+                    }}
+                    onMouseEnter={e => { if (!active) (e.target as HTMLElement).style.color = '#FFFFFF'; }}
+                    onMouseLeave={e => { if (!active) (e.target as HTMLElement).style.color = 'rgba(255,255,255,0.65)'; }}
                   >
                     {label}
-                    <span className="absolute -bottom-1 left-0 h-0.5 rounded-full transition-all duration-300" style={{ background: '#38D4B8', width: active ? '100%' : '0%' }} />
-                    <span className="absolute -bottom-1 left-0 h-0.5 rounded-full bg-[#38D4B8] w-0 group-hover:w-full transition-all duration-300 opacity-50" />
                   </span>
                 </Link>
               );
             })}
           </div>
-          <div className="hidden md:flex items-center gap-3">
-            <Link to="/login">
-              <span className="text-sm font-medium px-4 py-2 rounded-lg transition-colors cursor-pointer text-white/75 hover:text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
-                Sign In
+
+          {/* Desktop CTA */}
+          <div className="hidden md:flex items-center" style={{ gap: '1rem' }}>
+            <Link to="/login" style={{ textDecoration: 'none' }}>
+              <span
+                style={{
+                  fontSize: '0.9rem',
+                  fontWeight: '500',
+                  color: 'rgba(255,255,255,0.55)',
+                  cursor: 'pointer',
+                  transition: 'color 180ms ease',
+                }}
+                onMouseEnter={e => ((e.target as HTMLElement).style.color = '#FFFFFF')}
+                onMouseLeave={e => ((e.target as HTMLElement).style.color = 'rgba(255,255,255,0.55)')}
+              >
+                Sign in
               </span>
             </Link>
-            <Link to="/register">
-              <span className="btn-primary text-sm py-2.5 px-5 cursor-pointer">
-                Get Started
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-3.5 h-3.5"><path d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+            <Link to="/register" style={{ textDecoration: 'none' }}>
+              <span className="btn-primary" style={{ padding: '9px 20px', fontSize: '0.875rem' }}>
+                Get started
               </span>
             </Link>
           </div>
+
+          {/* Mobile menu toggle */}
           <button
-            className="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-lg transition-colors"
-            onClick={() => setMobileOpen(o => !o)}
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={mobileOpen}
+            className="md:hidden"
+            onClick={() => setMenuOpen(o => !o)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '8px',
+              color: '#FFFFFF',
+            }}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           >
-            <span className="block w-5 h-0.5 bg-white rounded-full transition-all duration-300" style={{ transform: mobileOpen ? 'rotate(45deg) translateY(8px)' : 'none' }} />
-            <span className="block w-5 h-0.5 bg-white rounded-full transition-all duration-300" style={{ opacity: mobileOpen ? 0 : 1 }} />
-            <span className="block w-5 h-0.5 bg-white rounded-full transition-all duration-300" style={{ transform: mobileOpen ? 'rotate(-45deg) translateY(-8px)' : 'none' }} />
+            {menuOpen ? (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '22px', height: '22px' }}>
+                <path d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '22px', height: '22px' }}>
+                <path d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
           </button>
         </div>
       </nav>
-      {mobileOpen && (
+
+      {/* Mobile overlay */}
+      {menuOpen && (
         <div
-          className="fixed inset-0 z-40 flex flex-col"
-          style={{ background: 'rgba(0,0,0,0.97)', backdropFilter: 'blur(24px)', paddingTop: '80px' }}
-          role="dialog" aria-modal="true" aria-label="Navigation menu"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 99,
+            background: '#000000',
+            display: 'flex',
+            flexDirection: 'column',
+            paddingTop: '80px',
+            paddingLeft: '1.5rem',
+            paddingRight: '1.5rem',
+          }}
         >
-          <div className="flex flex-col items-center justify-center flex-1 gap-8 px-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1 }}>
             {navLinks.map(({ href, label }) => {
               const active = location.pathname === href;
               return (
-                <Link key={href} to={href}>
-                  <span className="text-2xl font-bold transition-colors cursor-pointer" style={{ color: active ? '#38D4B8' : '#FFFFFF', fontFamily: "'Poppins', sans-serif" }}>
+                <Link key={href} to={href} style={{ textDecoration: 'none' }}>
+                  <span
+                    style={{
+                      display: 'block',
+                      padding: '1rem 0',
+                      fontSize: '1.5rem',
+                      fontWeight: '600',
+                      fontFamily: "'Poppins', sans-serif",
+                      color: active ? '#38D4B8' : '#FFFFFF',
+                      borderBottom: '1px solid rgba(255,255,255,0.06)',
+                    }}
+                  >
                     {label}
                   </span>
                 </Link>
               );
             })}
-            <div className="flex flex-col gap-3 w-full max-w-xs mt-4">
-              <Link to="/login">
-                <span className="block w-full text-center py-3 border rounded-xl text-white font-medium transition-colors cursor-pointer" style={{ borderColor: 'rgba(255,255,255,0.2)' }}>Sign In</span>
-              </Link>
-              <Link to="/register">
-                <span className="btn-primary w-full justify-center cursor-pointer">Get Started</span>
-              </Link>
-            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', paddingBottom: '2.5rem' }}>
+            <Link to="/login" style={{ textDecoration: 'none' }}>
+              <span
+                className="btn-ghost"
+                style={{ display: 'block', textAlign: 'center', width: '100%' }}
+              >
+                Sign in
+              </span>
+            </Link>
+            <Link to="/register" style={{ textDecoration: 'none' }}>
+              <span
+                className="btn-primary"
+                style={{ display: 'block', textAlign: 'center', width: '100%', justifyContent: 'center' }}
+              >
+                Get started free
+              </span>
+            </Link>
           </div>
         </div>
       )}
     </>
   );
 }
+
 export default PublicNavbar;

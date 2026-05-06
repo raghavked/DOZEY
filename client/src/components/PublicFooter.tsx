@@ -7,21 +7,21 @@ const navGroups = [
     links: [
       { href: '/features', label: 'Features' },
       { href: '/progress', label: 'Progress' },
-      { href: '/register', label: 'Get Started Free' },
+      { href: '/register', label: 'Get started free' },
     ],
   },
   {
     title: 'Company',
     links: [
-      { href: '/team', label: 'Our Team' },
+      { href: '/team', label: 'Our team' },
       { href: '/contact', label: 'Contact' },
     ],
   },
   {
     title: 'Legal',
     links: [
-      { href: '/privacy', label: 'Privacy Policy' },
-      { href: '/terms', label: 'Terms of Service' },
+      { href: '/privacy', label: 'Privacy policy' },
+      { href: '/terms', label: 'Terms of service' },
     ],
   },
 ];
@@ -31,46 +31,77 @@ export function PublicFooter() {
     <footer
       style={{
         background: '#000000',
-        borderTop: '1px solid rgba(56,212,184,0.1)',
+        borderTop: '1px solid rgba(255,255,255,0.07)',
       }}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
+      <div
+        style={{
+          maxWidth: '1280px',
+          margin: '0 auto',
+          padding: '4rem 1.5rem 3rem',
+        }}
+      >
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '2fr 1fr 1fr 1fr',
+            gap: '3rem',
+          }}
+        >
           {/* Brand column */}
-          <div className="lg:col-span-2">
-            <Link to="/">
-              <span className="block mb-5 hover:opacity-90 transition-opacity">
-                <DozeyLogo className="h-10" theme="dark" />
-              </span>
+          <div>
+            <Link to="/" style={{ display: 'inline-block', marginBottom: '1.25rem', textDecoration: 'none' }}>
+              <DozeyLogo className="h-8" theme="dark" />
             </Link>
             <p
-              className="text-sm leading-relaxed mb-6"
-              style={{ color: 'rgba(255,255,255,0.4)', maxWidth: '280px' }}
+              style={{
+                fontSize: '0.875rem',
+                color: 'rgba(255,255,255,0.38)',
+                lineHeight: '1.65',
+                maxWidth: '260px',
+              }}
             >
-              AI-powered health record management for international students. Translate, verify, and submit your vaccination records to any US university — in minutes.
+              AI-powered health record management for international students. Translate, verify, and submit your vaccination records to any US university.
             </p>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-[#38D4B8] animate-pulse" />
-              <span className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>HIPAA-compliant platform</span>
-            </div>
+            <p
+              style={{
+                fontSize: '0.75rem',
+                color: 'rgba(255,255,255,0.22)',
+                marginTop: '1.25rem',
+              }}
+            >
+              HIPAA-compliant platform
+            </p>
           </div>
 
           {/* Nav groups */}
           {navGroups.map(({ title, links }) => (
             <div key={title}>
               <h4
-                className="text-sm font-semibold mb-4 text-white"
-                style={{ fontFamily: "'Poppins', sans-serif" }}
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: '600',
+                  color: 'rgba(255,255,255,0.38)',
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  marginBottom: '1.25rem',
+                }}
               >
                 {title}
               </h4>
-              <ul className="space-y-3">
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {links.map(({ href, label }) => (
                   <li key={href}>
-                    <Link to={href}>
+                    <Link to={href} style={{ textDecoration: 'none' }}>
                       <span
-                        className="text-sm transition-colors cursor-pointer hover:text-white"
-                        style={{ color: 'rgba(255,255,255,0.4)' }}
+                        style={{
+                          fontSize: '0.875rem',
+                          color: 'rgba(255,255,255,0.45)',
+                          transition: 'color 180ms ease',
+                          cursor: 'pointer',
+                        }}
+                        onMouseEnter={e => ((e.target as HTMLElement).style.color = '#FFFFFF')}
+                        onMouseLeave={e => ((e.target as HTMLElement).style.color = 'rgba(255,255,255,0.45)')}
                       >
                         {label}
                       </span>
@@ -84,33 +115,40 @@ export function PublicFooter() {
 
         {/* Bottom bar */}
         <div
-          className="mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+          style={{
+            marginTop: '3rem',
+            paddingTop: '1.5rem',
+            borderTop: '1px solid rgba(255,255,255,0.05)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
         >
-          <p className="text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>
+          <p style={{ fontSize: '0.8125rem', color: 'rgba(255,255,255,0.22)' }}>
             &copy; {new Date().getFullYear()} DOZEY. All rights reserved.
           </p>
-          <div className="flex items-center gap-6">
-            <Link to="/privacy">
-              <span
-                className="text-xs transition-colors cursor-pointer hover:text-white"
-                style={{ color: 'rgba(255,255,255,0.25)' }}
-              >
-                Privacy
-              </span>
-            </Link>
-            <Link to="/terms">
-              <span
-                className="text-xs transition-colors cursor-pointer hover:text-white"
-                style={{ color: 'rgba(255,255,255,0.25)' }}
-              >
-                Terms
-              </span>
-            </Link>
+          <div style={{ display: 'flex', gap: '1.5rem' }}>
+            {[{ href: '/privacy', label: 'Privacy' }, { href: '/terms', label: 'Terms' }].map(({ href, label }) => (
+              <Link key={href} to={href} style={{ textDecoration: 'none' }}>
+                <span
+                  style={{
+                    fontSize: '0.8125rem',
+                    color: 'rgba(255,255,255,0.22)',
+                    cursor: 'pointer',
+                    transition: 'color 180ms ease',
+                  }}
+                  onMouseEnter={e => ((e.target as HTMLElement).style.color = 'rgba(255,255,255,0.55)')}
+                  onMouseLeave={e => ((e.target as HTMLElement).style.color = 'rgba(255,255,255,0.22)')}
+                >
+                  {label}
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </div>
     </footer>
   );
 }
+
 export default PublicFooter;
