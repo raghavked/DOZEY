@@ -2,9 +2,14 @@ import { Outlet } from 'react-router-dom';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import { PublicFooter } from '@/components/PublicFooter';
 
+/**
+ * Public layout wrapper.
+ * Background is white — individual sections use .section-dark or .section-light
+ * for the alternating light/dark rhythm specified in the PDR.
+ */
 export function PublicLayout() {
   return (
-    <div className="min-h-screen bg-[#0A1428] text-white">
+    <div className="min-h-screen bg-white">
       <PublicNavbar />
       <main>
         <Outlet />
@@ -13,3 +18,5 @@ export function PublicLayout() {
     </div>
   );
 }
+
+export default PublicLayout;

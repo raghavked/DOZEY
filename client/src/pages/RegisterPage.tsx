@@ -68,25 +68,47 @@ export function RegisterPage() {
     }
   };
 
+  const inputBase = {
+    background: 'rgba(255,255,255,0.05)',
+    border: '1px solid rgba(255,255,255,0.12)',
+    color: 'white',
+  } as const;
+
   if (success) {
     return (
-      <div className="min-h-screen bg-[#0A1428] flex items-center justify-center px-4">
+      <div
+        className="min-h-screen flex items-center justify-center px-4"
+        style={{ background: '#0F1A22' }}
+      >
         <div className="w-full max-w-sm text-center">
           <Link to="/">
-            <DozeyLogo className="h-16 mx-auto mb-8" />
+            <span className="block mb-8 hover:opacity-90 transition-opacity">
+              <DozeyLogo className="h-12 mx-auto" theme="dark" />
+            </span>
           </Link>
-          <div className="w-16 h-16 bg-[#10B981]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-8 h-8 text-[#10B981]" />
-          </div>
-          <h2 className="text-2xl font-extrabold text-white mb-3">Check your email</h2>
-          <p className="text-[#94A3B8] mb-8 text-sm leading-relaxed">
-            We've sent a verification link to <strong className="text-white">{email}</strong>. Click the link to verify your account.
-          </p>
-          <Link
-            to="/login"
-            className="inline-flex items-center gap-2 bg-[#00D9A3] hover:bg-[#00c494] text-[#0A1428] px-8 py-3.5 rounded-[4px] font-semibold transition-all text-sm"
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
+            style={{ background: 'rgba(56,212,184,0.15)', border: '1px solid rgba(56,212,184,0.3)' }}
           >
-            Go to Sign In
+            <CheckCircle className="w-8 h-8" style={{ color: '#38D4B8' }} />
+          </div>
+          <h2
+            className="text-2xl font-bold text-white mb-3"
+            style={{ fontFamily: "'Poppins', sans-serif" }}
+          >
+            Check your email
+          </h2>
+          <p className="text-sm leading-relaxed mb-8" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            We've sent a verification link to{' '}
+            <strong className="text-white">{email}</strong>. Click the link to verify your account.
+          </p>
+          <Link to="/login">
+            <span
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-sm transition-all cursor-pointer"
+              style={{ background: '#38D4B8', color: '#0F1A22', fontFamily: "'Poppins', sans-serif" }}
+            >
+              Go to Sign In
+            </span>
           </Link>
         </div>
       </div>
@@ -94,81 +116,121 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-1/2 bg-[#10B981] text-white relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-[#111827]/10 rounded-full blur-[100px]" />
-          <div className="absolute bottom-1/4 left-1/4 w-[300px] h-[300px] bg-[#111827]/5 rounded-full blur-[80px]" />
-        </div>
-        <div className="relative flex flex-col justify-center px-16 max-w-lg">
-          <DozeyLogo className="h-20 mb-12" />
-          <h2 className="text-4xl font-extrabold mb-6 leading-[1.05]">
-            Your health records,
-            <br />unified
+    <div className="min-h-screen flex" style={{ background: '#1A3A4F' }}>
+
+      {/* ── Left panel (desktop only) ── */}
+      <div
+        className="hidden lg:flex lg:w-1/2 flex-col justify-center px-16 relative overflow-hidden"
+        style={{ background: 'rgba(26,58,79,0.95)', borderRight: '1px solid rgba(56,212,184,0.12)' }}
+      >
+        <div className="glow-orb w-[400px] h-[400px] bg-[#38D4B8] opacity-[0.06] top-[-100px] right-[-100px]" />
+        <div className="relative z-10">
+          <DozeyLogo className="h-12 mb-12" theme="dark" />
+          <h2
+            className="text-4xl font-black text-white mb-6 leading-tight"
+            style={{ fontFamily: "'Poppins', sans-serif" }}
+          >
+            Your health records,{' '}
+            <span style={{ color: '#38D4B8' }}>unified.</span>
           </h2>
-          <p className="text-white/70 text-lg leading-relaxed mb-10">
-            Join the platform that helps immigrants, students, and global workers manage vaccination records.
+          <p className="text-lg leading-relaxed mb-10" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            Join the platform that helps international students manage vaccination records and meet US university health requirements.
           </p>
           <div className="space-y-3">
-            {['Free to create an account', 'Upload records in any language', 'AI-powered processing'].map((feature) => (
+            {[
+              'Free to create an account',
+              'Upload records in any language',
+              'AI-powered processing in under 2 minutes',
+              'HIPAA-compliant and secure',
+            ].map(feature => (
               <div key={feature} className="flex items-center gap-3">
-                <div className="w-1.5 h-1.5 bg-[#10B981] rounded-full" />
-                <span className="text-white/70 text-sm font-medium">{feature}</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="#38D4B8" strokeWidth="2.5" className="w-4 h-4 flex-shrink-0">
+                  <path d="M5 13l4 4L19 7" />
+                </svg>
+                <span className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>{feature}</span>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center px-6 bg-[#0A1428]">
+      {/* ── Right panel (form) ── */}
+      <div
+        className="flex-1 flex items-center justify-center px-6 py-12"
+        style={{ background: '#0F1A22' }}
+      >
         <div className="w-full max-w-sm">
+          {/* Mobile logo */}
           <div className="text-center mb-8 lg:hidden">
             <Link to="/">
-              <DozeyLogo className="h-16 mx-auto mb-4" />
+              <span className="block hover:opacity-90 transition-opacity">
+                <DozeyLogo className="h-12 mx-auto mb-4" theme="dark" />
+              </span>
             </Link>
           </div>
 
-          <h1 className="text-3xl font-extrabold text-white mb-2">Create account</h1>
-          <p className="text-[#94A3B8] mb-8 text-sm">Start managing your health records securely</p>
+          <h1
+            className="text-3xl font-black text-white mb-2"
+            style={{ fontFamily: "'Poppins', sans-serif" }}
+          >
+            Create account
+          </h1>
+          <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            Start managing your health records securely.
+          </p>
 
           {error && (
-            <div className="bg-red-50 text-red-700 px-4 py-3 rounded-[4px] mb-6 text-sm">
+            <div
+              className="rounded-xl px-4 py-3 mb-6 text-sm"
+              style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#FCA5A5' }}
+            >
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-medium text-[#94A3B8] mb-2 uppercase tracking-wide">Email</label>
+              <label className="block text-xs font-medium mb-2 uppercase tracking-wide" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                Email
+              </label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94A3B8]" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} />
                 <input
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="your@email.com"
                   required
-                  className="w-full pl-11 pr-4 py-3.5 bg-[#111827] border border-white/10 rounded-[4px] focus:ring-2 focus:ring-[#0A1428]/10 outline-none transition-all text-sm text-white placeholder:text-[#94A3B8]/60"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-xl text-sm text-white placeholder-white/30 outline-none transition-all"
+                  style={inputBase}
+                  onFocus={e => (e.currentTarget.style.borderColor = '#38D4B8')}
+                  onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#94A3B8] mb-2 uppercase tracking-wide">Password</label>
+              <label className="block text-xs font-medium mb-2 uppercase tracking-wide" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                Password
+              </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94A3B8]" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   placeholder="Min 8 chars, uppercase, number, special"
                   required
-                  className="w-full pl-11 pr-12 py-3.5 bg-[#111827] border border-white/10 rounded-[4px] focus:ring-2 focus:ring-[#0A1428]/10 outline-none transition-all text-sm text-white placeholder:text-[#94A3B8]/60"
+                  className="w-full pl-11 pr-12 py-3.5 rounded-xl text-sm text-white placeholder-white/30 outline-none transition-all"
+                  style={inputBase}
+                  onFocus={e => (e.currentTarget.style.borderColor = '#38D4B8')}
+                  onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-white"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors"
+                  style={{ color: 'rgba(255,255,255,0.4)' }}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -176,33 +238,46 @@ export function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#94A3B8] mb-2 uppercase tracking-wide">Confirm Password</label>
+              <label className="block text-xs font-medium mb-2 uppercase tracking-wide" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                Confirm Password
+              </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94A3B8]" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={e => setConfirmPassword(e.target.value)}
                   placeholder="Confirm your password"
                   required
-                  className="w-full pl-11 pr-4 py-3.5 bg-[#111827] border border-white/10 rounded-[4px] focus:ring-2 focus:ring-[#0A1428]/10 outline-none transition-all text-sm text-white placeholder:text-[#94A3B8]/60"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-xl text-sm text-white placeholder-white/30 outline-none transition-all"
+                  style={inputBase}
+                  onFocus={e => (e.currentTarget.style.borderColor = '#38D4B8')}
+                  onBlur={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)')}
                 />
               </div>
             </div>
 
-            <div className="flex items-start gap-3 bg-[#111827] p-4 rounded-[4px]">
+            <div
+              className="flex items-start gap-3 p-4 rounded-xl"
+              style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+            >
               <input
                 type="checkbox"
                 id="tosAccepted"
                 checked={tosAccepted}
                 onChange={e => setTosAccepted(e.target.checked)}
-                className="mt-0.5 w-4 h-4 text-white border-white/10/30 rounded focus:ring-[#0A1428] cursor-pointer"
+                className="mt-0.5 w-4 h-4 rounded cursor-pointer"
+                style={{ accentColor: '#38D4B8' }}
               />
-              <label htmlFor="tosAccepted" className="text-xs text-[#94A3B8] leading-relaxed cursor-pointer">
+              <label htmlFor="tosAccepted" className="text-xs leading-relaxed cursor-pointer" style={{ color: 'rgba(255,255,255,0.5)' }}>
                 I agree to the{' '}
-                <Link to="/terms" target="_blank" className="text-white hover:underline font-semibold">Terms of Service</Link>
+                <Link to="/terms" target="_blank">
+                  <span className="font-semibold text-white hover:underline cursor-pointer">Terms of Service</span>
+                </Link>
                 {' '}and{' '}
-                <Link to="/privacy" target="_blank" className="text-white hover:underline font-semibold">Privacy Policy</Link>
+                <Link to="/privacy" target="_blank">
+                  <span className="font-semibold text-white hover:underline cursor-pointer">Privacy Policy</span>
+                </Link>
                 , including the HIPAA Notice of Privacy Practices.
               </label>
             </div>
@@ -210,18 +285,23 @@ export function RegisterPage() {
             <button
               type="submit"
               disabled={loading || !tosAccepted}
-              className="w-full bg-[#00D9A3] hover:bg-[#00c494] text-[#0A1428] py-3.5 rounded-[4px] font-semibold transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm active:scale-[0.98]"
+              className="w-full py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                background: '#38D4B8',
+                color: '#0F1A22',
+                fontFamily: "'Poppins', sans-serif",
+              }}
             >
-              {loading ? 'Creating account...' : 'Create Account'}
+              {loading ? 'Creating account…' : 'Create Account'}
               {!loading && <UserPlus className="w-4 h-4" />}
             </button>
           </form>
 
           <div className="mt-8 text-center">
-            <p className="text-[#94A3B8] text-sm">
+            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>
               Already have an account?{' '}
-              <Link to="/login" className="text-white hover:underline font-semibold">
-                Sign In
+              <Link to="/login">
+                <span className="font-semibold text-white hover:underline cursor-pointer">Sign In</span>
               </Link>
             </p>
           </div>
