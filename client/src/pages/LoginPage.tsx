@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/use-auth';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react';
 import { DozeyLogo } from '@/components/DozeyLogo';
+import { useAuth } from '@/hooks/use-auth';
+import { Eye, EyeOff } from 'lucide-react';
 
 export function LoginPage() {
   const { signIn } = useAuth();
@@ -10,141 +10,101 @@ export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      await signIn(email, password);
-      navigate('/app');
+      const result = await signIn(email, password);
+      if (result?.user) {
+        navigate('/dashboard');
+      } else {
+        setError('Invalid email or password. Please try again.');
+      }
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in. Please check your credentials.');
+      setError(err?.message || 'Sign in failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left panel — brand */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#0A1428] text-white relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-[#10B981]/10 rounded-full blur-[100px]" />
-          <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-[#10B981]/5 rounded-full blur-[80px]" />
-        </div>
-        <div className="relative flex flex-col justify-center px-16 max-w-lg">
-          <DozeyLogo className="h-16 mb-12" theme="dark" />
-          <h2 className="text-4xl font-bold mb-6 leading-[1.1] tracking-tight">
-            Healthcare that
-            <br />moves with you
-          </h2>
-          <p className="text-white/60 text-lg leading-relaxed mb-10">
-            Securely manage your vaccination records across borders. Upload, translate, and verify.
-          </p>
-          <div className="space-y-3">
-            {['HIPAA Compliant', '256-bit Encryption', 'AI-Powered Translation'].map((feature) => (
-              <div key={feature} className="flex items-center gap-3">
-                <div className="w-1.5 h-1.5 bg-[#10B981] rounded-full" />
-                <span className="text-white/60 text-sm font-medium">{feature}</span>
-              </div>
-            ))}
+    <div className="min-h-screen bg-[#0A1428] flex">
+      {/* Left panel */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[#060D1A] border-r border-white/10 flex-col justify-between p-12">
+        <DozeyLogo className="h-16" />
+        <div>
+          <blockquote className="text-xl font-light text-[#CBD5E1] leading-relaxed mb-6 italic">
+            "DOZEY made it possible for me to start school on time. My records were in three languages — they handled it all."
+          </blockquote>
+          <div>
+            <div className="font-semibold text-white">Priya S.</div>
+            <div className="text-sm text-[#10B981]">UC Davis, Class of 2027</div>
           </div>
         </div>
+        <div className="text-xs text-[#475569]">HIPAA Compliant · End-to-End Encrypted</div>
       </div>
 
-      {/* Right panel — form */}
-      <div className="flex-1 flex items-center justify-center px-6 bg-[#F8F7F4]">
+      {/* Right panel */}
+      <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-sm">
-          {/* Mobile logo */}
-          <div className="text-center mb-8 lg:hidden">
-            <Link to="/">
-              <DozeyLogo className="h-14 mx-auto mb-4" />
-            </Link>
+          <div className="lg:hidden mb-10 flex justify-center">
+            <DozeyLogo className="h-14" />
           </div>
-
-          <Link
-            to="/"
-            className="inline-flex items-center gap-1.5 text-sm text-[#6B7280] hover:text-[#0A1428] transition-colors mb-6"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Back to Home
-          </Link>
-
-          <h1 className="text-3xl font-bold text-[#0A1428] mb-2 tracking-tight">Welcome back</h1>
-          <p className="text-[#6B7280] mb-8 text-sm">Sign in to access your health records</p>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-[4px] mb-6 text-sm">
-              {error}
-            </div>
-          )}
+          <h1 className="text-3xl font-bold text-white mb-2">Welcome back</h1>
+          <p className="text-[#94A3B8] mb-8 text-sm">Sign in to your DOZEY account.</p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 text-sm text-red-400">{error}</div>
+            )}
             <div>
-              <label className="block text-sm font-medium text-[#0A1428] mb-1.5" htmlFor="email">
-                Email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280]" />
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  required
-                  className="w-full pl-10 pr-4 py-3 border border-[#D1D5DB] rounded-[4px] bg-white text-sm text-[#0A1428] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#0A1428] focus:ring-2 focus:ring-[#0A1428]/10 transition-colors"
-                />
-              </div>
+              <label className="block text-sm font-medium text-[#94A3B8] mb-2">Email address</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full bg-[#111827] border border-white/10 focus:border-[#10B981] rounded-[4px] px-4 py-3 text-white placeholder-[#475569] outline-none transition-colors text-sm"
+              />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-[#0A1428] mb-1.5" htmlFor="password">
-                Password
-              </label>
+              <label className="block text-sm font-medium text-[#94A3B8] mb-2">Password</label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280]" />
                 <input
-                  id="password"
                   type={showPassword ? 'text' : 'password'}
+                  required
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  required
-                  className="w-full pl-10 pr-12 py-3 border border-[#D1D5DB] rounded-[4px] bg-white text-sm text-[#0A1428] placeholder:text-[#9CA3AF] focus:outline-none focus:border-[#0A1428] focus:ring-2 focus:ring-[#0A1428]/10 transition-colors"
+                  placeholder="••••••••"
+                  className="w-full bg-[#111827] border border-white/10 focus:border-[#10B981] rounded-[4px] px-4 py-3 pr-12 text-white placeholder-[#475569] outline-none transition-colors text-sm"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#0A1428] transition-colors"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  onClick={() => setShowPassword(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-white transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
             </div>
-
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#0A1428] hover:bg-[#1F2937] text-white py-3.5 rounded-[4px] font-semibold transition-colors flex items-center justify-center gap-2 disabled:opacity-50 text-sm active:scale-[0.98]"
+              className="w-full bg-[#10B981] hover:bg-[#0ea472] disabled:opacity-60 text-white font-semibold py-3.5 rounded-[4px] transition-colors text-sm"
             >
-              {loading ? 'Signing in…' : 'Sign In'}
-              {!loading && <ArrowRight className="w-4 h-4" />}
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
-          <div className="mt-8 text-center">
-            <p className="text-[#6B7280] text-sm">
-              Don&apos;t have an account?{' '}
-              <Link to="/register" className="text-[#0A1428] font-semibold underline underline-offset-4 hover:text-[#1F2937]">
-                Create one
-              </Link>
-            </p>
-          </div>
+          <p className="text-center text-sm text-[#64748B] mt-8">
+            Don't have an account?{' '}
+            <Link to="/register" className="text-[#10B981] hover:underline font-medium">Sign up</Link>
+          </p>
         </div>
       </div>
     </div>

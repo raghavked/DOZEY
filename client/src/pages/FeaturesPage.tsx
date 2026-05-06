@@ -1,162 +1,107 @@
-import { useEffect, useRef } from 'react';
-import { Upload, Brain, Shield, Share2, ArrowRight, Syringe, Lock, FileCheck, Globe, Languages, ClipboardCheck, Zap, FileText, Stethoscope } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Globe, Shield, FileText, Brain, Lock, Zap, CheckCircle, ArrowRight, Languages, ClipboardCheck, Download, AlertTriangle } from 'lucide-react';
 
-function useScrollFade() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('opacity-100', 'translate-y-0');
-            entry.target.classList.remove('opacity-0', 'translate-y-6');
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
-    );
-    ref.current?.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-  return ref;
-}
-
-const pipeline = [
-  {
-    step: '01',
-    icon: Upload,
-    title: 'Upload your records',
-    desc: 'Upload vaccination cards, medical documents, or doctor\'s notes. We accept PDFs, images, and scanned documents in any language. Simply drag and drop or browse your files.',
-    align: 'left',
-  },
-  {
-    step: '02',
-    icon: Brain,
-    title: 'Smart extraction & translation',
-    desc: 'Our systems read handwritten and printed records with high accuracy. Language is detected automatically and everything is translated to English, preserving medical terminology.',
-    align: 'right',
-  },
-  {
-    step: '03',
-    icon: Syringe,
-    title: 'Records organized automatically',
-    desc: 'Vaccine names, dates, doses, and providers are parsed into structured data and added to your personal timeline. No manual entry required.',
-    align: 'left',
-  },
-  {
-    step: '04',
-    icon: ClipboardCheck,
-    title: 'Check compliance instantly',
-    desc: 'Compare your records against requirements for any institution, employer, or country. Generate downloadable compliance reports with gap analysis.',
-    align: 'right',
-  },
+const features = [
+  { icon: <Languages className="w-6 h-6" />, title: 'Multilingual OCR', desc: 'Reads and extracts data from vaccination records in 50+ languages including Arabic, Hindi, Mandarin, Spanish, Portuguese, and more.' },
+  { icon: <Brain className="w-6 h-6" />, title: 'AI-Powered Parsing', desc: 'Intelligently identifies vaccine names, dates, lot numbers, and healthcare provider information from any document format.' },
+  { icon: <AlertTriangle className="w-6 h-6" />, title: 'Fraud Detection', desc: 'Analyzes structural markers, date logic, and formatting consistency to flag potentially fraudulent or tampered documents.' },
+  { icon: <Globe className="w-6 h-6" />, title: 'Global Compliance', desc: 'Matches your records against requirements for UC System, CSU, Ivy League, and hundreds of other universities worldwide.' },
+  { icon: <ClipboardCheck className="w-6 h-6" />, title: 'Gap Analysis', desc: 'Automatically identifies missing vaccinations and tells you exactly what you need before your enrollment deadline.' },
+  { icon: <Download className="w-6 h-6" />, title: 'Instant PDF Export', desc: 'Generate a single, professionally formatted PDF combining all your records — ready to submit to any university health portal.' },
+  { icon: <Lock className="w-6 h-6" />, title: 'HIPAA Compliant', desc: 'All data is encrypted at rest and in transit. We never share your health information with third parties.' },
+  { icon: <Shield className="w-6 h-6" />, title: 'Secure Storage', desc: 'Your documents are stored with enterprise-grade security. Access them from any device, any time.' },
+  { icon: <Zap className="w-6 h-6" />, title: 'Fast Processing', desc: 'Most documents are processed in under 60 seconds. No waiting, no manual data entry.' },
 ];
 
-const featureGrid = [
-  { icon: Shield, title: 'HIPAA Compliant', desc: 'End-to-end encryption and full audit logs.' },
-  { icon: Languages, title: 'Multi-language OCR', desc: 'Reads records in 50+ languages accurately.' },
-  { icon: Globe, title: '40+ Countries', desc: 'Compliance data for institutions worldwide.' },
-  { icon: Share2, title: 'Secure sharing', desc: 'Share verified records with a time-limited link.' },
-  { icon: FileCheck, title: 'Gap analysis', desc: 'See exactly which vaccines you still need.' },
-  { icon: Lock, title: 'Zero-knowledge storage', desc: 'Your data is encrypted before it reaches us.' },
-  { icon: Zap, title: 'Instant processing', desc: 'Results in seconds, not days.' },
-  { icon: FileText, title: 'PDF export', desc: 'Download a clean, formatted record anytime.' },
-  { icon: Stethoscope, title: 'Provider verification', desc: 'Records verified against official databases.' },
+const steps = [
+  { step: '01', title: 'Upload Your Records', desc: 'Drag and drop your vaccination documents in any format — PDF, JPG, PNG, or scanned images. Multiple files supported.' },
+  { step: '02', title: 'AI Translates & Parses', desc: 'Our AI reads every field, translates the content, and extracts structured data — vaccine names, dates, doses, and provider info.' },
+  { step: '03', title: 'Authenticity Verified', desc: 'Each document is analyzed for signs of tampering or fraud. You receive a confidence score and risk assessment.' },
+  { step: '04', title: 'Compliance Checked', desc: 'Your records are matched against your target university\'s requirements. Missing vaccines are clearly flagged.' },
 ];
 
 export function FeaturesPage() {
-  const ref = useScrollFade();
-
   return (
-    <div ref={ref} className="min-h-screen bg-[#F8F7F4] text-[#0A1428]">
+    <div className="min-h-screen bg-[#0A1428] text-white">
 
-      {/* ── Hero ── */}
-      <section className="pt-36 pb-20 lg:pt-44 lg:pb-24">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
+      {/* Hero */}
+      <section className="pt-36 pb-20 lg:pt-48 lg:pb-28 relative">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-1/3 right-1/4 w-[600px] h-[400px] bg-[#10B981]/5 rounded-full blur-3xl" />
+        </div>
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 relative">
           <div className="max-w-2xl">
-            <p className="text-sm font-medium text-[#10B981] uppercase tracking-widest mb-4">
-              Features
-            </p>
-            <h1 className="text-5xl lg:text-6xl font-semibold leading-[1.1] tracking-tight mb-6">
-              How DOZEY works
+            <div className="inline-flex items-center gap-2 bg-[#10B981]/10 border border-[#10B981]/20 rounded-full px-4 py-1.5 mb-8">
+              <FileText className="w-3.5 h-3.5 text-[#10B981]" />
+              <span className="text-xs font-medium text-[#10B981] tracking-wide">Platform Features</span>
+            </div>
+            <h1 className="text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6">
+              Everything you need to<br />
+              <span className="text-[#10B981]">clear enrollment.</span>
             </h1>
-            <p className="text-lg text-[#6B7280] leading-relaxed">
-              A complete platform for managing, translating, and sharing your vaccination
-              records across borders — powered by AI, built for humans.
+            <p className="text-lg text-[#94A3B8] leading-relaxed mb-8">
+              DOZEY combines AI translation, fraud detection, and university compliance checking into one seamless platform built specifically for international students.
             </p>
+            <Link
+              to="/register"
+              className="inline-flex items-center gap-2 bg-[#10B981] hover:bg-[#0ea472] text-white font-semibold px-8 py-4 rounded-[4px] transition-colors"
+            >
+              Get Started <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Pipeline ── */}
-      <section className="py-20 lg:py-28 bg-white border-y border-[#E5E7EB]">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
-          <div className="fade-in opacity-0 translate-y-6 transition-all duration-500 mb-16">
-            <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight mb-3">The DOZEY pipeline</h2>
-            <p className="text-[#6B7280] text-lg">From upload to compliance in four simple steps</p>
-          </div>
-          <div className="space-y-20">
-            {pipeline.map(({ step, icon: Icon, title, desc, align }, i) => (
-              <div
-                key={step}
-                className={`fade-in opacity-0 translate-y-6 transition-all duration-500 grid lg:grid-cols-2 gap-16 items-center`}
-              >
-                <div className={align === 'right' ? 'lg:order-2' : ''}>
-                  <span className="text-7xl font-light text-[#0A1428]/8 tabular-nums block mb-4">{step}</span>
-                  <h3 className="text-2xl font-semibold text-[#0A1428] mb-4">{title}</h3>
-                  <p className="text-[#6B7280] leading-relaxed">{desc}</p>
-                </div>
-                <div className={`${align === 'right' ? 'lg:order-1' : ''} flex items-center justify-center`}>
-                  <div className="w-full max-w-sm bg-[#F8F7F4] border border-[#E5E7EB] rounded-[8px] p-12 flex items-center justify-center">
-                    <Icon className="w-20 h-20 text-[#0A1428]/15" strokeWidth={1} />
-                  </div>
-                </div>
+      {/* Pipeline */}
+      <section className="py-24 bg-[#060D1A]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <h2 className="text-3xl lg:text-4xl font-bold text-center mb-16">The DOZEY pipeline</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {steps.map(({ step, title, desc }) => (
+              <div key={step} className="relative">
+                <div className="text-7xl font-black text-white/5 leading-none mb-3">{step}</div>
+                <h3 className="text-lg font-semibold mb-2 -mt-6">{title}</h3>
+                <p className="text-sm text-[#94A3B8] leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Feature grid ── */}
-      <section className="py-20 lg:py-28">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-8">
-          <div className="fade-in opacity-0 translate-y-6 transition-all duration-500 mb-12">
-            <h2 className="text-3xl lg:text-4xl font-semibold tracking-tight mb-3">Everything you need</h2>
-            <p className="text-[#6B7280] text-lg">No complicated setups. No hidden features. Just the tools that matter.</p>
+      {/* Feature grid */}
+      <section className="py-24 lg:py-32">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">Every feature you need</h2>
+            <p className="text-[#94A3B8] text-lg max-w-xl mx-auto">Built by students who experienced these challenges firsthand.</p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {featureGrid.map(({ icon: Icon, title, desc }, i) => (
-              <div
-                key={title}
-                className="fade-in opacity-0 translate-y-6 transition-all duration-500 bg-white border border-[#E5E7EB] rounded-[8px] p-6 hover:border-[#D1D5DB] transition-colors"
-              >
-                <div className="w-9 h-9 bg-[#F3F4F6] rounded-[4px] flex items-center justify-center mb-4">
-                  <Icon className="w-4 h-4 text-[#0A1428]" strokeWidth={1.5} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map(({ icon, title, desc }) => (
+              <div key={title} className="bg-[#111827] border border-white/10 rounded-lg p-7 hover:border-[#10B981]/30 transition-colors group">
+                <div className="w-11 h-11 rounded-lg bg-[#10B981]/10 flex items-center justify-center text-[#10B981] mb-5 group-hover:bg-[#10B981]/20 transition-colors">
+                  {icon}
                 </div>
-                <h3 className="text-base font-semibold text-[#0A1428] mb-1.5">{title}</h3>
-                <p className="text-sm text-[#6B7280] leading-relaxed">{desc}</p>
+                <h3 className="text-base font-semibold mb-2">{title}</h3>
+                <p className="text-sm text-[#94A3B8] leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="py-20 bg-[#0A1428]">
-        <div className="max-w-[1280px] mx-auto px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-semibold text-white tracking-tight mb-4">
-            See it in action
-          </h2>
-          <p className="text-white/60 mb-8 max-w-md mx-auto">
-            Join people in 40+ countries managing their health records with DOZEY.
-          </p>
-          <Link
-            to="/login"
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-[#10B981] text-[#0A1428] font-semibold rounded-[4px] hover:bg-[#0ea572] transition-colors active:scale-[0.98]"
-          >
-            Get Started <ArrowRight className="w-4 h-4" />
-          </Link>
+      {/* CTA */}
+      <section className="py-24 bg-[#060D1A]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-black mb-6">Start clearing your requirements today</h2>
+          <p className="text-[#94A3B8] text-lg mb-10 max-w-xl mx-auto">Upload your first document and see DOZEY in action.</p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link to="/register" className="inline-flex items-center gap-2 bg-[#10B981] hover:bg-[#0ea472] text-white font-semibold px-8 py-4 rounded-[4px] transition-colors">
+              Get Started <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link to="/contact" className="inline-flex items-center gap-2 border border-white/20 hover:border-white/40 text-[#94A3B8] hover:text-white font-medium px-8 py-4 rounded-[4px] transition-colors">
+              Contact Us
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -318,8 +318,8 @@ h1, h2, h3, h4, h5, h6 {
 body {
   font-family: 'Inter', 'Helvetica Neue', sans-serif;
   line-height: 1.6;
-  background-color: #F8F7F4;
-  color: #0A1428;
+  background-color: #ffffff;
+  color: #ffffff;
 }
 
 /* Focus styles — accessible, no glow */

@@ -70,7 +70,7 @@ export function RegisterPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#F8F7F4] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[#0A1428] flex items-center justify-center px-4">
         <div className="w-full max-w-sm text-center">
           <Link to="/">
             <DozeyLogo className="h-16 mx-auto mb-8" />
@@ -78,9 +78,9 @@ export function RegisterPage() {
           <div className="w-16 h-16 bg-[#10B981]/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-8 h-8 text-[#10B981]" />
           </div>
-          <h2 className="text-2xl font-extrabold text-[#0A1428] mb-3">Check your email</h2>
-          <p className="text-[#6B7280] mb-8 text-sm leading-relaxed">
-            We've sent a verification link to <strong className="text-[#0A1428]">{email}</strong>. Click the link to verify your account.
+          <h2 className="text-2xl font-extrabold text-white mb-3">Check your email</h2>
+          <p className="text-[#94A3B8] mb-8 text-sm leading-relaxed">
+            We've sent a verification link to <strong className="text-white">{email}</strong>. Click the link to verify your account.
           </p>
           <Link
             to="/login"
@@ -95,13 +95,13 @@ export function RegisterPage() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-1/2 bg-[#0A1428] text-white relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 bg-[#10B981] text-white relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-white/10 rounded-full blur-[100px]" />
-          <div className="absolute bottom-1/4 left-1/4 w-[300px] h-[300px] bg-white/5 rounded-full blur-[80px]" />
+          <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-[#111827]/10 rounded-full blur-[100px]" />
+          <div className="absolute bottom-1/4 left-1/4 w-[300px] h-[300px] bg-[#111827]/5 rounded-full blur-[80px]" />
         </div>
         <div className="relative flex flex-col justify-center px-16 max-w-lg">
-          <DozeyLogo className="h-20 mb-12" theme="dark" />
+          <DozeyLogo className="h-20 mb-12" />
           <h2 className="text-4xl font-extrabold mb-6 leading-[1.05]">
             Your health records,
             <br />unified
@@ -120,7 +120,7 @@ export function RegisterPage() {
         </div>
       </div>
 
-      <div className="flex-1 flex items-center justify-center px-6 bg-[#F8F7F4]">
+      <div className="flex-1 flex items-center justify-center px-6 bg-[#0A1428]">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8 lg:hidden">
             <Link to="/">
@@ -128,8 +128,8 @@ export function RegisterPage() {
             </Link>
           </div>
 
-          <h1 className="text-3xl font-extrabold text-[#0A1428] mb-2">Create account</h1>
-          <p className="text-[#6B7280] mb-8 text-sm">Start managing your health records securely</p>
+          <h1 className="text-3xl font-extrabold text-white mb-2">Create account</h1>
+          <p className="text-[#94A3B8] mb-8 text-sm">Start managing your health records securely</p>
 
           {error && (
             <div className="bg-red-50 text-red-700 px-4 py-3 rounded-[4px] mb-6 text-sm">
@@ -139,36 +139,36 @@ export function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-2 uppercase tracking-wide">Email</label>
+              <label className="block text-xs font-medium text-[#94A3B8] mb-2 uppercase tracking-wide">Email</label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280]" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94A3B8]" />
                 <input
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="your@email.com"
                   required
-                  className="w-full pl-11 pr-4 py-3.5 bg-white border border-[#D1D5DB] rounded-[4px] focus:ring-2 focus:ring-[#0A1428]/10 outline-none transition-all text-sm text-[#0A1428] placeholder:text-[#6B7280]/60"
+                  className="w-full pl-11 pr-4 py-3.5 bg-[#111827] border border-white/10 rounded-[4px] focus:ring-2 focus:ring-[#0A1428]/10 outline-none transition-all text-sm text-white placeholder:text-[#94A3B8]/60"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-2 uppercase tracking-wide">Password</label>
+              <label className="block text-xs font-medium text-[#94A3B8] mb-2 uppercase tracking-wide">Password</label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280]" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94A3B8]" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   placeholder="Min 8 chars, uppercase, number, special"
                   required
-                  className="w-full pl-11 pr-12 py-3.5 bg-white border border-[#D1D5DB] rounded-[4px] focus:ring-2 focus:ring-[#0A1428]/10 outline-none transition-all text-sm text-[#0A1428] placeholder:text-[#6B7280]/60"
+                  className="w-full pl-11 pr-12 py-3.5 bg-[#111827] border border-white/10 rounded-[4px] focus:ring-2 focus:ring-[#0A1428]/10 outline-none transition-all text-sm text-white placeholder:text-[#94A3B8]/60"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#0A1428]"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#94A3B8] hover:text-white"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -176,33 +176,33 @@ export function RegisterPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-2 uppercase tracking-wide">Confirm Password</label>
+              <label className="block text-xs font-medium text-[#94A3B8] mb-2 uppercase tracking-wide">Confirm Password</label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280]" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94A3B8]" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   onChange={e => setConfirmPassword(e.target.value)}
                   placeholder="Confirm your password"
                   required
-                  className="w-full pl-11 pr-4 py-3.5 bg-white border border-[#D1D5DB] rounded-[4px] focus:ring-2 focus:ring-[#0A1428]/10 outline-none transition-all text-sm text-[#0A1428] placeholder:text-[#6B7280]/60"
+                  className="w-full pl-11 pr-4 py-3.5 bg-[#111827] border border-white/10 rounded-[4px] focus:ring-2 focus:ring-[#0A1428]/10 outline-none transition-all text-sm text-white placeholder:text-[#94A3B8]/60"
                 />
               </div>
             </div>
 
-            <div className="flex items-start gap-3 bg-white p-4 rounded-[4px]">
+            <div className="flex items-start gap-3 bg-[#111827] p-4 rounded-[4px]">
               <input
                 type="checkbox"
                 id="tosAccepted"
                 checked={tosAccepted}
                 onChange={e => setTosAccepted(e.target.checked)}
-                className="mt-0.5 w-4 h-4 text-[#0A1428] border-[#D1D5DB]/30 rounded focus:ring-[#0A1428] cursor-pointer"
+                className="mt-0.5 w-4 h-4 text-white border-white/10/30 rounded focus:ring-[#0A1428] cursor-pointer"
               />
-              <label htmlFor="tosAccepted" className="text-xs text-[#6B7280] leading-relaxed cursor-pointer">
+              <label htmlFor="tosAccepted" className="text-xs text-[#94A3B8] leading-relaxed cursor-pointer">
                 I agree to the{' '}
-                <Link to="/terms" target="_blank" className="text-[#0A1428] hover:underline font-semibold">Terms of Service</Link>
+                <Link to="/terms" target="_blank" className="text-white hover:underline font-semibold">Terms of Service</Link>
                 {' '}and{' '}
-                <Link to="/privacy" target="_blank" className="text-[#0A1428] hover:underline font-semibold">Privacy Policy</Link>
+                <Link to="/privacy" target="_blank" className="text-white hover:underline font-semibold">Privacy Policy</Link>
                 , including the HIPAA Notice of Privacy Practices.
               </label>
             </div>
@@ -218,9 +218,9 @@ export function RegisterPage() {
           </form>
 
           <div className="mt-8 text-center">
-            <p className="text-[#6B7280] text-sm">
+            <p className="text-[#94A3B8] text-sm">
               Already have an account?{' '}
-              <Link to="/login" className="text-[#0A1428] hover:underline font-semibold">
+              <Link to="/login" className="text-white hover:underline font-semibold">
                 Sign In
               </Link>
             </p>
