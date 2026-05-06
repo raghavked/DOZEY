@@ -4,12 +4,12 @@ import { PublicFooter } from '@/components/PublicFooter';
 
 /**
  * Public layout wrapper.
- * Background is white — individual sections use .section-dark or .section-light
- * for the alternating light/dark rhythm specified in the PDR.
+ * Background is pure black (#000000) per PDR v3.
+ * OroSwap-style dark aesthetic throughout.
  */
 export function PublicLayout() {
   return (
-    <div className="min-h-screen bg-white">
+    <div style={{ background: '#000000', minHeight: '100vh' }}>
       <PublicNavbar />
       <main>
         <Outlet />

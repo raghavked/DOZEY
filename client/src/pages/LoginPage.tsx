@@ -38,12 +38,12 @@ export function LoginPage() {
   } as const;
 
   return (
-    <div className="min-h-screen flex" style={{ background: '#1A3A4F' }}>
+    <div className="min-h-screen flex" style={{ background: '#000000' }}>
 
       {/* ── Left panel (desktop only) ── */}
       <div
         className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12"
-        style={{ background: 'rgba(26,58,79,0.95)', borderRight: '1px solid rgba(56,212,184,0.12)' }}
+        style={{ background: 'rgba(0,0,0,0.98)', borderRight: '1px solid rgba(56,212,184,0.12)' }}
       >
         <Link to="/">
           <DozeyLogo className="h-12" theme="dark" />
@@ -77,7 +77,7 @@ export function LoginPage() {
       {/* ── Right panel (form) ── */}
       <div
         className="flex-1 flex items-center justify-center p-8"
-        style={{ background: 'rgba(15,26,34,0.98)' }}
+        style={{ background: '#0A0A0A' }}
       >
         <div className="w-full max-w-sm">
           {/* Mobile logo */}

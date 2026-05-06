@@ -78,9 +78,9 @@ export function RegisterPage() {
     return (
       <div
         className="min-h-screen flex items-center justify-center px-4"
-        style={{ background: '#0F1A22' }}
+        style={{ background: '#000000' }}
       >
-        <div className="w-full max-w-sm text-center">
+        <div className="w-full max-w-sm">
           <Link to="/">
             <span className="block mb-8 hover:opacity-90 transition-opacity">
               <DozeyLogo className="h-12 mx-auto" theme="dark" />
@@ -116,12 +116,12 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex" style={{ background: '#1A3A4F' }}>
+    <div className="min-h-screen flex" style={{ background: '#000000' }}>
 
       {/* ── Left panel (desktop only) ── */}
       <div
         className="hidden lg:flex lg:w-1/2 flex-col justify-center px-16 relative overflow-hidden"
-        style={{ background: 'rgba(26,58,79,0.95)', borderRight: '1px solid rgba(56,212,184,0.12)' }}
+        style={{ background: 'rgba(0,0,0,0.98)', borderRight: '1px solid rgba(56,212,184,0.12)' }}
       >
         <div className="glow-orb w-[400px] h-[400px] bg-[#38D4B8] opacity-[0.06] top-[-100px] right-[-100px]" />
         <div className="relative z-10">
@@ -157,7 +157,7 @@ export function RegisterPage() {
       {/* ── Right panel (form) ── */}
       <div
         className="flex-1 flex items-center justify-center px-6 py-12"
-        style={{ background: '#0F1A22' }}
+        style={{ background: '#0A0A0A' }}
       >
         <div className="w-full max-w-sm">
           {/* Mobile logo */}

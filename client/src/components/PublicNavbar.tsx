@@ -3,8 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import DozeyLogo from '@/components/DozeyLogo';
 
 const navLinks = [
+  { href: '/',         label: 'Home' },
   { href: '/features', label: 'Features' },
-  { href: '/progress', label: 'Impact' },
+  { href: '/progress', label: 'Progress' },
   { href: '/team',     label: 'Team' },
   { href: '/contact',  label: 'Contact' },
 ];
@@ -32,11 +33,11 @@ export function PublicNavbar() {
       <nav
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
         style={{
-          background: scrolled ? 'rgba(26,58,79,0.97)' : 'rgba(26,58,79,0.92)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          borderBottom: scrolled ? '1px solid rgba(56,212,184,0.15)' : '1px solid transparent',
-          boxShadow: scrolled ? '0 4px 24px rgba(26,58,79,0.3)' : 'none',
+          background: scrolled ? 'rgba(0,0,0,0.97)' : 'rgba(0,0,0,0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: scrolled ? '1px solid rgba(56,212,184,0.15)' : '1px solid rgba(255,255,255,0.04)',
+          boxShadow: scrolled ? '0 4px 32px rgba(0,0,0,0.6)' : 'none',
         }}
         role="navigation"
         aria-label="Main navigation"
@@ -92,7 +93,7 @@ export function PublicNavbar() {
       {mobileOpen && (
         <div
           className="fixed inset-0 z-40 flex flex-col"
-          style={{ background: 'rgba(26,58,79,0.98)', backdropFilter: 'blur(20px)', paddingTop: '80px' }}
+          style={{ background: 'rgba(0,0,0,0.97)', backdropFilter: 'blur(24px)', paddingTop: '80px' }}
           role="dialog" aria-modal="true" aria-label="Navigation menu"
         >
           <div className="flex flex-col items-center justify-center flex-1 gap-8 px-6">
