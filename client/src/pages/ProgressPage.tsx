@@ -17,43 +17,43 @@ function useReveal() {
 
 const milestones = [
   {
-    period: 'Fall 2024',
+    period: 'January 2026',
     title: 'Problem identified',
     desc: 'Multiple UC Davis international students in our network had vaccination records rejected by the university health center. We started documenting the scope of the problem.',
     status: 'done',
   },
   {
-    period: 'Winter 2024',
+    period: 'February 2026',
     title: 'First prototype',
     desc: 'Built a proof-of-concept that could extract vaccination data from a PDF and translate it from Spanish to English. Tested with 12 real documents.',
     status: 'done',
   },
   {
-    period: 'Spring 2025',
+    period: 'March 2026',
     title: 'Core AI pipeline',
     desc: 'Integrated Mistral OCR for document extraction and DeepL for translation. Added a medical terminology layer to handle vaccine name mapping across countries.',
     status: 'done',
   },
   {
-    period: 'Summer 2025',
+    period: 'March 2026',
     title: 'University compliance database',
     desc: 'Built the compliance rules engine with vaccination requirements for 50 US universities. Expanded language support to 80+ languages.',
     status: 'done',
   },
   {
-    period: 'Fall 2025',
+    period: 'April 2026',
     title: 'Beta launch',
     desc: 'Opened the platform to a closed beta of 200 UC Davis international students. Processed over 600 documents. Collected feedback and iterated on the UX.',
     status: 'done',
   },
   {
-    period: 'Winter 2025',
+    period: 'April 2026',
     title: 'HIPAA compliance',
     desc: 'Completed HIPAA compliance audit. Implemented AES-256 encryption at rest and in transit. Established data retention and deletion policies.',
     status: 'done',
   },
   {
-    period: 'Spring 2026',
+    period: 'May 2026',
     title: 'Public launch',
     desc: 'Opened DOZEY to all international students. Expanded university coverage to 200+ institutions. Launched secure sharing feature for direct submission to health centers.',
     status: 'current',
@@ -89,7 +89,7 @@ export function ProgressPage() {
             className="body-text"
             style={{ fontSize: '1.125rem', maxWidth: '520px' }}
           >
-            DOZEY started as a weekend project in 2024. Here is an honest account of what we have built, what works, and what is still in progress.
+            DOZEY started as a weekend project in January 2026. Here is an honest account of what we have built, what works, and what is still in progress.
           </p>
         </div>
       </section>

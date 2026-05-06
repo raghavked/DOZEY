@@ -18,21 +18,13 @@ function useReveal() {
   }, []);
 }
 
-/**
- * Team page — real DOZEY founding team.
- * Photos: raghav-photo.png, aash-photo.png, isaac-photo.png
- * All bios are motivation-driven, not credential-driven.
- * Layout is intentionally asymmetric per UX spec.
- */
 export function TeamPage() {
   useReveal();
 
   return (
     <div className="public-site">
 
-      {/* ─────────────────────────────────────────────────────────
-          HERO — left-aligned, honest, human
-      ───────────────────────────────────────────────────────── */}
+      {/* HERO */}
       <section
         className="pt-36 pb-20 px-6 lg:px-16"
         style={{ background: '#000000' }}
@@ -49,16 +41,12 @@ export function TeamPage() {
             className="body-text"
             style={{ fontSize: '1.125rem', maxWidth: '520px' }}
           >
-            DOZEY started as a frustration. We were international students — or friends of international students — watching people miss enrollment deadlines over paperwork. So we built the tool that should have already existed.
+            DOZEY started as a frustration. We watched international students miss enrollment deadlines over paperwork. So we built the tool that should have already existed.
           </p>
         </div>
       </section>
 
-      {/* ─────────────────────────────────────────────────────────
-          TEAM MEMBERS — asymmetric, each person gets space
-          Purpose: Build trust. Show real people with real motivations.
-          North star: "Each person has a clear story of why they're doing this."
-      ───────────────────────────────────────────────────────── */}
+      {/* TEAM MEMBERS */}
       <section
         className="py-24 px-6 lg:px-16"
         style={{ background: '#0D0D0D', borderTop: '1px solid rgba(255,255,255,0.05)' }}
@@ -88,26 +76,26 @@ export function TeamPage() {
               <p className="text-sm font-medium mb-6" style={{ color: '#38D4B8' }}>Co-Founder, Engineering</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <p className="body-text" style={{ fontSize: '1.0625rem' }}>
-                  Raghav built the core AI pipeline that powers DOZEY's document processing. He came to UC Davis as an international student and spent his first semester navigating the exact problem DOZEY now solves — vaccination records that kept getting rejected by the health center.
+                  Raghav built the core AI pipeline that powers DOZEY's document processing. He grew up in the US as a naturalized citizen and watched close friends — international students arriving at UC Davis — spend their first weeks fighting paperwork instead of starting school.
                 </p>
                 <p className="body-text" style={{ fontSize: '1.0625rem' }}>
-                  His motivation is straightforward: the process of getting health records accepted is a bureaucratic obstacle that has nothing to do with whether a student is healthy. He wanted to remove that obstacle.
+                  His motivation is straightforward: the process of getting health records accepted is a bureaucratic obstacle that has nothing to do with whether a student is healthy. He wanted to remove that obstacle. DOZEY is the result.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Aash — bio left, photo right (intentional asymmetry) */}
+          {/* Aash — bio left, photo right */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start reveal">
             <div className="lg:col-span-8" style={{ paddingTop: '1.5rem' }}>
               <h2 className="heading-section mb-1" style={{ fontSize: '1.75rem' }}>Aash</h2>
               <p className="text-sm font-medium mb-6" style={{ color: '#38D4B8' }}>Co-Founder, Product</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <p className="body-text" style={{ fontSize: '1.0625rem' }}>
-                  Aash leads product design and user experience at DOZEY. His focus is on making the platform feel approachable to students who are already overwhelmed — arriving in a new country, starting a new school, dealing with a new healthcare system.
+                  Aash leads product design and user experience at DOZEY. Her focus is on making the platform feel approachable to students who are already overwhelmed — arriving in a new country, starting a new school, dealing with a new healthcare system.
                 </p>
                 <p className="body-text" style={{ fontSize: '1.0625rem' }}>
-                  He watched close friends spend weeks in limbo because their records were in the wrong format. That experience shaped his conviction that good design can remove real barriers — and that healthcare tools should be built for patients, not administrators.
+                  She watched close friends spend weeks in limbo because their records were in the wrong format. That experience shaped her conviction that good design can remove real barriers — and that healthcare tools should be built for patients, not administrators.
                 </p>
               </div>
             </div>
@@ -165,10 +153,7 @@ export function TeamPage() {
         </div>
       </section>
 
-      {/* ─────────────────────────────────────────────────────────
-          ORIGIN STORY — honest, specific, no corporate language
-          Purpose: Build credibility. Show the real context.
-      ───────────────────────────────────────────────────────── */}
+      {/* ORIGIN STORY */}
       <section
         className="py-24 px-6 lg:px-16"
         style={{ background: '#000000', borderTop: '1px solid rgba(255,255,255,0.05)' }}
@@ -179,25 +164,23 @@ export function TeamPage() {
             className="heading-section mb-8"
             style={{ fontSize: 'clamp(1.9rem, 3.5vw, 2.75rem)' }}
           >
-            2025. UC Davis. A health center rejection notice.
+            January 2026. UC Davis. A health center rejection notice.
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             <p className="body-text" style={{ fontSize: '1.0625rem' }}>
-              The three of us were at UC Davis in 2025 when the problem became impossible to ignore. Students we knew — from Brazil, India, Korea, China — were getting their vaccination records rejected by the university health center. Not because they were missing vaccines, but because their records were in the wrong language or the wrong format.
+              The three of us were at UC Davis in early 2026 when the problem became impossible to ignore. Students we knew — from Brazil, India, Korea, China — were getting their vaccination records rejected by the university health center. Not because they were missing vaccines, but because their records were in the wrong language or the wrong format.
             </p>
             <p className="body-text" style={{ fontSize: '1.0625rem' }}>
               The solution the university offered was to hire a certified translator. Cost: $50 to $200 per document. Wait time: one to three weeks. And after all that, some records still got rejected because the format didn't match what the health center expected.
             </p>
             <p className="body-text" style={{ fontSize: '1.0625rem' }}>
-              We started building DOZEY in the evenings. Not because we thought it would become a company, but because the problem was clearly solvable and nobody had solved it. The first version processed a single document from a single country. Today it handles 150+ countries and 200+ universities.
+              We started building DOZEY in January 2026. Not because we thought it would become a company, but because the problem was clearly solvable and nobody had solved it. The first version processed a single document from a single country. Today it handles 150+ countries and 200+ universities.
             </p>
           </div>
         </div>
       </section>
 
-      {/* ─────────────────────────────────────────────────────────
-          CONTACT CTA — single, clear, no competing elements
-      ───────────────────────────────────────────────────────── */}
+      {/* CONTACT CTA */}
       <section
         className="py-24 px-6 lg:px-16"
         style={{ background: '#0D0D0D', borderTop: '1px solid rgba(255,255,255,0.05)' }}

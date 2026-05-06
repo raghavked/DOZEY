@@ -70,11 +70,11 @@ export function ContactPage() {
                 <div>
                   <p className="text-xs font-semibold mb-2" style={{ color: '#38D4B8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Email</p>
                   <a
-                    href="mailto:hello@dozey.app"
+                    href="mailto:dozeyrecords@gmail.com"
                     className="body-text"
                     style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.8)', textDecoration: 'none' }}
                   >
-                    hello@dozey.app
+                    dozeyrecords@gmail.com
                   </a>
                 </div>
                 <div>

@@ -1,8 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import raghavPhoto from '@/assets/raghav-photo.png';
-import aashPhoto from '@/assets/aash-photo.png';
-import isaacPhoto from '@/assets/isaac-photo.png';
 
 function useReveal() {
   useEffect(() => {
@@ -33,11 +30,11 @@ export function HomePage() {
         className="pt-36 pb-28 px-6 lg:px-16"
         style={{ background: '#000000' }}
       >
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+        <div className="max-w-5xl mx-auto">
+          <div>
 
-            {/* Left — headline + CTA (7 cols) */}
-            <div className="lg:col-span-7">
+            {/* Headline + CTA */}
+            <div>
               <span className="section-label">Health Records, Simplified</span>
               <h1
                 className="heading-display mb-7"
@@ -66,69 +63,6 @@ export function HomePage() {
                   <span className="btn-ghost">See how it works</span>
                 </Link>
               </div>
-            </div>
-
-            {/* Right — team faces, early (5 cols) */}
-            <div className="lg:col-span-5">
-              <p
-                className="text-sm font-medium mb-5"
-                style={{ color: 'rgba(255,255,255,0.38)', letterSpacing: '0.06em', textTransform: 'uppercase' }}
-              >
-                Built by the team at DOZEY
-              </p>
-              <div className="flex items-end gap-4">
-                <div style={{ flex: '0 0 auto' }}>
-                  <img
-                    src={raghavPhoto}
-                    alt="Raghav, Co-Founder"
-                    style={{
-                      width: '120px',
-                      height: '120px',
-                      borderRadius: '10px',
-                      objectFit: 'cover',
-                      objectPosition: 'center top',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                    }}
-                  />
-                  <p className="text-xs mt-2" style={{ color: 'rgba(255,255,255,0.45)' }}>Raghav</p>
-                </div>
-                <div style={{ flex: '0 0 auto', marginBottom: '20px' }}>
-                  <img
-                    src={aashPhoto}
-                    alt="Aash, Co-Founder"
-                    style={{
-                      width: '100px',
-                      height: '100px',
-                      borderRadius: '10px',
-                      objectFit: 'cover',
-                      objectPosition: 'center top',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                    }}
-                  />
-                  <p className="text-xs mt-2" style={{ color: 'rgba(255,255,255,0.45)' }}>Aash</p>
-                </div>
-                <div style={{ flex: '0 0 auto', marginBottom: '8px' }}>
-                  <img
-                    src={isaacPhoto}
-                    alt="Isaac, Co-Founder"
-                    style={{
-                      width: '110px',
-                      height: '110px',
-                      borderRadius: '10px',
-                      objectFit: 'cover',
-                      objectPosition: 'center top',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                    }}
-                  />
-                  <p className="text-xs mt-2" style={{ color: 'rgba(255,255,255,0.45)' }}>Isaac</p>
-                </div>
-              </div>
-              <p
-                className="text-sm mt-6 leading-relaxed"
-                style={{ color: 'rgba(255,255,255,0.5)', maxWidth: '320px' }}
-              >
-                We were UC Davis students who ran into this problem ourselves. So we built the solution.
-              </p>
             </div>
 
           </div>
@@ -311,10 +245,6 @@ export function HomePage() {
                     desc: 'Our AI handles 150+ languages with medical accuracy. No waiting for a human translator.',
                   },
                   {
-                    title: 'Free for students',
-                    desc: 'Core features are completely free. We believe cost should never be a barrier to healthcare access.',
-                  },
-                  {
                     title: 'Works with your university',
                     desc: 'Compliance rules for 200+ US universities are built in. We know what each school requires.',
                   },
@@ -353,8 +283,8 @@ export function HomePage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
 
-            {/* Left — story (7 cols) */}
-            <div className="lg:col-span-7 reveal-left">
+            {/* Story */}
+            <div className="reveal-left" style={{ maxWidth: '680px' }}>
               <span className="section-label">Our Story</span>
               <h2
                 className="heading-section mb-8"
@@ -364,13 +294,13 @@ export function HomePage() {
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 <p className="body-text" style={{ fontSize: '1.0625rem' }}>
-                  In 2025, we were UC Davis students — several of us international — trying to get our vaccination records accepted by the university health center. Records from Brazil, India, and Korea kept getting rejected. Wrong language. Wrong format. Not recognized.
+                  In January 2026, we were UC Davis students watching close friends — international students from Brazil, India, and Korea — get their vaccination records rejected by the university health center. Wrong language. Wrong format. Not recognized.
                 </p>
                 <p className="body-text" style={{ fontSize: '1.0625rem' }}>
                   We paid translators. We waited weeks. We still got rejected. The process was broken, and nobody was fixing it.
                 </p>
                 <p className="body-text" style={{ fontSize: '1.0625rem' }}>
-                  So we built DOZEY. Not as a startup idea, but as the tool we wished had existed when we arrived.
+                  So we built DOZEY. Not as a startup idea, but as the tool we wished had existed for them.
                 </p>
               </div>
               <div style={{ marginTop: '2.5rem' }}>
@@ -379,51 +309,6 @@ export function HomePage() {
                 </Link>
               </div>
             </div>
-
-            {/* Right — team photos, larger (5 cols) */}
-            <div className="lg:col-span-5 reveal-right">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <img
-                  src={raghavPhoto}
-                  alt="Raghav, Co-Founder"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '3/4',
-                    objectFit: 'cover',
-                    objectPosition: 'center top',
-                    borderRadius: '10px',
-                    border: '1px solid rgba(255,255,255,0.07)',
-                  }}
-                />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <img
-                    src={aashPhoto}
-                    alt="Aash, Co-Founder"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '1/1',
-                      objectFit: 'cover',
-                      objectPosition: 'center top',
-                      borderRadius: '10px',
-                      border: '1px solid rgba(255,255,255,0.07)',
-                    }}
-                  />
-                  <img
-                    src={isaacPhoto}
-                    alt="Isaac, Co-Founder"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '1/1',
-                      objectFit: 'cover',
-                      objectPosition: 'center top',
-                      borderRadius: '10px',
-                      border: '1px solid rgba(255,255,255,0.07)',
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
       </section>

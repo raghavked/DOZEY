@@ -51,7 +51,7 @@ export function PublicFooter() {
           {/* Brand column */}
           <div>
             <Link to="/" style={{ display: 'inline-block', marginBottom: '1.25rem', textDecoration: 'none' }}>
-              <DozeyLogo className="h-8" theme="dark" />
+              <DozeyLogo className="h-11" theme="dark" />
             </Link>
             <p
               style={{

@@ -54,7 +54,7 @@ export function PublicNavbar() {
         >
           {/* Logo */}
           <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-            <DozeyLogo className="h-8" theme="dark" />
+            <DozeyLogo className="h-11" theme="dark" />
           </Link>
 
           {/* Desktop nav */}

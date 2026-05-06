@@ -83,7 +83,7 @@ export function RegisterPage() {
         <div className="w-full max-w-sm">
           <Link to="/">
             <span className="block mb-8 hover:opacity-90 transition-opacity">
-              <DozeyLogo className="h-12 mx-auto" theme="dark" />
+              <DozeyLogo className="h-16 mx-auto" theme="dark" />
             </span>
           </Link>
           <div
@@ -125,7 +125,7 @@ export function RegisterPage() {
       >
         <div className="glow-orb w-[400px] h-[400px] bg-[#38D4B8] opacity-[0.06] top-[-100px] right-[-100px]" />
         <div className="relative z-10">
-          <DozeyLogo className="h-12 mb-12" theme="dark" />
+          <DozeyLogo className="h-16 mb-12" theme="dark" />
           <h2
             className="text-4xl font-black text-white mb-6 leading-tight"
             style={{ fontFamily: "'Poppins', sans-serif" }}
@@ -164,7 +164,7 @@ export function RegisterPage() {
           <div className="text-center mb-8 lg:hidden">
             <Link to="/">
               <span className="block hover:opacity-90 transition-opacity">
-                <DozeyLogo className="h-12 mx-auto mb-4" theme="dark" />
+                <DozeyLogo className="h-16 mx-auto mb-4" theme="dark" />
               </span>
             </Link>
           </div>

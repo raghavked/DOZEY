@@ -211,34 +211,7 @@ export function FeaturesPage() {
               </p>
             </div>
 
-            {/* Full-width card — Free */}
-            <div
-              className="feature-card reveal"
-              style={{ gridColumn: 'span 12' }}
-            >
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', alignItems: 'center' }}>
-                <div>
-                  <div className="teal-rule" />
-                  <h3 className="heading-section mb-3" style={{ fontSize: '1.1875rem' }}>
-                    Free for students — always
-                  </h3>
-                  <p className="body-text" style={{ fontSize: '0.9375rem' }}>
-                    The core features — translation, compliance checking, and document formatting — are completely free. We believe the cost of healthcare administration should not fall on the students who can least afford it.
-                  </p>
-                </div>
-                <div>
-                  <Link to="/register">
-                    <span className="btn-primary">
-                      Create free account
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="w-4 h-4">
-                        <path d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </svg>
-                    </span>
-                  </Link>
-                  <p className="text-sm mt-4" style={{ color: 'rgba(255,255,255,0.3)' }}>No credit card required.</p>
-                </div>
-              </div>
-            </div>
+
 
           </div>
         </div>

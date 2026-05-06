@@ -46,7 +46,7 @@ export function LoginPage() {
         style={{ background: 'rgba(0,0,0,0.98)', borderRight: '1px solid rgba(56,212,184,0.12)' }}
       >
         <Link to="/">
-          <DozeyLogo className="h-12" theme="dark" />
+          <DozeyLogo className="h-16" theme="dark" />
         </Link>
         <div>
           <div
@@ -82,7 +82,7 @@ export function LoginPage() {
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
           <div className="lg:hidden mb-10 flex justify-center">
-            <DozeyLogo className="h-12" theme="dark" />
+            <DozeyLogo className="h-16" theme="dark" />
           </div>
 
           <h1
