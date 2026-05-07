@@ -113,7 +113,7 @@ export function PrivacyPolicy() {
               <ul className="list-disc pl-6 text-[#0A1428] space-y-1">
                 <li><strong>Cloud Infrastructure:</strong> For secure data hosting and storage (SOC 2 Type II certified)</li>
                 <li><strong>Authentication Services:</strong> For secure user authentication, session management, and email verification</li>
-                <li><strong>AI Document Processing:</strong> OCR extraction (Mistral AI), language translation (DeepL), and data parsing (OpenAI) — all bound by BAAs, data processed in compliance with HIPAA, no PHI retained after processing</li>
+                <li><strong>AI Document Processing:</strong> Document extraction, language translation, and data parsing are handled by DOZEY’s proprietary AI models — all processing is HIPAA-compliant, no PHI is retained after processing</li>
                 <li><strong>Email Services:</strong> For transactional emails (account verification, security alerts) — no PHI included in emails</li>
               </ul>
               <p className="text-[#0A1428] leading-relaxed mt-2">

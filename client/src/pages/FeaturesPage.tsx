@@ -240,17 +240,17 @@ export function FeaturesPage() {
               {
                 step: '01',
                 title: 'Document extraction',
-                desc: 'Mistral OCR reads your document — whether it is a clear PDF or a blurry photo of a paper record — and extracts the text with high accuracy.',
+                desc: 'Our proprietary document intelligence model reads your record — whether it is a clean PDF or a blurry photo of a paper document — and extracts the text with high accuracy.',
               },
               {
                 step: '02',
                 title: 'Medical translation',
-                desc: 'DeepL handles the language translation, with a medical terminology layer on top that maps vaccine names and clinical terms to their US equivalents.',
+                desc: 'Our proprietary translation model handles the language conversion, with a medical terminology layer that maps vaccine names and clinical terms to their US equivalents.',
               },
               {
                 step: '03',
                 title: 'Compliance mapping',
-                desc: 'GPT-4o-mini checks the extracted data against the specific vaccination requirements of your university and flags any gaps or missing doses.',
+                desc: 'Our proprietary compliance model checks the extracted data against the specific vaccination requirements of your university and flags any gaps or missing doses.',
               },
               {
                 step: '04',

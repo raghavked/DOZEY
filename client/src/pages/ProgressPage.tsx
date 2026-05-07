@@ -31,7 +31,7 @@ const milestones = [
   {
     period: 'March 2026',
     title: 'Core AI pipeline',
-    desc: 'Integrated Mistral OCR for document extraction and DeepL for translation. Added a medical terminology layer to handle vaccine name mapping across countries.',
+    desc: 'Integrated our proprietary document extraction and translation models. Added a medical terminology layer to handle vaccine name mapping across countries.',
     status: 'done',
   },
   {
@@ -60,8 +60,14 @@ const milestones = [
   },
   {
     period: 'Summer 2026',
-    title: 'Mobile app',
-    desc: 'Native iOS and Android app for uploading documents from your phone. Offline access to processed records. Push notifications for compliance deadlines.',
+    title: 'Expanded university coverage',
+    desc: 'Broadening DOZEY’s reach to cover 500+ universities and health centers across the US, with deeper integration into existing student health portals.',
+    status: 'upcoming',
+  },
+  {
+    period: '2027',
+    title: 'Medical institution partnerships',
+    desc: 'Formal partnerships with hospitals, clinics, and healthcare networks to accept DOZEY-formatted records directly, reducing friction for students transitioning into the healthcare system.',
     status: 'upcoming',
   },
 ];

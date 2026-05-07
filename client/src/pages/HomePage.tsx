@@ -280,11 +280,10 @@ export function HomePage() {
         className="py-24 px-6 lg:px-16"
         style={{ background: '#000000', borderTop: '1px solid rgba(255,255,255,0.05)' }}
       >
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+        <div className="max-w-3xl mx-auto">
 
             {/* Story */}
-            <div className="reveal-left" style={{ maxWidth: '680px' }}>
+            <div className="reveal">
               <span className="section-label">Our Story</span>
               <h2
                 className="heading-section mb-8"
@@ -309,7 +308,6 @@ export function HomePage() {
                 </Link>
               </div>
             </div>
-          </div>
         </div>
       </section>
 
